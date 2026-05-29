@@ -12,15 +12,48 @@ class ScoringService
 
   def call
     total = 0
-    exact_hits = 0
-    match_hits = 0
+    @exact_hits = 0
+    @match_hits = 0
 
     total += score_groups
+    total += score_matches
 
-    @quiniela.update!(total_points: total, exact_hits: exact_hits, match_hits: match_hits)
+    @quiniela.update!(total_points: total, exact_hits: @exact_hits, match_hits: @match_hits)
   end
 
   private
+
+  def score_matches
+    sum = 0
+    @quiniela.match_predictions.includes(:match).each do |mp|
+      match = mp.match
+      next unless match.finished?
+      raw = match_points(mp, match)
+      points = (raw * match.multiplier).floor
+      mp.update!(points_earned: points)
+      sum += points
+    end
+    sum
+  end
+
+  def match_points(prediction, match)
+    points = 0
+    exact = prediction.pred_home == match.home_goals && prediction.pred_away == match.away_goals
+    if exact
+      points += EXACT_SCORE
+      @exact_hits += 1
+      @match_hits += 1
+    elsif prediction.predicted_winner_team_id.present? &&
+          prediction.predicted_winner_team_id == match.actual_winner_team_id
+      points += CORRECT_WINNER
+      @match_hits += 1
+    end
+    if match.penalty_winner_id.present? &&
+       prediction.penalty_qualifier_id == match.penalty_winner_id
+      points += CORRECT_PENALTY
+    end
+    points
+  end
 
   def score_groups
     sum = 0
