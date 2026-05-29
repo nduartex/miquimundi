@@ -40,5 +40,8 @@ module QuinielaMundial
     config.generators.system_tests = nil
 
     config.i18n.default_locale = :es
+
+    # Mostrar y operar siempre en hora de Chile (los datos se guardan en UTC).
+    config.time_zone = "America/Santiago"
   end
 end
