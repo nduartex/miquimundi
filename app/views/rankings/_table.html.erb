@@ -1,0 +1,13 @@
+<% leader = quinielas.first&.total_points || 0 %>
+<div class="space-y-2">
+  <% quinielas.each_with_index do |q, i| %>
+    <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3 border border-white/20 <%= 'ring-2 ring-yellow-300' if i.zero? %>">
+      <span class="w-8 text-center font-black text-white"><%= i + 1 %></span>
+      <span class="flex-1 text-white font-semibold"><%= q.user.display_name %></span>
+      <span class="text-green-300 text-sm" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
+      <span class="text-pink-300 text-sm" title="Partidos acertados"><%= q.match_hits %>⚽</span>
+      <span class="text-yellow-300 font-black w-16 text-right"><%= q.total_points %></span>
+      <span class="text-white/50 text-xs w-12 text-right"><%= i.zero? ? "—" : "-#{leader - q.total_points}" %></span>
+    </div>
+  <% end %>
+</div>
