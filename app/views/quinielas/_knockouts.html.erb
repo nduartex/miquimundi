@@ -28,10 +28,14 @@
           <% round_matches.each do |match| %>
             <% mp = preds[match.id] %>
             <% mult = match.multiplier %>
-            <div class="surface p-4">
+            <% dis = match.locked? %>
+            <div class="surface p-4 <%= 'opacity-70' if dis %>">
               <div class="flex items-center justify-between mb-3">
                 <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
-                <% if mult > 1.0 %><span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span><% end %>
+                <div class="flex items-center gap-2">
+                  <% if dis %><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-white/15 text-white/80">🔒 Cerrado</span><% end %>
+                  <% if mult > 1.0 %><span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span><% end %>
+                </div>
               </div>
               <div class="flex items-center justify-between gap-2">
                 <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-left">
@@ -41,15 +45,15 @@
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                   <div class="flex items-center gap-1" data-controller="stepper">
-                    <button type="button" data-action="stepper#dec" aria-label="Menos" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
-                    <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                    <button type="button" data-action="stepper#inc" aria-label="Más" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
+                    <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
+                    <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: dis, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                    <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
                   </div>
                   <span class="text-white/50 font-display text-lg px-1">vs</span>
                   <div class="flex items-center gap-1" data-controller="stepper">
-                    <button type="button" data-action="stepper#dec" aria-label="Menos" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
-                    <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                    <button type="button" data-action="stepper#inc" aria-label="Más" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
+                    <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
+                    <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: dis, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                    <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
                   </div>
                 </div>
                 <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-right">
@@ -63,7 +67,7 @@
                   <label class="block text-white/50 text-xs mb-1">Si hay empate, ¿quién pasa por penales?</label>
                   <%= select_tag "match_predictions[#{match.id}][penalty_qualifier_id]",
                         options_for_select([["—", ""], [match.home_team.name, match.home_team.id], [match.away_team.name, match.away_team.id]], mp&.penalty_qualifier_id),
-                        class: "w-full rounded-lg bg-slate-800 border border-white/20 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
+                        disabled: dis, class: "w-full rounded-lg bg-slate-800 border border-white/20 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
                 </div>
               <% end %>
               <% if match.advances_to.present? %>
