@@ -7,9 +7,7 @@ namespace :quiniela do
     data = YAML.safe_load_file(Rails.root.join("db/results.yml"))
     Results::ManualProvider.new(tournament, data).apply!
     puts "Resultados aplicados. Recalculando puntajes..."
-    Quiniela.where(tournament_id: tournament.id).find_each do |q|
-      ScoringService.new(q).call
-    end
+    RecalculateScoresJob.perform_now(tournament.id)
     puts "Listo. #{tournament.quinielas_relation.count} quinielas recalculadas."
   end
 
@@ -17,9 +15,7 @@ namespace :quiniela do
   task recalculate: :environment do
     tournament = Tournament.current
     abort("No hay torneo cargado.") if tournament.nil?
-    Quiniela.where(tournament_id: tournament.id).find_each do |q|
-      ScoringService.new(q).call
-    end
+    RecalculateScoresJob.perform_now(tournament.id)
     puts "Recalculo completo."
   end
 end
