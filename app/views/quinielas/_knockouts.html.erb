@@ -1,15 +1,60 @@
+<% phase_styles = {
+     "round_16" => "bg-slate-200 text-slate-900",
+     "quarter"  => "bg-sky-300 text-slate-900",
+     "semi"     => "bg-violet-300 text-slate-900",
+     "final"    => "bg-amber-300 text-slate-900"
+   } %>
+<p class="text-white/70 mb-4">Predice el <strong class="text-white">marcador exacto</strong> de cada llave. Las fases avanzadas multiplican tus puntos.</p>
 <div class="space-y-3">
   <% matches.each do |match| %>
     <% mp = quiniela.match_predictions.find_by(match_id: match.id) %>
-    <div class="bg-white/10 rounded-2xl p-4 border border-white/20 flex items-center gap-3">
-      <span class="text-white/70 text-xs uppercase w-20"><%= t("phase.#{match.phase}", default: match.phase) %></span>
-      <span class="text-white flex-1"><%= match.home_team&.label || match.bracket_slot %></span>
-      <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home,
-            min: 0, class: "w-14 rounded-lg px-2 py-1 text-center text-gray-900", disabled: match.locked? %>
-      <span class="text-white">-</span>
-      <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away,
-            min: 0, class: "w-14 rounded-lg px-2 py-1 text-center text-gray-900", disabled: match.locked? %>
-      <span class="text-white flex-1 text-right"><%= match.away_team&.label || "" %></span>
+    <% mult = match.multiplier %>
+    <div class="surface p-4">
+      <div class="flex items-center justify-between mb-3">
+        <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">
+          <%= t("phase.#{match.phase}", default: match.phase) %>
+        </span>
+        <% if mult > 1.0 %>
+          <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span>
+        <% end %>
+      </div>
+
+      <div class="flex items-center justify-between gap-2">
+        <!-- Home -->
+        <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-left">
+          <%= match.home_team&.label || content_tag(:span, "Por definir", class: "text-white/40") %>
+        </div>
+
+        <!-- Steppers -->
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1" data-controller="stepper">
+            <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %>
+                    class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
+            <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home,
+                  min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?,
+                  class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+            <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %>
+                    class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
+          </div>
+
+          <span class="text-white/50 font-display text-lg px-1">vs</span>
+
+          <div class="flex items-center gap-1" data-controller="stepper">
+            <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %>
+                    class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
+            <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away,
+                  min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?,
+                  class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+            <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %>
+                    class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
+          </div>
+        </div>
+
+        <!-- Away -->
+        <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-right">
+          <%= match.away_team&.label || content_tag(:span, "Por definir", class: "text-white/40") %>
+        </div>
+      </div>
     </div>
   <% end %>
 </div>

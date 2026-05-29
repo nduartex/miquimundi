@@ -1,9 +1,14 @@
-<div class="bg-white/10 rounded-2xl p-4 border border-white/20 mb-6">
-  <div class="grid grid-cols-3 gap-2 text-center">
-    <div><div class="text-yellow-300 text-2xl font-black"><%= quiniela.total_points %></div><div class="text-white/70 text-xs">Puntos</div></div>
-    <div><div class="text-green-300 text-2xl font-black"><%= quiniela.exact_hits %></div><div class="text-white/70 text-xs">Exactos</div></div>
-    <div><div class="text-pink-300 text-2xl font-black"><%= quiniela.match_hits %></div><div class="text-white/70 text-xs">Aciertos</div></div>
+<div class="grid grid-cols-3 gap-3 mb-6">
+  <div id="stat-puntos" class="surface p-4 text-center">
+    <div class="stat-value text-amber-300 tabular-nums"><%= quiniela.total_points %></div>
+    <div class="stat-label">Puntos</div>
   </div>
-  <% pending = @knockouts.where(status: "scheduled").count %>
-  <p class="text-white/70 text-sm mt-3 text-center"><%= pending %> partidos pendientes</p>
+  <div id="stat-exactos" class="surface p-4 text-center">
+    <div class="stat-value text-emerald-300 tabular-nums"><%= quiniela.exact_hits %></div>
+    <div class="stat-label">Exactos</div>
+  </div>
+  <div id="stat-aciertos" class="surface p-4 text-center">
+    <div class="stat-value text-rose-300 tabular-nums"><%= quiniela.match_hits %></div>
+    <div class="stat-label">Aciertos</div>
+  </div>
 </div>

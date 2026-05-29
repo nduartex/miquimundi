@@ -1,1 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — "Vibrant & Block-based" festive system (UI/UX Pro Max)
+   High contrast on a deep stadium-night base; bright sport accents.
+--------------------------------------------------------------------------- */
+@theme {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+
+  --color-pitch-900: #0b1220;   /* deep night base */
+  --color-pitch-800: #111a2e;
+  --color-pitch-700: #1b2540;
+
+  --color-gold: #fbbf24;        /* points / highlight */
+  --color-grass: #34d399;       /* exact hits */
+  --color-rose: #fb5d8a;        /* match hits / energy */
+  --color-sky: #38bdf8;         /* links / info */
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    /* Stadium-night gradient with a vibrant top glow for energy */
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(251, 93, 138, 0.35), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(56, 189, 248, 0.20), transparent 55%),
+      linear-gradient(160deg, #1a1140 0%, #2a1a4a 35%, #3b1d3f 70%, #4a1f2e 100%);
+    background-attachment: fixed;
+    color: #f8fafc;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer components {
+  /* Readable, high-contrast surface (replaces low-contrast white/10 glass) */
+  .surface {
+    @apply bg-slate-900/60 border border-white/15 rounded-2xl shadow-xl backdrop-blur-sm;
+  }
+  .surface-soft {
+    @apply bg-slate-900/40 border border-white/10 rounded-2xl;
+  }
+
+  /* Form controls — large, legible, on-style */
+  .field {
+    @apply w-full rounded-xl bg-slate-800/90 border border-white/20 text-white
+           px-4 py-3 text-base font-medium
+           focus:outline-none focus:ring-4 focus:ring-amber-300/60 focus:border-amber-300
+           transition;
+  }
+  .field option { @apply bg-slate-900 text-white; }
+
+  /* Stat tiles */
+  .stat-value { @apply text-3xl font-extrabold leading-none; }
+  .stat-label { @apply text-xs uppercase tracking-wide text-white/60 mt-1; }
+}
+
+/* Wizard step transitions (respect reduced-motion via media query below) */
+.wizard-panel {
+  transition: opacity 250ms ease-out, transform 250ms ease-out;
+}
+.wizard-panel[hidden] { display: none; }
+.wizard-panel.is-enter {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* Onboarding tour spotlight + tooltip */
+.tour-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(2, 6, 23, 0.72);
+  transition: opacity 200ms ease-out;
+}
+.tour-highlight {
+  position: fixed; z-index: 1001; border-radius: 16px;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.95), 0 0 0 9999px rgba(2, 6, 23, 0.72);
+  transition: all 250ms ease-out;
+  pointer-events: none;
+}
+.tour-tooltip {
+  position: fixed; z-index: 1002; max-width: 320px;
+  transition: all 250ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard-panel, .tour-backdrop, .tour-highlight, .tour-tooltip { transition: none !important; }
+  .wizard-panel.is-enter { transform: none; }
+}
