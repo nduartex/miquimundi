@@ -34,7 +34,7 @@ class PredictionsController < ApplicationController
 
   def save_match_predictions
     (params[:match_predictions] || {}).each do |match_id, attrs|
-      match = Match.find(match_id)
+      match = @tournament.matches.find(match_id)
       next if match.locked?
       next if attrs[:pred_home].blank? || attrs[:pred_away].blank?
       mp = @quiniela.match_predictions.find_or_initialize_by(match_id: match_id)

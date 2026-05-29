@@ -13,7 +13,8 @@ class Quiniela < ApplicationRecord
     match_predictions
       .joins(:match)
       .where(matches: { phase: "final" })
-      .where.not(pred_home: nil, pred_away: nil)
+      .where.not(pred_home: nil)
+      .where.not(pred_away: nil)
       .exists?
   end
 end

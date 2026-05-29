@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root "sessions#new"
   resource :session, only: %i[new create destroy]
   resource :quiniela, only: %i[show] do
-    resources :predictions, only: %i[index create]
+    resources :predictions, only: %i[create]
   end
   resources :rankings, only: %i[index]
 end
