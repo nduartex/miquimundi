@@ -24,16 +24,6 @@ export default class extends Controller {
     this.reorder(this.dragIndex, to)
   }
 
-  up(event) {
-    const i = this.itemTargets.indexOf(event.currentTarget.closest("[data-group-order-target='item']"))
-    this.reorder(i, i - 1)
-  }
-
-  down(event) {
-    const i = this.itemTargets.indexOf(event.currentTarget.closest("[data-group-order-target='item']"))
-    this.reorder(i, i + 1)
-  }
-
   reorder(from, to) {
     if (from == null || to < 0 || to >= this.itemTargets.length || from === to) return
     const items = [...this.itemTargets]

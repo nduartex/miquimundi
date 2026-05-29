@@ -1,4 +1,4 @@
-<p class="text-white/70 mb-4">Ordena los <strong class="text-white">4 equipos</strong> de cada grupo (arrastra o usa ↑↓). El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.</p>
+<p class="text-white/70 mb-4">Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrándolos. El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.</p>
 <div class="grid sm:grid-cols-2 gap-4">
   <% groups.each do |group| %>
     <% gp = quiniela.group_predictions.find_by(group_id: group.id) %>
@@ -28,11 +28,7 @@
                      class="w-[26px] h-[20px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
               <% end %>
               <span class="flex-1 text-white font-semibold truncate"><%= team.name %></span>
-              <span class="text-white/30 select-none">⠿</span>
-              <span class="flex flex-col">
-                <button type="button" data-action="group-order#up" aria-label="Subir" class="w-7 h-5 leading-none text-white/60 hover:text-white cursor-pointer">▲</button>
-                <button type="button" data-action="group-order#down" aria-label="Bajar" class="w-7 h-5 leading-none text-white/60 hover:text-white cursor-pointer">▼</button>
-              </span>
+              <span class="text-white/30 text-lg select-none" aria-hidden="true">⠿</span>
             </li>
           <% end %>
         </ul>
