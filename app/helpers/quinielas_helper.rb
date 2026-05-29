@@ -23,6 +23,13 @@ module QuinielasHelper
           .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url } }
   end
 
+  # All national teams as a searchable dataset for the favorite-team picker.
+  def teams_dataset(tournament)
+    tournament.groups.includes(:teams).order(:name).flat_map(&:teams)
+              .sort_by(&:name)
+              .map { |t| { id: t.id, name: t.name, country: "", flag: t.flag_url } }
+  end
+
   # Ranked team ids 1st..4th for a group: saved prediction order padded with
   # any remaining teams so it always has all 4.
   def ranked_group_team_ids(group, quiniela)

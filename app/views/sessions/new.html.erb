@@ -28,9 +28,25 @@
     </div>
 
     <%= form_with url: session_path, method: :post, class: "space-y-4" do |f| %>
-      <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="email">Tu correo</label>
-      <%= f.email_field :email, id: "email", required: true, autocomplete: "email", placeholder: "tu@correo.com",
-            class: "field text-lg" %>
+      <div>
+        <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="email">Tu correo</label>
+        <%= f.email_field :email, id: "email", required: true, autocomplete: "email", placeholder: "tu@correo.com",
+              class: "field text-lg" %>
+      </div>
+
+      <% if @tournament %>
+        <script type="application/json" id="teams-json"><%== teams_dataset(@tournament).to_json %></script>
+        <div data-controller="combobox" data-combobox-dataset-id-value="teams-json" class="relative">
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1">Elige tu selección favorita <span class="text-white/40 normal-case">(opcional)</span></label>
+          <%= hidden_field_tag "favorite_team_id", nil, data: { combobox_target: "hidden" } %>
+          <input type="text" data-combobox-target="input" autocomplete="off" placeholder="Tu equipo del alma…"
+                 data-action="input->combobox#filter focus->combobox#filter keydown->combobox#key blur->combobox#blur"
+                 class="field">
+          <ul data-combobox-target="list" role="listbox" hidden
+              class="absolute z-30 mt-1 w-full max-h-60 overflow-auto rounded-xl bg-slate-800 border border-white/20 shadow-2xl py-1"></ul>
+        </div>
+      <% end %>
+
       <%= f.submit "Entrar a jugar",
             class: "w-full bg-gradient-to-r from-amber-400 to-rose-500 text-slate-900 font-extrabold py-3.5 rounded-xl text-lg hover:brightness-110 transition cursor-pointer" %>
     <% end %>

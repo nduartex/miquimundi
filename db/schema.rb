@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_024424) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_29_031724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -171,7 +171,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_024424) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "onboarded_at"
+    t.bigint "favorite_team_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["favorite_team_id"], name: "index_users_on_favorite_team_id"
   end
 
   add_foreign_key "award_predictions", "players", column: "balon_oro_player_id"
@@ -207,4 +209,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_024424) do
   add_foreign_key "tournament_results", "players", column: "young_player_id"
   add_foreign_key "tournament_results", "teams", column: "fair_play_team_id"
   add_foreign_key "tournament_results", "tournaments"
+  add_foreign_key "users", "teams", column: "favorite_team_id"
 end

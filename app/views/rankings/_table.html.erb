@@ -16,7 +16,13 @@
         </span>
         <div class="flex-1 min-w-0">
           <% if lead %><div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest">👑 Líder</div><% end %>
-          <span class="block text-white font-semibold truncate <%= 'text-xl' if lead %>"><%= q.user.display_name %></span>
+          <span class="flex items-center gap-2 text-white font-semibold truncate <%= 'text-xl' if lead %>">
+            <% if q.user.favorite_team&.flag_url %>
+              <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
+                   class="<%= lead ? 'w-[26px] h-[19px]' : 'w-[22px] h-[16px]' %> rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+            <% end %>
+            <span class="truncate"><%= q.user.display_name %></span>
+          </span>
         </div>
         <span class="text-emerald-300 font-semibold tabular-nums <%= lead ? 'text-base' : 'text-sm' %>" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
         <span class="text-rose-300 font-semibold tabular-nums <%= lead ? 'text-base' : 'text-sm' %>" title="Partidos acertados"><%= q.match_hits %>⚽</span>

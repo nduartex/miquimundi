@@ -1,14 +1,17 @@
 class SessionsController < ApplicationController
   def new
     redirect_to quiniela_path if signed_in?
+    @tournament = Tournament.current
   end
 
   def create
     user = User.find_or_initialize_by(email: params[:email].to_s.downcase.strip)
-    if user.persisted? || user.save
+    user.favorite_team_id = params[:favorite_team_id] if params[:favorite_team_id].present?
+    if user.save
       session[:user_id] = user.id
       redirect_to quiniela_path, notice: "¡Bienvenido, #{user.display_name}!"
     else
+      @tournament = Tournament.current
       flash.now[:alert] = "Correo inválido."
       render :new, status: :unprocessable_entity
     end

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :quinielas, dependent: :destroy
+  belongs_to :favorite_team, class_name: "Team", optional: true
 
   EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
 
