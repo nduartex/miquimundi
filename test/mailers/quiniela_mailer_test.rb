@@ -7,7 +7,7 @@ class QuinielaMailerTest < ActionMailer::TestCase
     quiniela = Quiniela.create!(user: user, tournament: tournament)
     mail = QuinielaMailer.confirmation(quiniela)
     assert_equal ["p@x.com"], mail.to
-    assert_match "Quiniela", mail.subject
+    assert_match "MiquiMundi", mail.subject
     assert_match "Pancho", mail.body.encoded
   end
 end
