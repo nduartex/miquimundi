@@ -10,5 +10,6 @@ class QuinielasController < ApplicationController
     @players = Player.includes(:team).order("teams.name")
     @teams = Team.joins(:group).where(groups: { tournament_id: @tournament.id }).order(:name)
     @knockout_open = @tournament.knockout_open?
+    @groups_locked = @tournament.locked? # group-stage predictions frozen (WC started)
   end
 end

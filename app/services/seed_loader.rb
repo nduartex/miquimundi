@@ -8,6 +8,7 @@ class SeedLoader
     tournament = Tournament.find_or_create_by!(year: data["tournament"]["year"]) do |t|
       t.name = data["tournament"]["name"]
     end
+    tournament.update!(name: data["tournament"]["name"], locked_at: data["tournament"]["starts_at"])
 
     data["groups"].each do |group_name, teams|
       group = Group.find_or_create_by!(tournament: tournament, name: group_name)

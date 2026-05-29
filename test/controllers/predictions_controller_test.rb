@@ -50,6 +50,20 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal %w[A B C D E F G H], q.best_third_groups
   end
 
+  test "group predictions are frozen and not overwritten once the tournament starts" do
+    post quiniela_predictions_path, params: {
+      group_predictions: { @group.id.to_s => { first_team_id: @teams[0].id, second_team_id: @teams[1].id } }
+    }
+    gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
+    assert_equal @teams[0].id, gp.first_team_id
+
+    @tournament.update!(locked_at: 1.day.ago) # World Cup has started
+    post quiniela_predictions_path, params: {
+      group_predictions: { @group.id.to_s => { first_team_id: @teams[2].id, second_team_id: @teams[3].id } }
+    }
+    assert_equal @teams[0].id, gp.reload.first_team_id # original kept, not overwritten
+  end
+
   test "knockout score predictions are ignored while the stage is locked" do
     m = @tournament.matches.find_by(phase: "round_32")
     post quiniela_predictions_path, params: {

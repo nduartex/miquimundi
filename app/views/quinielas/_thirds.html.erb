@@ -14,7 +14,8 @@
         <input type="checkbox" name="best_third_groups[]" value="<%= group.name %>"
                data-thirds-target="checkbox" data-action="thirds#change"
                <%= "checked" if Array(quiniela.best_third_groups).include?(group.name) %>
-               class="w-5 h-5 accent-amber-400 shrink-0">
+               <%= "disabled" if locked %>
+               class="w-5 h-5 accent-amber-400 shrink-0 <%= 'cursor-not-allowed' if locked %>">
         <span class="w-9 h-8 rounded-lg bg-white/10 text-white/80 text-xs font-extrabold flex items-center justify-center shrink-0">3º<%= group.name %></span>
         <span class="flex-1 min-w-0 text-white font-semibold truncate" data-team>—</span>
       </label>

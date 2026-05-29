@@ -22,6 +22,12 @@
 
   <%= render "summary", quiniela: @quiniela %>
 
+  <% if @groups_locked %>
+    <div class="surface bg-rose-500/15 border-rose-300/30 p-3 mb-6 text-center text-rose-100 text-sm font-semibold">
+      🔒 Tu quiniela de grupos quedó cerrada — el Mundial ya comenzó. Ya no se puede modificar.
+    </div>
+  <% end %>
+
   <!-- Step indicator -->
   <nav id="wizard-steps" class="grid grid-cols-4 gap-2 mb-6" aria-label="Pasos de la quiniela">
     <% [["Grupos", "①"], ["Terceros", "②"], ["Premios", "③"], [@knockout_open ? "Eliminatorias" : "Eliminatorias 🔒", "④"]].each_with_index do |(name, num), i| %>
@@ -36,13 +42,13 @@
 
   <%= form_with url: quiniela_predictions_path, method: :post, data: { action: "submit->confetti#burst" } do %>
     <div class="wizard-panel" data-wizard-target="panel">
-      <%= render "group_stage", groups: @groups, quiniela: @quiniela %>
+      <%= render "group_stage", groups: @groups, quiniela: @quiniela, locked: @groups_locked %>
     </div>
     <div class="wizard-panel" data-wizard-target="panel" hidden>
-      <%= render "thirds", groups: @groups, quiniela: @quiniela, teams_json: tp[:teams].to_json, groups_json: tp[:groups].to_json %>
+      <%= render "thirds", groups: @groups, quiniela: @quiniela, locked: @groups_locked, teams_json: tp[:teams].to_json, groups_json: tp[:groups].to_json %>
     </div>
     <div class="wizard-panel" data-wizard-target="panel" hidden>
-      <%= render "awards", players: @players, teams: @teams, quiniela: @quiniela %>
+      <%= render "awards", players: @players, teams: @teams, quiniela: @quiniela, locked: @groups_locked %>
     </div>
     <div class="wizard-panel" data-wizard-target="panel" hidden>
       <%= render "knockouts", matches: @knockouts, quiniela: @quiniela, open: @knockout_open %>

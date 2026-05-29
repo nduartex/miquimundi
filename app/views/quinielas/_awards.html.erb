@@ -34,15 +34,16 @@
           <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, data: { combobox_target: "hidden" } %>
           <input type="text" data-combobox-target="input" autocomplete="off"
                  value="<%= selected&.name %>" placeholder="Escribe un jugador…"
+                 <%= "disabled" if locked %>
                  data-action="input->combobox#filter focus->combobox#filter keydown->combobox#key blur->combobox#blur"
-                 class="field">
+                 class="field <%= 'opacity-60 cursor-not-allowed' if locked %>">
           <ul data-combobox-target="list" role="listbox" hidden
               class="absolute z-30 mt-1 w-full max-h-64 overflow-auto rounded-xl bg-slate-800 border border-white/20 shadow-2xl py-1"></ul>
         </div>
       <% else %>
         <%= select_tag "award_prediction[#{a[:field]}]",
               options_from_collection_for_select(teams, :id, :name, award&.public_send(a[:field].sub("_id", ""))&.id),
-              include_blank: "Selecciona…", class: "field" %>
+              include_blank: "Selecciona…", disabled: locked, class: "field #{'opacity-60 cursor-not-allowed' if locked}" %>
       <% end %>
     </div>
   <% end %>
