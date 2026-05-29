@@ -17,11 +17,30 @@ class ScoringService
 
     total += score_groups
     total += score_matches
+    total += score_awards
 
     @quiniela.update!(total_points: total, exact_hits: @exact_hits, match_hits: @match_hits)
   end
 
   private
+
+  def score_awards
+    award = @quiniela.award_prediction
+    result = @quiniela.tournament.tournament_result
+    return 0 if award.nil? || result.nil?
+
+    sum = 0
+    if award.top_scorer_player_id.present? &&
+       award.top_scorer_player_id == result.top_scorer_player_id
+      sum += AWARD_POINTS
+    end
+    if award.top_assists_player_id.present? &&
+       award.top_assists_player_id == result.top_assists_player_id
+      sum += AWARD_POINTS
+    end
+    award.update!(points_earned: sum)
+    sum
+  end
 
   def score_matches
     sum = 0
