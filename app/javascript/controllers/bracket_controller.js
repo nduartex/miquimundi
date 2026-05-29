@@ -95,7 +95,22 @@ export default class extends Controller {
       this.renderSlot(m, "away", A[m.n])
       this.renderPenalty(m, H[m.n], A[m.n])
     }
+    this.updateThirdLabels()
     this.renderChampion(W[104])
+  }
+
+  // Keep the 3rd-place pickers showing "Grupo C · Colombia" live, based on the
+  // current group ordering (the 3rd of each candidate group can change).
+  updateThirdLabels() {
+    this.element.querySelectorAll('select[name$="[third_group]"]').forEach((sel) => {
+      sel.querySelectorAll("option").forEach((opt) => {
+        const letter = opt.value
+        if (!letter) return
+        const tid = this.ranking(letter)[2]
+        const name = tid ? this.name(tid) : null
+        opt.textContent = name ? `Grupo ${letter} · ${name}` : `Grupo ${letter}`
+      })
+    })
   }
 
   renderSlot(m, side, teamId) {
