@@ -25,6 +25,14 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/partidos pendientes/, response.body)              # pending line removed
   end
 
+  test "group selectors use the custom flag dropdown with real flag images" do
+    get quiniela_path
+    assert_response :success
+    assert_match 'data-controller="flag-select"', response.body  # custom dropdown, not native select
+    assert_match "https://flagcdn.com/mx.svg", response.body     # México flag image rendered
+    assert_select "ul[role=listbox]"                              # accessible listbox
+  end
+
   test "show requires login" do
     delete session_path
     get quiniela_path
