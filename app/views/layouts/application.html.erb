@@ -22,7 +22,24 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-orange-500 bg-fixed">
+    <% if signed_in? %>
+      <nav class="flex items-center justify-between px-4 py-3 bg-black/20 backdrop-blur">
+        <%= link_to "⚽ Quiniela", quiniela_path, class: "text-white font-black text-xl" %>
+        <div class="flex gap-4 items-center">
+          <%= link_to "Mi Quiniela", quiniela_path, class: "text-white/90 hover:text-white font-semibold" %>
+          <%= link_to "Ranking", rankings_path, class: "text-white/90 hover:text-white font-semibold" %>
+          <%= button_to "Salir", session_path, method: :delete, class: "text-white/70 text-sm" %>
+        </div>
+      </nav>
+    <% end %>
+
+    <% flash.each do |type, msg| %>
+      <div class="mx-auto max-w-3xl mt-4 px-4 py-3 rounded-xl text-center font-semibold <%= type == 'alert' ? 'bg-red-500/80 text-white' : 'bg-green-500/80 text-white' %>">
+        <%= msg %>
+      </div>
+    <% end %>
+
+    <main><%= yield %></main>
   </body>
 </html>
