@@ -1,12 +1,33 @@
+<% award = quiniela.award_prediction %>
+<% award_defs = [
+     { field: "balon_oro_player_id",  label: "Balón de Oro",        pts: 10, kind: :player, tip: "Mejor jugador de todo el Mundial. También hay Balón de Plata y Bronce para el 2º y 3º mejor jugador." },
+     { field: "bota_oro_player_id",   label: "Bota de Oro",         pts: 10, kind: :player, tip: "Máximo goleador del torneo. También hay Bota de Plata y Bronce para el 2º y 3º goleador." },
+     { field: "guante_oro_player_id", label: "Guante de Oro",       pts: 8,  kind: :player, tip: "Mejor arquero del Mundial." },
+     { field: "young_player_id",      label: "Mejor jugador joven", pts: 6,  kind: :player, tip: "Mejor futbolista joven del torneo." },
+     { field: "fair_play_team_id",    label: "Fair Play",           pts: 5,  kind: :team,   tip: "Premio al equipo con mejor juego limpio (mejor conducta disciplinaria del torneo)." }
+   ] %>
 <div class="surface p-6">
-  <h3 class="font-display text-2xl font-bold text-white mb-1">🏆 Premios individuales</h3>
-  <p class="text-white/60 text-sm mb-5">Elígelos desde ya. Cada acierto suma <strong class="text-amber-300">10 puntos</strong>.</p>
-  <label class="block text-white/70 text-xs uppercase tracking-wide mb-1">Goleador del Mundial</label>
-  <%= select_tag "award_prediction[top_scorer_player_id]",
-        options_from_collection_for_select(players, :id, :label, quiniela.award_prediction&.top_scorer_player_id),
-        include_blank: "Selecciona…", class: "field mb-4" %>
-  <label class="block text-white/70 text-xs uppercase tracking-wide mb-1">Máximo asistidor</label>
-  <%= select_tag "award_prediction[top_assists_player_id]",
-        options_from_collection_for_select(players, :id, :label, quiniela.award_prediction&.top_assists_player_id),
-        include_blank: "Selecciona…", class: "field" %>
+  <h3 class="font-display text-2xl font-bold text-white mb-1">🏆 Premios</h3>
+  <p class="text-white/60 text-sm mb-5">Elígelos desde ya. Toca el <span class="font-bold">ⓘ</span> para ver qué es cada uno.</p>
+
+  <% award_defs.each do |a| %>
+    <div class="mb-4" data-controller="tooltip">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-white/70 text-xs uppercase tracking-wide"><%= a[:label] %></span>
+        <span class="text-amber-300 text-xs font-extrabold"><%= a[:pts] %> pts</span>
+        <button type="button" data-action="tooltip#toggle" aria-label="Qué es <%= a[:label] %>"
+                class="relative w-4 h-4 rounded-full bg-white/15 hover:bg-white/25 text-white/80 text-[10px] font-bold leading-none cursor-pointer flex items-center justify-center">i
+          <span data-tooltip-target="bubble" hidden role="tooltip"
+                class="absolute left-6 -top-1 z-30 w-60 surface p-3 text-xs leading-relaxed text-white/90 font-normal normal-case tracking-normal text-left shadow-2xl">
+            <%= a[:tip] %>
+          </span>
+        </button>
+      </div>
+      <% collection = a[:kind] == :player ? players : teams %>
+      <% label_method = a[:kind] == :player ? :label : :name %>
+      <%= select_tag "award_prediction[#{a[:field]}]",
+            options_from_collection_for_select(collection, :id, label_method, award&.public_send(a[:field])),
+            include_blank: "Selecciona…", class: "field" %>
+    </div>
+  <% end %>
 </div>

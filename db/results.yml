@@ -4,5 +4,8 @@ matches: []
 # Códigos de los 8 equipos que clasificaron como mejores terceros, ej: [MEX, BRA, ...]
 qualified_thirds: []
 awards:
-  top_scorer:
-  top_assists:
+  balon_oro:    # nombre del jugador (Balón de Oro)
+  bota_oro:     # nombre del jugador (Bota de Oro / goleador)
+  guante_oro:   # nombre del jugador (Guante de Oro / arquero)
+  young:        # nombre del jugador (Mejor joven)
+  fair_play:    # código de equipo (Fair Play), ej: ARG

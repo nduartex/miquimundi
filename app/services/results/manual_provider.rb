@@ -49,8 +49,11 @@ module Results
       return unless awards
       result = TournamentResult.find_or_initialize_by(tournament: @tournament)
       result.update!(
-        top_scorer_player: awards["top_scorer"] ? players[awards["top_scorer"]] : result.top_scorer_player,
-        top_assists_player: awards["top_assists"] ? players[awards["top_assists"]] : result.top_assists_player
+        balon_oro_player:  awards["balon_oro"]  ? players[awards["balon_oro"]]  : result.balon_oro_player,
+        bota_oro_player:   awards["bota_oro"]   ? players[awards["bota_oro"]]   : result.bota_oro_player,
+        guante_oro_player: awards["guante_oro"] ? players[awards["guante_oro"]] : result.guante_oro_player,
+        young_player:      awards["young"]      ? players[awards["young"]]      : result.young_player,
+        fair_play_team:    awards["fair_play"]  ? teams[awards["fair_play"]]    : result.fair_play_team
       )
     end
 

@@ -4,8 +4,11 @@ class ScoringService
   EXACT_SCORE = 5
   CORRECT_WINNER = 2
   CORRECT_PENALTY = 3
-  AWARD_POINTS = 10
   BEST_THIRD = 3
+  AWARDS = {
+    balon_oro_player_id: 10, bota_oro_player_id: 10, guante_oro_player_id: 8,
+    young_player_id: 6, fair_play_team_id: 5
+  }.freeze
 
   def initialize(quiniela)
     @quiniela = quiniela
@@ -31,14 +34,9 @@ class ScoringService
     result = @quiniela.tournament.tournament_result
     return 0 if award.nil? || result.nil?
 
-    sum = 0
-    if award.top_scorer_player_id.present? &&
-       award.top_scorer_player_id == result.top_scorer_player_id
-      sum += AWARD_POINTS
-    end
-    if award.top_assists_player_id.present? &&
-       award.top_assists_player_id == result.top_assists_player_id
-      sum += AWARD_POINTS
+    sum = AWARDS.sum do |field, points|
+      predicted = award.public_send(field)
+      predicted.present? && predicted == result.public_send(field) ? points : 0
     end
     award.update!(points_earned: sum)
     sum
