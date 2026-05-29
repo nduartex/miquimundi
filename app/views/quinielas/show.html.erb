@@ -8,7 +8,8 @@
        { el: '#stat-puntos',  title: 'Puntos',  body: 'Tu puntaje total acumulado. Suma según tus aciertos en grupos, terceros, premios y eliminatorias.' },
        { el: '#stat-exactos', title: 'Exactos', body: 'Marcadores que clavaste exactos (resultado idéntico). Valen más puntos.' },
        { el: '#stat-aciertos', title: 'Aciertos', body: 'Partidos donde acertaste al ganador, aunque el marcador no sea exacto.' },
-       { el: '#wizard-steps', title: 'Arma tu quiniela', body: 'Paso 1 Grupos → Paso 2 los 8 mejores terceros → Paso 3 Premios. Las Eliminatorias se abren al terminar la fase de grupos. Guarda para registrar tu jugada.' }
+       { el: '#wizard-steps', title: 'Arma tu quiniela', body: 'Paso 1 Grupos → Paso 2 los 8 mejores terceros → Paso 3 Premios. Las Eliminatorias se abren al terminar la fase de grupos. Guarda para registrar tu jugada.' },
+       { el: '#access-link', title: '🔑 ¡GUARDA tu enlace!', body: 'Este es tu único acceso. Cópialo y guárdalo en un lugar seguro: si se cierra la sesión, entras con este enlace. Sin él (y sin tu usuario) pierdes tu quiniela.' }
      ].to_json %>">
 
   <header class="flex items-center justify-between mb-6">
@@ -22,7 +23,7 @@
 
   <%= render "summary", quiniela: @quiniela %>
 
-  <div class="surface p-4 mb-6 <%= 'ring-2 ring-amber-300' if params[:welcome] %>" data-controller="clipboard">
+  <div id="access-link" class="surface p-4 mb-6 <%= 'ring-2 ring-amber-300' if params[:welcome] %>" data-controller="clipboard">
     <div class="flex items-center gap-2 mb-2">
       <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
       <span class="text-white/50 text-xs">guárdalo para volver a entrar si se cierra la sesión</span>
