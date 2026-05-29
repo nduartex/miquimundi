@@ -1,9 +1,10 @@
 <div class="min-h-dvh flex items-center justify-center px-4">
   <div class="w-full max-w-md surface p-8">
     <div class="text-center mb-8">
-      <div class="text-6xl mb-2">⚽</div>
-      <h1 class="font-display text-5xl font-extrabold text-white tracking-wide">QUINIELA MUNDIAL</h1>
-      <p class="text-white/70 mt-2">Predice. Compite. Gana el ranking.</p>
+      <%= image_tag "miquimundi.jpg", width: 224, height: 224, alt: "MiquiMundi — Mi Quiniela Mundialista 2026",
+            class: "w-56 h-56 mx-auto rounded-2xl shadow-2xl ring-1 ring-white/15" %>
+      <h1 class="sr-only">MiquiMundi — Mi Quiniela Mundialista 2026</h1>
+      <p class="text-white/70 mt-4">Predice. Compite. Gana el ranking.</p>
     </div>
     <%= form_with url: session_path, method: :post, class: "space-y-4" do |f| %>
       <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="email">Tu correo</label>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Quiniela Mundial" %></title>
+    <title><%= content_for(:title) || "MiquiMundi — Mi Quiniela Mundialista 2026" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -14,7 +14,6 @@
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
@@ -25,8 +24,9 @@
   <body class="min-h-dvh">
     <% if signed_in? %>
       <nav class="flex items-center justify-between px-4 py-3 bg-slate-950/40 backdrop-blur border-b border-white/10 sticky top-0 z-40">
-        <%= link_to quiniela_path, class: "font-display font-extrabold text-2xl text-white tracking-wide" do %>
-          <span class="text-amber-300">⚽</span> QUINIELA
+        <%= link_to quiniela_path, class: "flex items-center gap-2 font-display font-extrabold text-2xl text-white tracking-wide" do %>
+          <%= image_tag "miquimundi-mark.png", width: 36, height: 36, alt: "", class: "w-9 h-9 rounded-lg ring-1 ring-white/15" %>
+          MiquiMundi
         <% end %>
         <div class="flex gap-1 items-center">
           <%= link_to "Mi Quiniela", quiniela_path, class: "px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition #{'bg-white/15 text-white' if current_page?(quiniela_path)}" %>
