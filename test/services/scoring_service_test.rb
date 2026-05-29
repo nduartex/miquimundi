@@ -29,4 +29,51 @@ class ScoringServiceTest < ActiveSupport::TestCase
     ScoringService.new(@quiniela).call
     assert_equal 3, @quiniela.reload.total_points
   end
+
+  def build_match(phase:, home:, away:, hg:, ag:, pen: nil)
+    Match.create!(tournament: @tournament, phase: phase, home_team: home, away_team: away,
+                  home_goals: hg, away_goals: ag, penalty_winner: pen,
+                  status: "finished", kickoff_at: 1.day.ago)
+  end
+
+  test "exact score in round_16 scores 5" do
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)
+    ScoringService.new(@quiniela).call
+    assert_equal 5, @quiniela.reload.total_points
+    assert_equal 1, @quiniela.exact_hits
+    assert_equal 1, @quiniela.match_hits
+  end
+
+  test "correct winner wrong score scores 2" do
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 3, ag: 0)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)
+    ScoringService.new(@quiniela).call
+    assert_equal 2, @quiniela.reload.total_points
+    assert_equal 0, @quiniela.exact_hits
+    assert_equal 1, @quiniela.match_hits
+  end
+
+  test "quarter multiplier x1.5 on exact score yields 7" do
+    m = build_match(phase: "quarter", home: @t1, away: @t2, hg: 1, ag: 0)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 1, pred_away: 0)
+    ScoringService.new(@quiniela).call
+    assert_equal 7, @quiniela.reload.total_points # floor(5 * 1.5) = 7
+  end
+
+  test "final multiplier x3 on exact score yields 24 with penalty" do
+    m = build_match(phase: "final", home: @t1, away: @t2, hg: 0, ag: 0, pen: @t1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 0, pred_away: 0, penalty_qualifier: @t1)
+    ScoringService.new(@quiniela).call
+    # exact 0-0 = 5, +3 penalty correct = 8, x3 = 24
+    assert_equal 24, @quiniela.reload.total_points
+  end
+
+  test "correct penalty qualifier scores 3" do
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 1, ag: 1, pen: @t2)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 0, pred_away: 0, penalty_qualifier: @t2)
+    ScoringService.new(@quiniela).call
+    # pred 0-0 is a draw -> no winner pts and not exact; penalty correct = 3
+    assert_equal 3, @quiniela.reload.total_points
+  end
 end
