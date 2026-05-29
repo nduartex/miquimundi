@@ -23,14 +23,18 @@ export default class extends Controller {
 
   render(matches) {
     if (!matches.length) { this.close(); return }
-    this.listTarget.innerHTML = matches.map((p, i) => `
-      <li role="option" data-id="${p.id}" data-label="${esc(p.name)}"
+    this.listTarget.innerHTML = matches.map((p, i) => {
+      const flag = safeFlag(p.flag)
+      const img = flag ? `<img src="${esc(flag)}" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">` : ""
+      return `
+      <li role="option" data-id="${esc(String(p.id))}" data-label="${esc(p.name)}"
           data-action="mousedown->combobox#choose"
           class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-white/10 ${i === 0 ? "bg-white/5" : ""}">
-        ${p.flag ? `<img src="${p.flag}" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">` : ""}
+        ${img}
         <span class="text-white truncate">${esc(p.name)}</span>
         <span class="text-white/40 text-xs ml-auto shrink-0">${esc(p.country)}</span>
-      </li>`).join("")
+      </li>`
+    }).join("")
     this.listTarget.hidden = false
     this.active = -1
   }
@@ -62,8 +66,14 @@ export default class extends Controller {
   close() { this.listTarget.hidden = true }
 }
 
+// Quote-aware escaper (safe for attribute context, not just text nodes).
 function esc(s) {
-  const d = document.createElement("div")
-  d.textContent = s == null ? "" : String(s)
-  return d.innerHTML
+  return String(s ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;")
+}
+
+// Only allow http(s) flag URLs (blocks javascript:/data: URIs).
+function safeFlag(url) {
+  return /^https?:\/\//i.test(url || "") ? url : null
 }
