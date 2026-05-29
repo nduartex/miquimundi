@@ -8,6 +8,6 @@ class GroupTest < ActiveSupport::TestCase
   test "requires a name" do
     group = Group.new
     assert_not group.valid?
-    assert_includes group.errors[:name], "can't be blank"
+    assert_includes group.errors[:name], "no puede estar en blanco"
   end
 end

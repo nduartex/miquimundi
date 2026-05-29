@@ -1,0 +1,15 @@
+<div class="space-y-3">
+  <% matches.each do |match| %>
+    <% mp = quiniela.match_predictions.find_by(match_id: match.id) %>
+    <div class="bg-white/10 rounded-2xl p-4 border border-white/20 flex items-center gap-3">
+      <span class="text-white/70 text-xs uppercase w-20"><%= t("phase.#{match.phase}", default: match.phase) %></span>
+      <span class="text-white flex-1"><%= match.home_team&.label || match.bracket_slot %></span>
+      <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home,
+            min: 0, class: "w-14 rounded-lg px-2 py-1 text-center text-gray-900", disabled: match.locked? %>
+      <span class="text-white">-</span>
+      <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away,
+            min: 0, class: "w-14 rounded-lg px-2 py-1 text-center text-gray-900", disabled: match.locked? %>
+      <span class="text-white flex-1 text-right"><%= match.away_team&.label || "" %></span>
+    </div>
+  <% end %>
+</div>

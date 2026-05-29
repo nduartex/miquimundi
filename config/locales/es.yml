@@ -1,0 +1,13 @@
+es:
+  phase:
+    round_16: "Octavos"
+    quarter: "Cuartos"
+    semi: "Semis"
+    final: "Final"
+  errors:
+    messages:
+      blank: "no puede estar en blanco"
+  activerecord:
+    errors:
+      messages:
+        blank: "no puede estar en blanco"

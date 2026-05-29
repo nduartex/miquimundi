@@ -1,0 +1,15 @@
+<div class="bg-white/10 rounded-2xl p-6 border border-white/20" data-wizard-target="awards">
+  <% if quiniela.predicted_final? %>
+    <h3 class="text-white font-black mb-4">🏆 Premios individuales (10 pts c/u)</h3>
+    <label class="block text-white/80 text-sm">Goleador del Mundial</label>
+    <%= select_tag "award_prediction[top_scorer_player_id]",
+          options_from_collection_for_select(players, :id, :label, quiniela.award_prediction&.top_scorer_player_id),
+          include_blank: "—", class: "w-full rounded-lg px-3 py-2 mb-3 text-gray-900" %>
+    <label class="block text-white/80 text-sm">Máximo asistidor</label>
+    <%= select_tag "award_prediction[top_assists_player_id]",
+          options_from_collection_for_select(players, :id, :label, quiniela.award_prediction&.top_assists_player_id),
+          include_blank: "—", class: "w-full rounded-lg px-3 py-2 text-gray-900" %>
+  <% else %>
+    <p class="text-white/80">🔒 Predice primero el resultado de la <strong>final</strong> para desbloquear los premios individuales.</p>
+  <% end %>
+</div>
