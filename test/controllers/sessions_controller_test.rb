@@ -20,6 +20,13 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "login stores the chosen favorite team" do
+    SeedLoader.call
+    team = Team.find_by(code: "ARG")
+    post session_path, params: { email: "fan@x.com", favorite_team_id: team.id }
+    assert_equal team.id, User.find_by(email: "fan@x.com").favorite_team_id
+  end
+
   test "login hero shows the logo, hook and World Cup countdown" do
     get new_session_path
     assert_response :success

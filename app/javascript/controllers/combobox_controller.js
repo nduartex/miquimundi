@@ -5,9 +5,12 @@ import { Controller } from "@hotwired/stimulus"
 // the chosen player id into a hidden field.
 export default class extends Controller {
   static targets = ["input", "hidden", "list"]
+  static values = { datasetId: { type: String, default: "players-json" } }
 
   connect() {
-    this.data = window.__playersData ||= JSON.parse(document.getElementById("players-json")?.textContent || "[]")
+    const cache = (window.__cbData ||= {})
+    this.data = cache[this.datasetIdValue] ||=
+      JSON.parse(document.getElementById(this.datasetIdValue)?.textContent || "[]")
     this.active = -1
   }
 
