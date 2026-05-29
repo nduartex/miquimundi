@@ -1,5 +1,14 @@
-<div class="max-w-2xl mx-auto px-4 py-8">
-  <h1 class="text-3xl font-black text-white mb-6">🏆 Ranking Global</h1>
+<div class="max-w-2xl mx-auto px-4 py-8"
+     data-controller="tour"
+     data-tour-name-value="ranking"
+     data-tour-steps-value="<%= [
+       { el: '#ranking-header', title: 'Ranking Global', body: 'Aquí compiten todos los participantes registrados, ordenados por puntaje.' },
+       { el: '#ranking', title: 'Los registrados', body: 'Cada fila es un jugador: su posición, aciertos exactos (✓), partidos acertados (⚽), puntaje y diferencia respecto al líder.' }
+     ].to_json %>">
+  <header id="ranking-header" class="mb-6">
+    <h1 class="font-display text-4xl font-extrabold text-white">🏆 Ranking Global</h1>
+    <p class="text-white/60 mt-1">Posiciones en vivo de todos los participantes.</p>
+  </header>
   <%= turbo_stream_from "ranking_#{@tournament.id}" %>
   <div id="ranking">
     <%= render "table", quinielas: @quinielas %>

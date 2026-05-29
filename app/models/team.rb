@@ -4,7 +4,8 @@ class Team < ApplicationRecord
 
   validates :name, presence: true
 
+  # Name first, flag on the right, no country code/abbreviation.
   def label
-    [flag_emoji, name].compact.join(" ")
+    [name, flag_emoji].compact.join("  ")
   end
 end

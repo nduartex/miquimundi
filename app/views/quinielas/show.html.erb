@@ -1,24 +1,55 @@
-<div class="max-w-3xl mx-auto px-4 py-8" data-controller="wizard confetti">
+<div class="max-w-3xl mx-auto px-4 py-8"
+     data-controller="wizard confetti tour"
+     data-tour-name-value="mi-quiniela"
+     data-tour-steps-value="<%= [
+       { el: '#stat-puntos',  title: 'Puntos',  body: 'Tu puntaje total acumulado. Suma según tus aciertos en grupos, eliminatorias y premios.' },
+       { el: '#stat-exactos', title: 'Exactos', body: 'Marcadores que clavaste exactos (resultado idéntico). Valen más puntos.' },
+       { el: '#stat-aciertos', title: 'Aciertos', body: 'Partidos donde acertaste al ganador, aunque el marcador no sea exacto.' },
+       { el: '#wizard-steps', title: 'Arma tu quiniela', body: 'Avanza por Grupos → Eliminatorias → Premios. Guarda al final para registrar tu jugada.' }
+     ].to_json %>">
+
   <header class="flex items-center justify-between mb-6">
-    <h1 class="text-3xl font-black text-white">Mi Quiniela</h1>
-    <div class="text-yellow-300 font-black text-2xl"><%= @quiniela.total_points %> pts</div>
+    <h1 class="text-4xl font-extrabold text-white">Mi Quiniela</h1>
+    <div class="text-amber-300 font-extrabold text-3xl font-display tabular-nums"><%= @quiniela.total_points %> <span class="text-lg align-top">pts</span></div>
   </header>
 
   <%= render "summary", quiniela: @quiniela %>
 
-  <nav class="flex gap-2 mb-6">
-    <button type="button" data-action="wizard#go" data-wizard-step-param="0" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">1 · Grupos</button>
-    <button type="button" data-action="wizard#go" data-wizard-step-param="1" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">2 · Eliminatorias</button>
-    <button type="button" data-action="wizard#go" data-wizard-step-param="2" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">3 · Premios</button>
+  <!-- Step indicator -->
+  <nav id="wizard-steps" class="grid grid-cols-3 gap-2 mb-6" aria-label="Pasos de la quiniela">
+    <% [["Grupos", "①"], ["Eliminatorias", "②"], ["Premios", "③"]].each_with_index do |(name, num), i| %>
+      <button type="button" data-action="wizard#go" data-wizard-step-param="<%= i %>"
+              data-wizard-target="tab"
+              class="group flex flex-col items-center gap-1 py-3 rounded-xl border border-white/15 bg-slate-900/50 text-white/70 font-semibold transition hover:bg-white/10 cursor-pointer aria-[current=true]:bg-amber-400 aria-[current=true]:text-slate-900 aria-[current=true]:border-amber-300">
+        <span class="text-lg font-display"><%= num %></span>
+        <span class="text-sm"><%= name %></span>
+      </button>
+    <% end %>
   </nav>
 
   <%= form_with url: quiniela_predictions_path, method: :post, data: { action: "submit->confetti#burst" } do %>
-    <div data-wizard-target="panel"><%= render "group_stage", groups: @groups, quiniela: @quiniela %></div>
-    <div data-wizard-target="panel" class="hidden"><%= render "knockouts", matches: @knockouts, quiniela: @quiniela %></div>
-    <div data-wizard-target="panel" class="hidden"><%= render "awards", players: @players, quiniela: @quiniela %></div>
+    <div class="wizard-panel" data-wizard-target="panel">
+      <%= render "group_stage", groups: @groups, quiniela: @quiniela %>
+    </div>
+    <div class="wizard-panel" data-wizard-target="panel" hidden>
+      <%= render "knockouts", matches: @knockouts, quiniela: @quiniela %>
+    </div>
+    <div class="wizard-panel" data-wizard-target="panel" hidden>
+      <%= render "awards", players: @players, quiniela: @quiniela %>
+    </div>
 
-    <div class="mt-8">
-      <%= submit_tag "Guardar mi Quiniela", class: "w-full bg-gradient-to-r from-green-400 via-yellow-400 to-pink-500 text-white font-black py-4 rounded-2xl text-xl hover:scale-[1.01] transition" %>
+    <div class="mt-8 flex items-center justify-between gap-3">
+      <button type="button" data-action="wizard#prev" data-wizard-target="back"
+              class="px-5 py-3 rounded-xl bg-white/10 text-white font-semibold border border-white/15 hover:bg-white/20 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Atrás
+      </button>
+      <button type="button" data-action="wizard#next" data-wizard-target="forward"
+              class="flex-1 px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold transition cursor-pointer">
+        Siguiente →
+      </button>
+      <%= submit_tag "Guardar mi Quiniela",
+            data: { wizard_target: "submit" },
+            class: "flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-rose-500 text-slate-900 font-extrabold text-lg hover:brightness-110 transition cursor-pointer hidden" %>
     </div>
   <% end %>
 </div>

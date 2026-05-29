@@ -22,14 +22,16 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-orange-500 bg-fixed">
+  <body class="min-h-dvh">
     <% if signed_in? %>
-      <nav class="flex items-center justify-between px-4 py-3 bg-black/20 backdrop-blur">
-        <%= link_to "⚽ Quiniela", quiniela_path, class: "text-white font-black text-xl" %>
-        <div class="flex gap-4 items-center">
-          <%= link_to "Mi Quiniela", quiniela_path, class: "text-white/90 hover:text-white font-semibold" %>
-          <%= link_to "Ranking", rankings_path, class: "text-white/90 hover:text-white font-semibold" %>
-          <%= button_to "Salir", session_path, method: :delete, class: "text-white/70 text-sm" %>
+      <nav class="flex items-center justify-between px-4 py-3 bg-slate-950/40 backdrop-blur border-b border-white/10 sticky top-0 z-40">
+        <%= link_to quiniela_path, class: "font-display font-extrabold text-2xl text-white tracking-wide" do %>
+          <span class="text-amber-300">⚽</span> QUINIELA
+        <% end %>
+        <div class="flex gap-1 items-center">
+          <%= link_to "Mi Quiniela", quiniela_path, class: "px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition #{'bg-white/15 text-white' if current_page?(quiniela_path)}" %>
+          <%= link_to "Ranking", rankings_path, class: "px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition #{'bg-white/15 text-white' if current_page?(rankings_path)}" %>
+          <%= button_to "Salir", session_path, method: :delete, class: "px-3 py-2 rounded-lg text-white/60 hover:text-white text-sm font-semibold transition" %>
         </div>
       </nav>
     <% end %>
