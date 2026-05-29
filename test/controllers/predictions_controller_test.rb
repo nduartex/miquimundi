@@ -42,12 +42,20 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [@teams[0].id, @teams[1].id, @teams[2].id, @teams[3].id], gp.ranked_team_ids
   end
 
-  test "saving stores third_group choice for a Round of 32 third slot" do
-    m74 = @tournament.matches.find_by(bracket_slot: "M74") # away slot is a 3rd-place candidate
+  test "saving stores the 8 best-third group picks (capped at 8)" do
+    letters = %w[A B C D E F G H I]  # 9 sent
+    post quiniela_predictions_path, params: { best_third_groups: letters }
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_equal 8, q.best_third_groups.size
+    assert_equal %w[A B C D E F G H], q.best_third_groups
+  end
+
+  test "knockout score predictions are ignored while the stage is locked" do
+    m = @tournament.matches.find_by(phase: "round_32")
     post quiniela_predictions_path, params: {
-      match_predictions: { m74.id.to_s => { pred_home: 2, pred_away: 0, third_group: "C" } }
+      match_predictions: { m.id.to_s => { pred_home: 2, pred_away: 0 } }
     }
-    mp = @user.quinielas.find_by(tournament: @tournament).match_predictions.find_by(match_id: m74.id)
-    assert_equal "C", mp.third_group
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_nil q.match_predictions.find_by(match_id: m.id) # locked: not saved
   end
 end

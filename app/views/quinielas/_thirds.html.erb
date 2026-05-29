@@ -1,0 +1,25 @@
+<div data-controller="thirds"
+     data-thirds-teams-value="<%= teams_json %>"
+     data-thirds-groups-value="<%= groups_json %>"
+     data-thirds-max-value="8">
+  <div class="flex items-center justify-between mb-4">
+    <p class="text-white/70 pr-3">Elige los <strong class="text-white">8 mejores terceros</strong> que clasifican a dieciseisavos.</p>
+    <span class="shrink-0 px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold tabular-nums" data-thirds-target="counter">0/8</span>
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-2">
+    <% groups.each do |group| %>
+      <label data-thirds-target="option" data-group="<%= group.name %>"
+             class="surface-soft flex items-center gap-3 px-3 py-3 cursor-pointer transition ring-amber-300">
+        <input type="checkbox" name="best_third_groups[]" value="<%= group.name %>"
+               data-thirds-target="checkbox" data-action="thirds#change"
+               <%= "checked" if Array(quiniela.best_third_groups).include?(group.name) %>
+               class="w-5 h-5 accent-amber-400 shrink-0">
+        <span class="w-9 h-8 rounded-lg bg-white/10 text-white/80 text-xs font-extrabold flex items-center justify-center shrink-0">3º<%= group.name %></span>
+        <span class="flex-1 min-w-0 text-white font-semibold truncate" data-team>—</span>
+      </label>
+    <% end %>
+  </div>
+
+  <p class="text-white/40 text-xs mt-3">El 3º de cada grupo sale de tu orden del paso anterior. Los 4 que no elijas quedan eliminados.</p>
+</div>

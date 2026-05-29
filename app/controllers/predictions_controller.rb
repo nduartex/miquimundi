@@ -8,6 +8,7 @@ class PredictionsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       save_group_predictions
+      save_best_thirds
       save_match_predictions
       save_award_prediction
       @quiniela.update!(submitted_at: Time.current)
@@ -37,26 +38,32 @@ class PredictionsController < ApplicationController
     end
   end
 
+  # Exactly the group letters the user nominated as qualifying best thirds.
+  def save_best_thirds
+    return unless params.key?(:best_third_groups)
+    letters = Array(params[:best_third_groups]).reject(&:blank?).first(8)
+    @quiniela.update!(best_third_groups: letters)
+  end
+
   def save_match_predictions
+    return unless @tournament.knockout_open? # locked until the real group stage ends
     (params[:match_predictions] || {}).each do |match_id, attrs|
       match = @tournament.matches.find(match_id)
       next if match.locked?
-      has_score = attrs[:pred_home].present? && attrs[:pred_away].present?
-      next unless has_score || attrs[:third_group].present?
+      next if attrs[:pred_home].blank? || attrs[:pred_away].blank?
       mp = @quiniela.match_predictions.find_or_initialize_by(match_id: match_id)
       mp.update!(
-        pred_home: attrs[:pred_home].presence,
-        pred_away: attrs[:pred_away].presence,
-        penalty_qualifier_id: attrs[:penalty_qualifier_id].presence,
-        third_group: attrs[:third_group].presence
+        pred_home: attrs[:pred_home],
+        pred_away: attrs[:pred_away],
+        penalty_qualifier_id: attrs[:penalty_qualifier_id].presence
       )
     end
   end
 
+  # Awards are available from the start (no longer gated on predicting the final).
   def save_award_prediction
     attrs = params[:award_prediction]
     return if attrs.blank?
-    return unless @quiniela.predicted_final?
     award = @quiniela.award_prediction || @quiniela.build_award_prediction
     award.update!(top_scorer_player_id: attrs[:top_scorer_player_id].presence,
                   top_assists_player_id: attrs[:top_assists_player_id].presence)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_015715) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_29_022416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -118,6 +118,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_015715) do
     t.datetime "submitted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "best_third_groups", default: [], null: false
     t.index ["tournament_id"], name: "index_quinielas_on_tournament_id"
     t.index ["user_id"], name: "index_quinielas_on_user_id"
   end
@@ -138,6 +139,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_015715) do
     t.bigint "top_assists_player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "qualified_third_codes", default: [], null: false
     t.index ["top_assists_player_id"], name: "index_tournament_results_on_top_assists_player_id"
     t.index ["top_scorer_player_id"], name: "index_tournament_results_on_top_scorer_player_id"
     t.index ["tournament_id"], name: "index_tournament_results_on_tournament_id"

@@ -4,6 +4,7 @@ module Results
       apply_group_results
       apply_matches
       apply_awards
+      apply_qualified_thirds
     end
 
     private
@@ -51,6 +52,14 @@ module Results
         top_scorer_player: awards["top_scorer"] ? players[awards["top_scorer"]] : result.top_scorer_player,
         top_assists_player: awards["top_assists"] ? players[awards["top_assists"]] : result.top_assists_player
       )
+    end
+
+    # Real team codes that qualified as best thirds, e.g. qualified_thirds: [MEX, BRA, ...]
+    def apply_qualified_thirds
+      codes = @data["qualified_thirds"]
+      return if codes.nil?
+      result = TournamentResult.find_or_initialize_by(tournament: @tournament)
+      result.update!(qualified_third_codes: Array(codes))
     end
   end
 end
