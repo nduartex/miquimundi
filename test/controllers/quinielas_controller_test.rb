@@ -3,8 +3,8 @@ require "test_helper"
 class QuinielasControllerTest < ActionDispatch::IntegrationTest
   def setup
     SeedLoader.call
-    @user = User.create!(email: "p@x.com")
-    post session_path, params: { email: @user.email }
+    @user = User.create!(username: "tester")
+    get restore_path(token: @user.access_token)
   end
 
   test "show renders the 4-step wizard with groups, thirds and locked knockouts" do

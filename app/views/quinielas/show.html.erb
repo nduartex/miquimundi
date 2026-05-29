@@ -22,6 +22,23 @@
 
   <%= render "summary", quiniela: @quiniela %>
 
+  <div class="surface p-4 mb-6 <%= 'ring-2 ring-amber-300' if params[:welcome] %>" data-controller="clipboard">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
+      <span class="text-white/50 text-xs">guárdalo para volver a entrar si se cierra la sesión</span>
+    </div>
+    <div class="flex gap-2">
+      <input type="text" readonly value="<%= restore_url(token: current_user.access_token) %>"
+             data-clipboard-target="source" onclick="this.select()"
+             class="field text-sm">
+      <button type="button" data-action="clipboard#copy" data-clipboard-target="btn"
+              class="px-4 rounded-xl bg-amber-400 text-slate-900 font-bold shrink-0 cursor-pointer">Copiar</button>
+    </div>
+    <% if params[:welcome] %>
+      <p class="text-amber-200/90 text-xs mt-2">⚠️ Si pierdes este enlace y olvidas tu usuario, no podrás recuperar tu cuenta.</p>
+    <% end %>
+  </div>
+
   <% if @groups_locked %>
     <div class="surface bg-rose-500/15 border-rose-300/30 p-3 mb-6 text-center text-rose-100 text-sm font-semibold">
       🔒 Tu quiniela de grupos quedó cerrada — el Mundial ya comenzó. Ya no se puede modificar.

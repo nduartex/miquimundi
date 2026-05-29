@@ -8,7 +8,7 @@ class ScoringServiceTest < ActiveSupport::TestCase
     @t2 = Team.create!(group: @group, name: "T2")
     @t3 = Team.create!(group: @group, name: "T3")
     GroupResult.create!(group: @group, first_team: @t1, second_team: @t2)
-    @user = User.create!(email: "p@x.com")
+    @user = User.create!(username: "player1")
     @quiniela = Quiniela.create!(user: @user, tournament: @tournament)
   end
 

@@ -29,9 +29,11 @@
 
     <%= form_with url: session_path, method: :post, class: "space-y-4" do |f| %>
       <div>
-        <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="email">Tu correo</label>
-        <%= f.email_field :email, id: "email", required: true, autocomplete: "email", placeholder: "tu@correo.com",
+        <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="username">Elige tu nombre de usuario</label>
+        <%= text_field_tag :username, params[:username], id: "username", required: true, autocomplete: "off",
+              minlength: 3, maxlength: 20, placeholder: "ej: martin_10",
               class: "field text-lg" %>
+        <p class="text-white/40 text-xs mt-1">Debe ser único. Si ya existe, elige otro.</p>
       </div>
 
       <% if @tournament %>
@@ -47,9 +49,9 @@
         </div>
       <% end %>
 
-      <%= f.submit "Entrar a jugar",
+      <%= f.submit "Crear y entrar",
             class: "w-full bg-gradient-to-r from-amber-400 to-rose-500 text-slate-900 font-extrabold py-3.5 rounded-xl text-lg hover:brightness-110 transition cursor-pointer" %>
     <% end %>
-    <p class="text-white/40 text-xs text-center mt-6">Sin contraseña. Tu correo es tu identificador.</p>
+    <p class="text-white/40 text-xs text-center mt-6">Sin contraseña. Tras crear tu usuario te daremos un <strong class="text-white/60">enlace de acceso</strong> para volver a entrar. ¿Ya tienes uno? Úsalo para reingresar.</p>
   </div>
 </div>

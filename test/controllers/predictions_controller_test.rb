@@ -6,8 +6,8 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     @tournament = Tournament.current
     @group = @tournament.groups.find_by(name: "A")
     @teams = @group.teams.to_a
-    @user = User.create!(email: "p@x.com")
-    post session_path, params: { email: @user.email }
+    @user = User.create!(username: "tester")
+    get restore_path(token: @user.access_token) # log in via personal link
   end
 
   test "saving group predictions creates records and a quiniela" do

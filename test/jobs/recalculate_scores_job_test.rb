@@ -5,7 +5,7 @@ class RecalculateScoresJobTest < ActiveSupport::TestCase
 
   test "recomputes scores and broadcasts the ranking" do
     tournament = Tournament.create!(name: "WC", year: 2026)
-    user = User.create!(email: "p@x.com")
+    user = User.create!(username: "jobuser")
     quiniela = Quiniela.create!(user: user, tournament: tournament, total_points: 999)
 
     assert_changes -> { quiniela.reload.total_points }, from: 999, to: 0 do

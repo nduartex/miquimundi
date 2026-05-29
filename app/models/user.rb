@@ -2,14 +2,16 @@ class User < ApplicationRecord
   has_many :quinielas, dependent: :destroy
   belongs_to :favorite_team, class_name: "Team", optional: true
 
-  EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+  USERNAME_REGEX = /\A[a-zA-Z0-9_.\-]{3,20}\z/
 
-  before_validation { self.email = email.to_s.downcase.strip }
+  before_validation { self.username = username.to_s.strip }
+  has_secure_token :access_token
 
-  validates :email, presence: true, uniqueness: true, format: { with: EMAIL_REGEX }
+  validates :username, presence: true, uniqueness: { case_sensitive: false },
+            format: { with: USERNAME_REGEX, message: "usa 3-20 letras, números, . _ -" }
 
   def display_name
-    name.presence || email
+    name.presence || username
   end
 
   def quiniela_for(tournament)

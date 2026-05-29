@@ -17,10 +17,9 @@ class PredictionsController < ApplicationController
     end
 
     ScoringService.new(@quiniela).call
-    QuinielaMailer.confirmation(@quiniela).deliver_later
 
     respond_to do |format|
-      format.html { redirect_to quiniela_path, notice: "¡Quiniela guardada! Revisa tu correo." }
+      format.html { redirect_to quiniela_path, notice: "¡Quiniela guardada!" }
       format.turbo_stream { flash.now[:notice] = "¡Quiniela guardada!" }
     end
   end

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   root "sessions#new"
   resource :session, only: %i[new create destroy]
+  get "u/:token", to: "sessions#restore", as: :restore
   resource :onboarding, only: %i[update]
   resource :quiniela, only: %i[show] do
     resources :predictions, only: %i[create]
