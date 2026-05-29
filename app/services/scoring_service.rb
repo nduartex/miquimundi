@@ -75,10 +75,13 @@ class ScoringService
   end
 
   def score_groups
+    results_by_group = GroupResult
+      .where(group_id: @quiniela.group_predictions.select(:group_id))
+      .index_by(&:group_id)
+
     sum = 0
-    @quiniela.group_predictions.includes(:group).each do |gp|
-      result = GroupResult.find_by(group_id: gp.group_id)
-      points = group_points(gp, result)
+    @quiniela.group_predictions.each do |gp|
+      points = group_points(gp, results_by_group[gp.group_id])
       gp.update!(points_earned: points)
       sum += points
     end
