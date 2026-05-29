@@ -8,7 +8,15 @@
    } %>
 <% by_phase = matches.group_by(&:phase) %>
 <% preds = quiniela.match_predictions.index_by(&:match_id) %>
-<p class="text-white/70 mb-5">Predice el <strong class="text-white">marcador exacto</strong> de cada llave. Sigue el orden del bracket: Dieciseisavos → Final. Las fases avanzadas multiplican tus puntos.</p>
+<p class="text-white/70 mb-5">Predice el <strong class="text-white">marcador</strong> de cada llave. Tus banderas de la fase de grupos fluyen aquí, y el ganador de cada partido avanza solo hasta la Final.</p>
+
+<%# Champion banner %>
+<div class="surface p-5 mb-6 text-center">
+  <div class="text-white/60 text-xs uppercase tracking-wide mb-1">Tu campeón</div>
+  <div class="font-display text-2xl font-extrabold text-amber-300 flex items-center justify-center gap-2" data-bracket-target="champion">
+    <span class="text-white/40">Tu campeón aparecerá aquí</span>
+  </div>
+</div>
 
 <div class="space-y-8">
   <% Match::KNOCKOUT_ORDER.each do |phase| %>
@@ -23,51 +31,51 @@
 
       <div class="space-y-3">
         <% round_matches.each do |match| %>
+          <% mp = preds[match.id] %>
           <% mult = match.multiplier %>
-          <% home = match.home_team&.label || match.home_label || match.bracket_slot %>
-          <% away = match.away_team&.label || match.away_label %>
-          <div class="surface p-4">
+          <% third = match.away_label.to_s.start_with?("3º") %>
+          <% candidates = third ? match.away_label.sub("3º", "").split("/").map(&:strip) : [] %>
+          <div class="surface p-4" data-bracket-match="<%= match.match_number %>" data-match-id="<%= match.id %>">
             <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">
-                Partido <%= match.match_number %>
-              </span>
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
               <% if mult > 1.0 %>
                 <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span>
               <% end %>
             </div>
 
             <div class="flex items-center justify-between gap-2">
-              <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-left">
-                <%= home %>
-              </div>
+              <div class="flex-1 min-w-0 text-white font-semibold text-center sm:text-left"
+                   data-slot="home" data-label="<%= match.home_label %>"><%= match.home_label %></div>
 
               <div class="flex items-center gap-2 shrink-0">
                 <div class="flex items-center gap-1" data-controller="stepper">
-                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %>
-                          class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
-                  <%= number_field_tag "match_predictions[#{match.id}][pred_home]", preds[match.id]&.pred_home,
-                        min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?,
-                        class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %>
-                          class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
+                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
+                  <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
                 </div>
-
                 <span class="text-white/50 font-display text-lg px-1">vs</span>
-
                 <div class="flex items-center gap-1" data-controller="stepper">
-                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %>
-                          class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
-                  <%= number_field_tag "match_predictions[#{match.id}][pred_away]", preds[match.id]&.pred_away,
-                        min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?,
-                        class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %>
-                          class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
+                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
+                  <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
                 </div>
               </div>
 
-              <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-right">
-                <%= away %>
+              <div class="flex-1 min-w-0 text-center sm:text-right">
+                <% if third %>
+                  <%= select_tag "match_predictions[#{match.id}][third_group]",
+                        options_for_select([["3º grupo…", ""]] + candidates.map { |g| ["Grupo #{g}", g] }, mp&.third_group),
+                        class: "w-full mb-1 rounded-lg bg-slate-800 border border-white/20 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
+                <% end %>
+                <div class="text-white font-semibold truncate" data-slot="away" data-label="<%= match.away_label %>"><%= match.away_label %></div>
               </div>
+            </div>
+
+            <%# Penalty shootout pick — shown by the engine only on a tie %>
+            <div class="mt-3" data-penalty hidden>
+              <%= select_tag "match_predictions[#{match.id}][penalty_qualifier_id]", "",
+                    data: { initial: mp&.penalty_qualifier_id },
+                    class: "w-full rounded-lg bg-slate-800 border border-amber-300/40 text-white text-sm px-2 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
             </div>
 
             <% if match.advances_to.present? %>
