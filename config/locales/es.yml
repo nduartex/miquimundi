@@ -1,8 +1,10 @@
 es:
   phase:
+    round_32: "Dieciseisavos"
     round_16: "Octavos"
     quarter: "Cuartos"
     semi: "Semis"
+    third_place: "3er puesto"
     final: "Final"
   errors:
     messages:

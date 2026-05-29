@@ -22,12 +22,26 @@ class SeedLoader
       end
     end
 
-    data["knockout_slots"].each do |slot|
-      Match.find_or_create_by!(tournament: tournament, bracket_slot: slot["bracket_slot"]) do |m|
-        m.phase = slot["phase"]
-        m.status = "scheduled"
-      end
+    slots = data["knockout_slots"]
+    slots.each do |slot|
+      match = Match.find_or_initialize_by(tournament: tournament, bracket_slot: slot["bracket_slot"])
+      match.assign_attributes(
+        phase: slot["phase"],
+        match_number: slot["match_number"],
+        home_label: slot["home_label"],
+        away_label: slot["away_label"],
+        advances_to: slot["advances_to"].presence
+      )
+      match.status ||= "scheduled"
+      match.save!
     end
+
+    # Remove knockout matches no longer part of the bracket definition
+    # (keeps re-seeding idempotent after a structure change).
+    tournament.matches
+              .where.not(phase: "group")
+              .where.not(bracket_slot: slots.map { |s| s["bracket_slot"] })
+              .destroy_all
 
     tournament
   end

@@ -1,7 +1,14 @@
 class Match < ApplicationRecord
-  PHASES = %w[group round_16 quarter semi final].freeze
+  PHASES = %w[group round_32 round_16 quarter semi third_place final].freeze
   STATUSES = %w[scheduled live finished].freeze
-  MULTIPLIERS = { "round_16" => 1.0, "quarter" => 1.5, "semi" => 2.0, "final" => 3.0 }.freeze
+  # Per spec: R32 and Octavos count normal (x1); Cuartos x1.5, Semis x2, Final x3.
+  # The third-place playoff scores normal (x1).
+  MULTIPLIERS = {
+    "round_32" => 1.0, "round_16" => 1.0, "quarter" => 1.5,
+    "semi" => 2.0, "third_place" => 1.0, "final" => 3.0
+  }.freeze
+  # Display order of knockout rounds (used to group the bracket view).
+  KNOCKOUT_ORDER = %w[round_32 round_16 quarter semi third_place final].freeze
 
   belongs_to :tournament
   belongs_to :home_team, class_name: "Team", optional: true
@@ -13,7 +20,7 @@ class Match < ApplicationRecord
   validates :status, inclusion: { in: STATUSES }
 
   scope :knockout, -> { where.not(phase: "group") }
-  scope :ordered, -> { order(:kickoff_at) }
+  scope :ordered, -> { order(Arel.sql("match_number NULLS LAST"), :kickoff_at) }
 
   def knockout?
     phase != "group"

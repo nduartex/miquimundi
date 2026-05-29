@@ -62,19 +62,45 @@ groups:
     - { name: "Croacia", code: "CRO", flag: "🇭🇷", players: ["Luka Modrić"] }
     - { name: "Ghana", code: "GHA", flag: "🇬🇭", players: ["Mohammed Kudus"] }
     - { name: "Panamá", code: "PAN", flag: "🇵🇦", players: ["Adalberto Carrasquilla"] }
+# Official 2026 FIFA World Cup knockout bracket (matches 73-104).
+# home_label / away_label = the "cruce" each slot is fed from.
+# advances_to = bracket_slot of the next match the winner plays.
 knockout_slots:
-  - { phase: "round_16", bracket_slot: "R16-1" }
-  - { phase: "round_16", bracket_slot: "R16-2" }
-  - { phase: "round_16", bracket_slot: "R16-3" }
-  - { phase: "round_16", bracket_slot: "R16-4" }
-  - { phase: "round_16", bracket_slot: "R16-5" }
-  - { phase: "round_16", bracket_slot: "R16-6" }
-  - { phase: "round_16", bracket_slot: "R16-7" }
-  - { phase: "round_16", bracket_slot: "R16-8" }
-  - { phase: "quarter", bracket_slot: "QF-1" }
-  - { phase: "quarter", bracket_slot: "QF-2" }
-  - { phase: "quarter", bracket_slot: "QF-3" }
-  - { phase: "quarter", bracket_slot: "QF-4" }
-  - { phase: "semi", bracket_slot: "SF-1" }
-  - { phase: "semi", bracket_slot: "SF-2" }
-  - { phase: "final", bracket_slot: "F-1" }
+  # Dieciseisavos de final (Round of 32) — matches 73-88
+  - { match_number: 73,  phase: "round_32", bracket_slot: "M73", home_label: "2A", away_label: "2B", advances_to: "M90" }
+  - { match_number: 74,  phase: "round_32", bracket_slot: "M74", home_label: "1E", away_label: "3º A/B/C/D/F", advances_to: "M89" }
+  - { match_number: 75,  phase: "round_32", bracket_slot: "M75", home_label: "1F", away_label: "2C", advances_to: "M90" }
+  - { match_number: 76,  phase: "round_32", bracket_slot: "M76", home_label: "1C", away_label: "2F", advances_to: "M91" }
+  - { match_number: 77,  phase: "round_32", bracket_slot: "M77", home_label: "1I", away_label: "3º C/D/F/G/H", advances_to: "M89" }
+  - { match_number: 78,  phase: "round_32", bracket_slot: "M78", home_label: "2E", away_label: "2I", advances_to: "M91" }
+  - { match_number: 79,  phase: "round_32", bracket_slot: "M79", home_label: "1A", away_label: "3º C/E/F/H/I", advances_to: "M92" }
+  - { match_number: 80,  phase: "round_32", bracket_slot: "M80", home_label: "1L", away_label: "3º E/H/I/J/K", advances_to: "M92" }
+  - { match_number: 81,  phase: "round_32", bracket_slot: "M81", home_label: "1D", away_label: "3º B/E/F/I/J", advances_to: "M94" }
+  - { match_number: 82,  phase: "round_32", bracket_slot: "M82", home_label: "1G", away_label: "3º A/E/H/I/J", advances_to: "M94" }
+  - { match_number: 83,  phase: "round_32", bracket_slot: "M83", home_label: "2K", away_label: "2L", advances_to: "M93" }
+  - { match_number: 84,  phase: "round_32", bracket_slot: "M84", home_label: "1H", away_label: "2J", advances_to: "M93" }
+  - { match_number: 85,  phase: "round_32", bracket_slot: "M85", home_label: "1B", away_label: "3º E/F/G/I/J", advances_to: "M96" }
+  - { match_number: 86,  phase: "round_32", bracket_slot: "M86", home_label: "1J", away_label: "2H", advances_to: "M95" }
+  - { match_number: 87,  phase: "round_32", bracket_slot: "M87", home_label: "1K", away_label: "3º D/E/I/J/L", advances_to: "M96" }
+  - { match_number: 88,  phase: "round_32", bracket_slot: "M88", home_label: "2D", away_label: "2G", advances_to: "M95" }
+  # Octavos de final (Round of 16) — matches 89-96
+  - { match_number: 89,  phase: "round_16", bracket_slot: "M89", home_label: "Gan. 74", away_label: "Gan. 77", advances_to: "M97" }
+  - { match_number: 90,  phase: "round_16", bracket_slot: "M90", home_label: "Gan. 73", away_label: "Gan. 75", advances_to: "M97" }
+  - { match_number: 91,  phase: "round_16", bracket_slot: "M91", home_label: "Gan. 76", away_label: "Gan. 78", advances_to: "M99" }
+  - { match_number: 92,  phase: "round_16", bracket_slot: "M92", home_label: "Gan. 79", away_label: "Gan. 80", advances_to: "M99" }
+  - { match_number: 93,  phase: "round_16", bracket_slot: "M93", home_label: "Gan. 83", away_label: "Gan. 84", advances_to: "M98" }
+  - { match_number: 94,  phase: "round_16", bracket_slot: "M94", home_label: "Gan. 81", away_label: "Gan. 82", advances_to: "M98" }
+  - { match_number: 95,  phase: "round_16", bracket_slot: "M95", home_label: "Gan. 86", away_label: "Gan. 88", advances_to: "M100" }
+  - { match_number: 96,  phase: "round_16", bracket_slot: "M96", home_label: "Gan. 85", away_label: "Gan. 87", advances_to: "M100" }
+  # Cuartos de final — matches 97-100
+  - { match_number: 97,  phase: "quarter", bracket_slot: "M97", home_label: "Gan. 89", away_label: "Gan. 90", advances_to: "M101" }
+  - { match_number: 98,  phase: "quarter", bracket_slot: "M98", home_label: "Gan. 93", away_label: "Gan. 94", advances_to: "M101" }
+  - { match_number: 99,  phase: "quarter", bracket_slot: "M99", home_label: "Gan. 91", away_label: "Gan. 92", advances_to: "M102" }
+  - { match_number: 100, phase: "quarter", bracket_slot: "M100", home_label: "Gan. 95", away_label: "Gan. 96", advances_to: "M102" }
+  # Semifinales — matches 101-102
+  - { match_number: 101, phase: "semi", bracket_slot: "M101", home_label: "Gan. 97", away_label: "Gan. 98", advances_to: "M104" }
+  - { match_number: 102, phase: "semi", bracket_slot: "M102", home_label: "Gan. 99", away_label: "Gan. 100", advances_to: "M104" }
+  # Tercer puesto — match 103
+  - { match_number: 103, phase: "third_place", bracket_slot: "M103", home_label: "Perd. 101", away_label: "Perd. 102", advances_to: "" }
+  # Final — match 104
+  - { match_number: 104, phase: "final", bracket_slot: "M104", home_label: "Gan. 101", away_label: "Gan. 102", advances_to: "" }
