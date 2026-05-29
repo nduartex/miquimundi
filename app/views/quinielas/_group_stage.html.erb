@@ -8,13 +8,13 @@
         Grupo <%= group.name %>
       </h3>
       <label class="block text-white/70 text-xs uppercase tracking-wide mb-1">1º clasificado</label>
-      <%= select_tag "group_predictions[#{group.id}][first_team_id]",
-            options_from_collection_for_select(group.teams, :id, :label, gp&.first_team_id),
-            include_blank: "Selecciona…", class: "field mb-3" %>
+      <div class="mb-3">
+        <%= render "flag_select", name: "group_predictions[#{group.id}][first_team_id]",
+              teams: group.teams, selected_id: gp&.first_team_id, placeholder: "Selecciona…" %>
+      </div>
       <label class="block text-white/70 text-xs uppercase tracking-wide mb-1">2º clasificado</label>
-      <%= select_tag "group_predictions[#{group.id}][second_team_id]",
-            options_from_collection_for_select(group.teams, :id, :label, gp&.second_team_id),
-            include_blank: "Selecciona…", class: "field" %>
+      <%= render "flag_select", name: "group_predictions[#{group.id}][second_team_id]",
+            teams: group.teams, selected_id: gp&.second_team_id, placeholder: "Selecciona…" %>
     </div>
   <% end %>
 </div>

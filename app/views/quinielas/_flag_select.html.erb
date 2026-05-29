@@ -1,0 +1,38 @@
+<%#
+  Accessible flag dropdown.
+  locals: name (hidden field name), teams, selected_id, placeholder
+%>
+<div class="relative" data-controller="flag-select" data-flag-select-placeholder-value="<%= placeholder %>">
+  <%= hidden_field_tag name, selected_id, data: { flag_select_target: "hidden" } %>
+
+  <button type="button"
+          data-flag-select-target="button"
+          data-action="click->flag-select#toggle keydown->flag-select#onKey"
+          aria-haspopup="listbox" aria-expanded="false"
+          class="field flex items-center gap-2 text-left cursor-pointer">
+    <span data-flag-select-target="display" class="flex items-center gap-2 min-w-0 flex-1">
+      <span class="text-white/45"><%= placeholder %></span>
+    </span>
+    <svg class="w-4 h-4 text-white/50 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+    </svg>
+  </button>
+
+  <ul data-flag-select-target="list" role="listbox" hidden
+      class="absolute z-30 mt-1 w-full max-h-64 overflow-auto rounded-xl bg-slate-800 border border-white/20 shadow-2xl py-1">
+    <% teams.each do |team| %>
+      <li role="option"
+          data-flag-select-target="option"
+          data-action="click->flag-select#select"
+          data-value="<%= team.id %>"
+          aria-selected="<%= team.id == selected_id ? 'true' : 'false' %>"
+          class="flex items-center gap-3 px-3 py-2.5 text-white cursor-pointer hover:bg-white/10 aria-selected:bg-amber-400/20 aria-selected:font-bold">
+        <% if team.flag_url %>
+          <img src="<%= team.flag_url %>" alt="" width="26" height="20" loading="lazy"
+               class="w-[26px] h-[20px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+        <% end %>
+        <span class="truncate"><%= team.name %></span>
+      </li>
+    <% end %>
+  </ul>
+</div>
