@@ -13,6 +13,16 @@ module QuinielasHelper
     { teams: teams, groups: groups }
   end
 
+  # All players as a searchable dataset for the awards typeahead:
+  # [{ id, name, country, flag }]
+  def players_dataset(tournament)
+    Player.joins(team: :group)
+          .where(groups: { tournament_id: tournament.id })
+          .includes(:team)
+          .order(:name)
+          .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url } }
+  end
+
   # Ranked team ids 1st..4th for a group: saved prediction order padded with
   # any remaining teams so it always has all 4.
   def ranked_group_team_ids(group, quiniela)

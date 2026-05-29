@@ -1,11 +1,15 @@
 <% award = quiniela.award_prediction %>
 <% award_defs = [
-     { field: "balon_oro_player_id",  label: "Balón de Oro",        pts: 10, kind: :player, tip: "Mejor jugador de todo el Mundial. También hay Balón de Plata y Bronce para el 2º y 3º mejor jugador." },
-     { field: "bota_oro_player_id",   label: "Bota de Oro",         pts: 10, kind: :player, tip: "Máximo goleador del torneo. También hay Bota de Plata y Bronce para el 2º y 3º goleador." },
+     { field: "balon_oro_player_id",  label: "Balón de Oro",        pts: 10, kind: :player, tip: "Mejor jugador de todo el Mundial." },
+     { field: "bota_oro_player_id",   label: "Bota de Oro",         pts: 10, kind: :player, tip: "Máximo goleador del torneo." },
      { field: "guante_oro_player_id", label: "Guante de Oro",       pts: 8,  kind: :player, tip: "Mejor arquero del Mundial." },
      { field: "young_player_id",      label: "Mejor jugador joven", pts: 6,  kind: :player, tip: "Mejor futbolista joven del torneo." },
      { field: "fair_play_team_id",    label: "Fair Play",           pts: 5,  kind: :team,   tip: "Premio al equipo con mejor juego limpio (mejor conducta disciplinaria del torneo)." }
    ] %>
+
+<%# Shared players dataset for the typeahead (embedded once) %>
+<script type="application/json" id="players-json"><%== players_dataset(@tournament).to_json %></script>
+
 <div class="surface p-6">
   <h3 class="font-display text-2xl font-bold text-white mb-1">🏆 Premios</h3>
   <p class="text-white/60 text-sm mb-5">Elígelos desde ya. Toca el <span class="font-bold">ⓘ</span> para ver qué es cada uno.</p>
@@ -23,11 +27,23 @@
           </span>
         </button>
       </div>
-      <% collection = a[:kind] == :player ? players : teams %>
-      <% label_method = a[:kind] == :player ? :label : :name %>
-      <%= select_tag "award_prediction[#{a[:field]}]",
-            options_from_collection_for_select(collection, :id, label_method, award&.public_send(a[:field])),
-            include_blank: "Selecciona…", class: "field" %>
+
+      <% if a[:kind] == :player %>
+        <% selected = award&.public_send(a[:field].sub("_id", "")) %>
+        <div class="relative" data-controller="combobox">
+          <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, data: { combobox_target: "hidden" } %>
+          <input type="text" data-combobox-target="input" autocomplete="off"
+                 value="<%= selected&.name %>" placeholder="Escribe un jugador…"
+                 data-action="input->combobox#filter focus->combobox#filter keydown->combobox#key blur->combobox#blur"
+                 class="field">
+          <ul data-combobox-target="list" role="listbox" hidden
+              class="absolute z-30 mt-1 w-full max-h-64 overflow-auto rounded-xl bg-slate-800 border border-white/20 shadow-2xl py-1"></ul>
+        </div>
+      <% else %>
+        <%= select_tag "award_prediction[#{a[:field]}]",
+              options_from_collection_for_select(teams, :id, :name, award&.public_send(a[:field].sub("_id", ""))&.id),
+              include_blank: "Selecciona…", class: "field" %>
+      <% end %>
     </div>
   <% end %>
 </div>
