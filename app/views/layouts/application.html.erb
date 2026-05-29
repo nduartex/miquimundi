@@ -36,9 +36,19 @@
       </nav>
     <% end %>
 
-    <% flash.each do |type, msg| %>
-      <div class="mx-auto max-w-3xl mt-4 px-4 py-3 rounded-xl text-center font-semibold <%= type == 'alert' ? 'bg-red-500/80 text-white' : 'bg-green-500/80 text-white' %>">
-        <%= msg %>
+    <% if flash.any? %>
+      <div class="fixed top-4 inset-x-0 z-50 flex flex-col items-center gap-2 px-4 pointer-events-none">
+        <% flash.each do |type, msg| %>
+          <% alert = type.to_s == "alert" %>
+          <div data-controller="flash" role="<%= alert ? 'alert' : 'status' %>" aria-live="polite"
+               class="toast-in pointer-events-auto w-full max-w-md flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl text-white font-semibold backdrop-blur ring-1
+                      <%= alert ? 'bg-gradient-to-r from-rose-600/95 to-red-600/95 ring-rose-300/40' : 'bg-gradient-to-r from-emerald-600/95 to-green-600/95 ring-emerald-300/40' %>">
+            <span class="text-xl shrink-0"><%= alert ? "⚠️" : "⚽" %></span>
+            <span class="flex-1 leading-snug"><%= msg %></span>
+            <button type="button" data-action="flash#dismiss" aria-label="Cerrar"
+                    class="text-white/70 hover:text-white text-2xl leading-none cursor-pointer shrink-0">&times;</button>
+          </div>
+        <% end %>
       </div>
     <% end %>
 
