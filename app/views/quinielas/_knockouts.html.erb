@@ -1,89 +1,78 @@
-<% phase_styles = {
-     "round_32"    => "bg-slate-200 text-slate-900",
-     "round_16"    => "bg-sky-200 text-slate-900",
-     "quarter"     => "bg-sky-300 text-slate-900",
-     "semi"        => "bg-violet-300 text-slate-900",
-     "third_place" => "bg-orange-200 text-slate-900",
-     "final"       => "bg-amber-300 text-slate-900"
-   } %>
-<% by_phase = matches.group_by(&:phase) %>
-<% preds = quiniela.match_predictions.index_by(&:match_id) %>
-<p class="text-white/70 mb-5">Predice el <strong class="text-white">marcador</strong> de cada llave. Tus banderas de la fase de grupos fluyen aquí, y el ganador de cada partido avanza solo hasta la Final.</p>
-
-<%# Champion banner %>
-<div class="surface p-5 mb-6 text-center">
-  <div class="text-white/60 text-xs uppercase tracking-wide mb-1">Tu campeón</div>
-  <div class="font-display text-2xl font-extrabold text-amber-300 flex items-center justify-center gap-2" data-bracket-target="champion">
-    <span class="text-white/40">Tu campeón aparecerá aquí</span>
+<% unless open %>
+  <div class="surface p-8 text-center">
+    <div class="text-5xl mb-3">🔒</div>
+    <h3 class="font-display text-2xl font-bold text-white mb-2">Eliminatorias bloqueadas</h3>
+    <p class="text-white/70 max-w-md mx-auto">Se desbloquea cuando termine la <strong class="text-white">fase de grupos</strong>. Ahí se generan los partidos reales de dieciseisavos y podrás predecir los marcadores contra los equipos clasificados.</p>
+    <p class="text-white/40 text-sm mt-4">Por ahora completa tus grupos, los 8 mejores terceros y tus premios. 💪</p>
   </div>
-</div>
+<% else %>
+  <% phase_styles = {
+       "round_32" => "bg-slate-200 text-slate-900", "round_16" => "bg-sky-200 text-slate-900",
+       "quarter" => "bg-sky-300 text-slate-900", "semi" => "bg-violet-300 text-slate-900",
+       "third_place" => "bg-orange-200 text-slate-900", "final" => "bg-amber-300 text-slate-900"
+     } %>
+  <% by_phase = matches.group_by(&:phase) %>
+  <% preds = quiniela.match_predictions.index_by(&:match_id) %>
+  <p class="text-white/70 mb-5">Predice el <strong class="text-white">marcador</strong> de cada partido real de eliminatorias.</p>
 
-<div class="space-y-8">
-  <% Match::KNOCKOUT_ORDER.each do |phase| %>
-    <% round_matches = by_phase[phase] %>
-    <% next if round_matches.blank? %>
-    <section>
-      <div class="flex items-center gap-3 mb-3">
-        <h3 class="font-display text-2xl font-extrabold text-white"><%= t("phase.#{phase}", default: phase) %></h3>
-        <span class="h-px flex-1 bg-white/15"></span>
-        <span class="text-white/50 text-sm font-semibold"><%= round_matches.size %> <%= "partido".pluralize(round_matches.size) %></span>
-      </div>
-
-      <div class="space-y-3">
-        <% round_matches.each do |match| %>
-          <% mp = preds[match.id] %>
-          <% mult = match.multiplier %>
-          <% third = match.away_label.to_s.start_with?("3º") %>
-          <% candidates = third ? match.away_label.sub("3º", "").split("/").map(&:strip) : [] %>
-          <div class="surface p-4" data-bracket-match="<%= match.match_number %>" data-match-id="<%= match.id %>">
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
-              <% if mult > 1.0 %>
-                <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span>
+  <div class="space-y-8">
+    <% Match::KNOCKOUT_ORDER.each do |phase| %>
+      <% round_matches = by_phase[phase] %>
+      <% next if round_matches.blank? %>
+      <section>
+        <div class="flex items-center gap-3 mb-3">
+          <h3 class="font-display text-2xl font-extrabold text-white"><%= t("phase.#{phase}", default: phase) %></h3>
+          <span class="h-px flex-1 bg-white/15"></span>
+        </div>
+        <div class="space-y-3">
+          <% round_matches.each do |match| %>
+            <% mp = preds[match.id] %>
+            <% mult = match.multiplier %>
+            <div class="surface p-4">
+              <div class="flex items-center justify-between mb-3">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
+                <% if mult > 1.0 %><span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span><% end %>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-left">
+                  <% if match.home_team %>
+                    <span class="inline-flex items-center gap-1.5"><% if match.home_team.flag_url %><img src="<%= match.home_team.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15"><% end %><%= match.home_team.name %></span>
+                  <% else %><span class="text-white/40"><%= match.home_label %></span><% end %>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <div class="flex items-center gap-1" data-controller="stepper">
+                    <button type="button" data-action="stepper#dec" aria-label="Menos" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
+                    <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                    <button type="button" data-action="stepper#inc" aria-label="Más" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
+                  </div>
+                  <span class="text-white/50 font-display text-lg px-1">vs</span>
+                  <div class="flex items-center gap-1" data-controller="stepper">
+                    <button type="button" data-action="stepper#dec" aria-label="Menos" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
+                    <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
+                    <button type="button" data-action="stepper#inc" aria-label="Más" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-right">
+                  <% if match.away_team %>
+                    <span class="inline-flex items-center gap-1.5"><% if match.away_team.flag_url %><img src="<%= match.away_team.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15"><% end %><%= match.away_team.name %></span>
+                  <% else %><span class="text-white/40"><%= match.away_label %></span><% end %>
+                </div>
+              </div>
+              <% if match.home_team && match.away_team %>
+                <div class="mt-3">
+                  <label class="block text-white/50 text-xs mb-1">Si hay empate, ¿quién pasa por penales?</label>
+                  <%= select_tag "match_predictions[#{match.id}][penalty_qualifier_id]",
+                        options_for_select([["—", ""], [match.home_team.name, match.home_team.id], [match.away_team.name, match.away_team.id]], mp&.penalty_qualifier_id),
+                        class: "w-full rounded-lg bg-slate-800 border border-white/20 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
+                </div>
+              <% end %>
+              <% if match.advances_to.present? %>
+                <p class="text-white/40 text-xs mt-3 text-center">↳ El ganador avanza al partido <%= match.advances_to.delete("M") %></p>
               <% end %>
             </div>
-
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex-1 min-w-0 text-white font-semibold text-center sm:text-left"
-                   data-slot="home" data-label="<%= match.home_label %>"><%= match.home_label %></div>
-
-              <div class="flex items-center gap-2 shrink-0">
-                <div class="flex items-center gap-1" data-controller="stepper">
-                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
-                  <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
-                </div>
-                <span class="text-white/50 font-display text-lg px-1">vs</span>
-                <div class="flex items-center gap-1" data-controller="stepper">
-                  <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">−</button>
-                  <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: match.locked?, class: "w-14 h-11 rounded-xl bg-slate-800 border border-white/20 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-amber-300/60" %>
-                  <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if match.locked? %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer disabled:opacity-40">+</button>
-                </div>
-              </div>
-
-              <div class="flex-1 min-w-0 text-center sm:text-right">
-                <% if third %>
-                  <%= select_tag "match_predictions[#{match.id}][third_group]",
-                        options_for_select([["3º grupo…", ""]] + candidates.map { |g| ["Grupo #{g}", g] }, mp&.third_group),
-                        class: "w-full mb-1 rounded-lg bg-slate-800 border border-white/20 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
-                <% end %>
-                <div class="text-white font-semibold truncate" data-slot="away" data-label="<%= match.away_label %>"><%= match.away_label %></div>
-              </div>
-            </div>
-
-            <%# Penalty shootout pick — shown by the engine only on a tie %>
-            <div class="mt-3" data-penalty hidden>
-              <%= select_tag "match_predictions[#{match.id}][penalty_qualifier_id]", "",
-                    data: { initial: mp&.penalty_qualifier_id },
-                    class: "w-full rounded-lg bg-slate-800 border border-amber-300/40 text-white text-sm px-2 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60" %>
-            </div>
-
-            <% if match.advances_to.present? %>
-              <p class="text-white/40 text-xs mt-3 text-center">↳ El ganador avanza al partido <%= match.advances_to.delete("M") %></p>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </section>
-  <% end %>
-</div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+<% end %>

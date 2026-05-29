@@ -38,7 +38,7 @@ export default class extends Controller {
 
     const last = this.panelTargets.length - 1
     if (this.hasBackTarget) this.backTarget.disabled = this.index === 0
+    // Next hides on the last step; Save stays available on every step.
     if (this.hasForwardTarget) this.forwardTarget.classList.toggle("hidden", this.index === last)
-    if (this.hasSubmitTarget) this.submitTarget.classList.toggle("hidden", this.index !== last)
   }
 }

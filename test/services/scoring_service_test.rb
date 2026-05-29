@@ -145,4 +145,25 @@ class ScoringServiceTest < ActiveSupport::TestCase
     ScoringService.new(@quiniela).call
     assert_equal 8, gp.reload.points_earned
   end
+
+  test "correct best-third nomination scores 3" do
+    @t3.update!(code: "T3")
+    GroupPrediction.create!(quiniela: @quiniela, group: @group,
+                            first_team: @t1, second_team: @t2, third_team: @t3)
+    @quiniela.update!(best_third_groups: ["A"])
+    TournamentResult.create!(tournament: @tournament, qualified_third_codes: ["T3"])
+    ScoringService.new(@quiniela).call
+    # group exact-order 8 + best third 3
+    assert_equal 11, @quiniela.reload.total_points
+  end
+
+  test "best-third nomination that did not qualify scores 0 extra" do
+    @t3.update!(code: "T3")
+    GroupPrediction.create!(quiniela: @quiniela, group: @group,
+                            first_team: @t1, second_team: @t2, third_team: @t3)
+    @quiniela.update!(best_third_groups: ["A"])
+    TournamentResult.create!(tournament: @tournament, qualified_third_codes: ["OTHER"])
+    ScoringService.new(@quiniela).call
+    assert_equal 8, @quiniela.reload.total_points # only the group points
+  end
 end

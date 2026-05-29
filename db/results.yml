@@ -1,6 +1,8 @@
 # Resultados reales del Mundial 2026. Editar y correr: bin/rails quiniela:load_results
 group_results: []
 matches: []
+# Códigos de los 8 equipos que clasificaron como mejores terceros, ej: [MEX, BRA, ...]
+qualified_thirds: []
 awards:
   top_scorer:
   top_assists:

@@ -5,6 +5,7 @@ class ScoringService
   CORRECT_WINNER = 2
   CORRECT_PENALTY = 3
   AWARD_POINTS = 10
+  BEST_THIRD = 3
 
   def initialize(quiniela)
     @quiniela = quiniela
@@ -16,6 +17,7 @@ class ScoringService
     @match_hits = 0
 
     total += score_groups
+    total += score_thirds
     total += score_matches
     total += score_awards
 
@@ -72,6 +74,26 @@ class ScoringService
       points += CORRECT_PENALTY
     end
     points
+  end
+
+  # +3 for each nominated best-third whose predicted team actually qualified
+  # as one of the real best thirds.
+  def score_thirds
+    result = @quiniela.tournament.tournament_result
+    real = result&.qualified_third_codes
+    return 0 if real.blank?
+
+    picked = Array(@quiniela.best_third_groups)
+    return 0 if picked.empty?
+
+    groups_by_name = @quiniela.tournament.groups.index_by(&:name)
+    thirds_by_group = @quiniela.group_predictions.includes(:third_team).index_by(&:group_id)
+
+    picked.sum do |letter|
+      group = groups_by_name[letter]
+      team = group && thirds_by_group[group.id]&.third_team
+      team && real.include?(team.code) ? BEST_THIRD : 0
+    end
   end
 
   def score_groups

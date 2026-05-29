@@ -16,4 +16,11 @@ class Tournament < ApplicationRecord
   def quinielas_relation
     Quiniela.where(tournament_id: id)
   end
+
+  # Knockout predictions open once the real group stage has finished, i.e. all
+  # 12 groups have an official result loaded.
+  def knockout_open?
+    return false if groups.empty?
+    GroupResult.where(group_id: groups.select(:id)).count >= groups.count
+  end
 end

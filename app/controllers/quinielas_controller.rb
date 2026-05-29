@@ -8,5 +8,6 @@ class QuinielasController < ApplicationController
     @groups = @tournament.groups.includes(:teams).order(:name)
     @knockouts = @tournament.matches.knockout.ordered
     @players = Player.includes(:team).order("teams.name")
+    @knockout_open = @tournament.knockout_open?
   end
 end
