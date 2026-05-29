@@ -10,20 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_022416) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_29_024424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "award_predictions", force: :cascade do |t|
     t.bigint "quiniela_id", null: false
-    t.bigint "top_scorer_player_id"
-    t.bigint "top_assists_player_id"
     t.integer "points_earned", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "balon_oro_player_id"
+    t.bigint "bota_oro_player_id"
+    t.bigint "guante_oro_player_id"
+    t.bigint "young_player_id"
+    t.bigint "fair_play_team_id"
+    t.index ["balon_oro_player_id"], name: "index_award_predictions_on_balon_oro_player_id"
+    t.index ["bota_oro_player_id"], name: "index_award_predictions_on_bota_oro_player_id"
+    t.index ["fair_play_team_id"], name: "index_award_predictions_on_fair_play_team_id"
+    t.index ["guante_oro_player_id"], name: "index_award_predictions_on_guante_oro_player_id"
     t.index ["quiniela_id"], name: "index_award_predictions_on_quiniela_id"
-    t.index ["top_assists_player_id"], name: "index_award_predictions_on_top_assists_player_id"
-    t.index ["top_scorer_player_id"], name: "index_award_predictions_on_top_scorer_player_id"
+    t.index ["young_player_id"], name: "index_award_predictions_on_young_player_id"
   end
 
   create_table "group_predictions", force: :cascade do |t|
@@ -135,14 +141,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_022416) do
 
   create_table "tournament_results", force: :cascade do |t|
     t.bigint "tournament_id", null: false
-    t.bigint "top_scorer_player_id"
-    t.bigint "top_assists_player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "qualified_third_codes", default: [], null: false
-    t.index ["top_assists_player_id"], name: "index_tournament_results_on_top_assists_player_id"
-    t.index ["top_scorer_player_id"], name: "index_tournament_results_on_top_scorer_player_id"
+    t.bigint "balon_oro_player_id"
+    t.bigint "bota_oro_player_id"
+    t.bigint "guante_oro_player_id"
+    t.bigint "young_player_id"
+    t.bigint "fair_play_team_id"
+    t.index ["balon_oro_player_id"], name: "index_tournament_results_on_balon_oro_player_id"
+    t.index ["bota_oro_player_id"], name: "index_tournament_results_on_bota_oro_player_id"
+    t.index ["fair_play_team_id"], name: "index_tournament_results_on_fair_play_team_id"
+    t.index ["guante_oro_player_id"], name: "index_tournament_results_on_guante_oro_player_id"
     t.index ["tournament_id"], name: "index_tournament_results_on_tournament_id"
+    t.index ["young_player_id"], name: "index_tournament_results_on_young_player_id"
   end
 
   create_table "tournaments", force: :cascade do |t|
@@ -162,9 +174,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_022416) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "award_predictions", "players", column: "top_assists_player_id"
-  add_foreign_key "award_predictions", "players", column: "top_scorer_player_id"
+  add_foreign_key "award_predictions", "players", column: "balon_oro_player_id"
+  add_foreign_key "award_predictions", "players", column: "bota_oro_player_id"
+  add_foreign_key "award_predictions", "players", column: "guante_oro_player_id"
+  add_foreign_key "award_predictions", "players", column: "young_player_id"
   add_foreign_key "award_predictions", "quinielas"
+  add_foreign_key "award_predictions", "teams", column: "fair_play_team_id"
   add_foreign_key "group_predictions", "groups"
   add_foreign_key "group_predictions", "quinielas"
   add_foreign_key "group_predictions", "teams", column: "first_team_id"
@@ -186,7 +201,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_022416) do
   add_foreign_key "quinielas", "tournaments"
   add_foreign_key "quinielas", "users"
   add_foreign_key "teams", "groups"
-  add_foreign_key "tournament_results", "players", column: "top_assists_player_id"
-  add_foreign_key "tournament_results", "players", column: "top_scorer_player_id"
+  add_foreign_key "tournament_results", "players", column: "balon_oro_player_id"
+  add_foreign_key "tournament_results", "players", column: "bota_oro_player_id"
+  add_foreign_key "tournament_results", "players", column: "guante_oro_player_id"
+  add_foreign_key "tournament_results", "players", column: "young_player_id"
+  add_foreign_key "tournament_results", "teams", column: "fair_play_team_id"
   add_foreign_key "tournament_results", "tournaments"
 end

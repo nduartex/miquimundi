@@ -14,7 +14,7 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_match "Grupo A", response.body
     assert_match "8 mejores terceros", response.body         # thirds step
     assert_match "Eliminatorias bloqueadas", response.body   # knockout locked until groups end
-    assert_match "Premios individuales", response.body       # awards available from the start
+    assert_match "Balón de Oro", response.body               # new awards available from the start
   end
 
   test "show includes the onboarding tour and the thirds picker, no pending line" do

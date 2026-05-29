@@ -42,7 +42,7 @@
       <%= render "thirds", groups: @groups, quiniela: @quiniela, teams_json: tp[:teams].to_json, groups_json: tp[:groups].to_json %>
     </div>
     <div class="wizard-panel" data-wizard-target="panel" hidden>
-      <%= render "awards", players: @players, quiniela: @quiniela %>
+      <%= render "awards", players: @players, teams: @teams, quiniela: @quiniela %>
     </div>
     <div class="wizard-panel" data-wizard-target="panel" hidden>
       <%= render "knockouts", matches: @knockouts, quiniela: @quiniela, open: @knockout_open %>

@@ -91,23 +91,28 @@ class ScoringServiceTest < ActiveSupport::TestCase
     assert_equal 3, @quiniela.reload.total_points
   end
 
-  test "correct top scorer and top assists each score 10" do
-    p1 = Player.create!(team: @t1, name: "Striker")
-    p2 = Player.create!(team: @t2, name: "Playmaker")
-    TournamentResult.create!(tournament: @tournament, top_scorer_player: p1, top_assists_player: p2)
-    AwardPrediction.create!(quiniela: @quiniela, top_scorer_player: p1, top_assists_player: p2)
+  test "all five individual awards score their points" do
+    balon = Player.create!(team: @t1, name: "Best")
+    bota  = Player.create!(team: @t2, name: "Scorer")
+    guante = Player.create!(team: @t3, name: "Keeper")
+    young = Player.create!(team: @t1, name: "Kid")
+    TournamentResult.create!(tournament: @tournament, balon_oro_player: balon, bota_oro_player: bota,
+                             guante_oro_player: guante, young_player: young, fair_play_team: @t2)
+    AwardPrediction.create!(quiniela: @quiniela, balon_oro_player: balon, bota_oro_player: bota,
+                            guante_oro_player: guante, young_player: young, fair_play_team: @t2)
     ScoringService.new(@quiniela).call
-    assert_equal 20, @quiniela.reload.total_points
+    assert_equal 10 + 10 + 8 + 6 + 5, @quiniela.reload.total_points # 39
   end
 
-  test "only top scorer correct scores 10" do
-    p1 = Player.create!(team: @t1, name: "Striker")
-    p2 = Player.create!(team: @t2, name: "Playmaker")
-    p3 = Player.create!(team: @t3, name: "Other")
-    TournamentResult.create!(tournament: @tournament, top_scorer_player: p1, top_assists_player: p2)
-    AwardPrediction.create!(quiniela: @quiniela, top_scorer_player: p1, top_assists_player: p3)
+  test "partial awards: only balón de oro and fair play correct" do
+    balon = Player.create!(team: @t1, name: "Best")
+    other = Player.create!(team: @t2, name: "Other")
+    TournamentResult.create!(tournament: @tournament, balon_oro_player: balon,
+                             bota_oro_player: other, fair_play_team: @t1)
+    AwardPrediction.create!(quiniela: @quiniela, balon_oro_player: balon,
+                            bota_oro_player: Player.create!(team: @t3, name: "Wrong"), fair_play_team: @t1)
     ScoringService.new(@quiniela).call
-    assert_equal 10, @quiniela.reload.total_points
+    assert_equal 10 + 5, @quiniela.reload.total_points # balón 10 + fair play 5
   end
 
   test "call is idempotent — running twice does not double points" do

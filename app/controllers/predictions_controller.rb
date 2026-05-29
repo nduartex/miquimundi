@@ -61,11 +61,13 @@ class PredictionsController < ApplicationController
   end
 
   # Awards are available from the start (no longer gated on predicting the final).
+  AWARD_FIELDS = %i[balon_oro_player_id bota_oro_player_id guante_oro_player_id
+                    young_player_id fair_play_team_id].freeze
+
   def save_award_prediction
     attrs = params[:award_prediction]
     return if attrs.blank?
     award = @quiniela.award_prediction || @quiniela.build_award_prediction
-    award.update!(top_scorer_player_id: attrs[:top_scorer_player_id].presence,
-                  top_assists_player_id: attrs[:top_assists_player_id].presence)
+    award.update!(AWARD_FIELDS.index_with { |f| attrs[f].presence })
   end
 end
