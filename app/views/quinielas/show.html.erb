@@ -9,7 +9,7 @@
        { el: '#stat-exactos', title: 'Exactos', body: 'Marcadores que clavaste exactos (resultado idéntico). Valen más puntos.' },
        { el: '#stat-aciertos', title: 'Aciertos', body: 'Partidos donde acertaste al ganador, aunque el marcador no sea exacto.' },
        { el: '#wizard-steps', title: 'Arma tu quiniela', body: 'Paso 1 Grupos → Paso 2 los 8 mejores terceros → Paso 3 Premios. Las Eliminatorias se abren al terminar la fase de grupos. Guarda para registrar tu jugada.' },
-       { el: '#access-link', title: '🔑 ¡GUARDA tu enlace!', body: 'Este es tu único acceso. Cópialo y guárdalo en un lugar seguro: si se cierra la sesión, entras con este enlace. Sin él (y sin tu usuario) pierdes tu quiniela.' }
+       { el: '#access-link', title: '🔑 ¡GUARDA tu enlace!', body: 'Este es tu ÚNICO acceso. Cópialo y guárdalo en un lugar seguro: si se cierra la sesión, solo entras con este enlace. Si lo pierdes, pierdes tu quiniela (tu usuario por sí solo no sirve para reingresar).' }
      ].to_json %>">
 
   <header class="flex items-center justify-between mb-6">
@@ -36,7 +36,7 @@
               class="px-4 rounded-xl bg-amber-400 text-slate-900 font-bold shrink-0 cursor-pointer">Copiar</button>
     </div>
     <% if params[:welcome] %>
-      <p class="text-amber-200/90 text-xs mt-2">⚠️ Si pierdes este enlace y olvidas tu usuario, no podrás recuperar tu cuenta.</p>
+      <p class="text-amber-200/90 text-xs mt-2">⚠️ Este enlace es tu única forma de reingresar. Si lo pierdes, pierdes el acceso a tu quiniela.</p>
     <% end %>
   </div>
 
