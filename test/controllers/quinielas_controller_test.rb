@@ -49,4 +49,13 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     get quiniela_path
     assert_redirected_to new_session_path
   end
+
+  test "tour auto-starts for a new user and stops once onboarded" do
+    get quiniela_path
+    assert_match 'data-tour-auto-value="true"', response.body   # first visit: tour auto-starts
+
+    patch onboarding_path                                        # user finished/skipped the tour
+    get quiniela_path
+    assert_match 'data-tour-auto-value="false"', response.body  # no longer auto-starts
+  end
 end
