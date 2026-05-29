@@ -5,9 +5,8 @@
     <% ranked_ids = gp&.ranked_team_ids || [] %>
     <% ordered = (ranked_ids.map { |id| group.teams.detect { |t| t.id == id } }.compact + (group.teams.to_a - group.teams.select { |t| ranked_ids.include?(t.id) })).first(4) %>
     <div class="surface p-5">
-      <h3 class="font-display text-xl font-bold text-white mb-3 flex items-center gap-2">
-        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-400 text-slate-900 font-extrabold"><%= group.name %></span>
-        Grupo <%= group.name %>
+      <h3 class="mb-3">
+        <span class="inline-flex items-center rounded-lg bg-amber-400 text-slate-900 font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
       </h3>
 
       <div data-controller="group-order">
