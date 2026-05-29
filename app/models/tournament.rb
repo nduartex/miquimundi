@@ -12,4 +12,8 @@ class Tournament < ApplicationRecord
   def locked?
     locked_at.present? && locked_at <= Time.current
   end
+
+  def quinielas_relation
+    Quiniela.where(tournament_id: id)
+  end
 end

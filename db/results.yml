@@ -1,0 +1,6 @@
+# Resultados reales del Mundial 2026. Editar y correr: bin/rails quiniela:load_results
+group_results: []
+matches: []
+awards:
+  top_scorer:
+  top_assists:
