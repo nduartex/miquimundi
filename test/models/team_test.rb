@@ -4,7 +4,7 @@ class TeamTest < ActiveSupport::TestCase
   test "is invalid without a name" do
     team = Team.new(code: "BRA")
     assert_not team.valid?
-    assert_includes team.errors[:name], "can't be blank"
+    assert_includes team.errors[:name], "no puede estar en blanco"
   end
 
   test "belongs to a group and has players" do

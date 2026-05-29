@@ -1,0 +1,24 @@
+<div class="max-w-3xl mx-auto px-4 py-8" data-controller="wizard confetti">
+  <header class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-black text-white">Mi Quiniela</h1>
+    <div class="text-yellow-300 font-black text-2xl"><%= @quiniela.total_points %> pts</div>
+  </header>
+
+  <%= render "summary", quiniela: @quiniela %>
+
+  <nav class="flex gap-2 mb-6">
+    <button type="button" data-action="wizard#go" data-wizard-step-param="0" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">1 · Grupos</button>
+    <button type="button" data-action="wizard#go" data-wizard-step-param="1" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">2 · Eliminatorias</button>
+    <button type="button" data-action="wizard#go" data-wizard-step-param="2" class="flex-1 py-2 rounded-xl bg-white/20 text-white font-bold">3 · Premios</button>
+  </nav>
+
+  <%= form_with url: quiniela_predictions_path, method: :post, data: { action: "submit->confetti#burst" } do %>
+    <div data-wizard-target="panel"><%= render "group_stage", groups: @groups, quiniela: @quiniela %></div>
+    <div data-wizard-target="panel" class="hidden"><%= render "knockouts", matches: @knockouts, quiniela: @quiniela %></div>
+    <div data-wizard-target="panel" class="hidden"><%= render "awards", players: @players, quiniela: @quiniela %></div>
+
+    <div class="mt-8">
+      <%= submit_tag "Guardar mi Quiniela", class: "w-full bg-gradient-to-r from-green-400 via-yellow-400 to-pink-500 text-white font-black py-4 rounded-2xl text-xl hover:scale-[1.01] transition" %>
+    </div>
+  <% end %>
+</div>
