@@ -25,12 +25,23 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/partidos pendientes/, response.body)              # pending line removed
   end
 
-  test "group selectors use the custom flag dropdown with real flag images" do
+  test "group stage uses sortable team ordering with real flag images" do
     get quiniela_path
     assert_response :success
-    assert_match 'data-controller="flag-select"', response.body  # custom dropdown, not native select
-    assert_match "https://flagcdn.com/mx.svg", response.body     # México flag image rendered
-    assert_select "ul[role=listbox]"                              # accessible listbox
+    assert_match 'data-controller="group-order"', response.body  # drag/arrow ranking
+    assert_match "https://flagcdn.com/mx.svg", response.body      # real flag image rendered
+    assert_select "li[draggable=true]"                            # draggable team rows
+    assert_select "input[type=hidden][name=?]", "group_predictions[#{Group.find_by(name: 'A').id}][fourth_team_id]"
+  end
+
+  test "show wires the live predicted bracket engine" do
+    get quiniela_path
+    assert_response :success
+    assert_match "bracket", response.body                        # bracket controller on root
+    assert_match 'data-bracket-data-value', response.body         # payload present
+    assert_select "[data-bracket-match=?]", "73"                  # R32 match slot
+    assert_select "[data-bracket-match=?]", "104"                 # final slot
+    assert_select "[data-bracket-target=champion]"                # champion display
   end
 
   test "show requires login" do

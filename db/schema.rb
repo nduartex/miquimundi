@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_010159) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_29_012445) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -34,10 +34,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_010159) do
     t.integer "points_earned", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "third_team_id"
+    t.bigint "fourth_team_id"
     t.index ["first_team_id"], name: "index_group_predictions_on_first_team_id"
+    t.index ["fourth_team_id"], name: "index_group_predictions_on_fourth_team_id"
     t.index ["group_id"], name: "index_group_predictions_on_group_id"
     t.index ["quiniela_id"], name: "index_group_predictions_on_quiniela_id"
     t.index ["second_team_id"], name: "index_group_predictions_on_second_team_id"
+    t.index ["third_team_id"], name: "index_group_predictions_on_third_team_id"
   end
 
   create_table "group_results", force: :cascade do |t|
@@ -68,6 +72,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_010159) do
     t.integer "points_earned", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "third_group"
     t.index ["match_id"], name: "index_match_predictions_on_match_id"
     t.index ["penalty_qualifier_id"], name: "index_match_predictions_on_penalty_qualifier_id"
     t.index ["quiniela_id"], name: "index_match_predictions_on_quiniela_id"
@@ -160,7 +165,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_010159) do
   add_foreign_key "group_predictions", "groups"
   add_foreign_key "group_predictions", "quinielas"
   add_foreign_key "group_predictions", "teams", column: "first_team_id"
+  add_foreign_key "group_predictions", "teams", column: "fourth_team_id"
   add_foreign_key "group_predictions", "teams", column: "second_team_id"
+  add_foreign_key "group_predictions", "teams", column: "third_team_id"
   add_foreign_key "group_results", "groups"
   add_foreign_key "group_results", "teams", column: "first_team_id"
   add_foreign_key "group_results", "teams", column: "second_team_id"

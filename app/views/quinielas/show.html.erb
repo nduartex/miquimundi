@@ -1,5 +1,6 @@
 <div class="max-w-3xl mx-auto px-4 py-8"
-     data-controller="wizard confetti tour"
+     data-controller="wizard confetti tour bracket"
+     data-bracket-data-value="<%= bracket_payload(@tournament, @quiniela).to_json %>"
      data-tour-name-value="mi-quiniela"
      data-tour-steps-value="<%= [
        { el: '#stat-puntos',  title: 'Puntos',  body: 'Tu puntaje total acumulado. Suma según tus aciertos en grupos, eliminatorias y premios.' },
