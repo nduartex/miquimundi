@@ -1,0 +1,80 @@
+tournament:
+  name: "Copa Mundial de la FIFA 2026"
+  year: 2026
+groups:
+  A:
+    - { name: "México", code: "MEX", flag: "🇲🇽", players: ["Santiago Giménez", "Hirving Lozano", "Edson Álvarez"] }
+    - { name: "Sudáfrica", code: "RSA", flag: "🇿🇦", players: ["Percy Tau", "Lyle Foster"] }
+    - { name: "Corea del Sur", code: "KOR", flag: "🇰🇷", players: ["Son Heung-min", "Lee Kang-in"] }
+    - { name: "Chequia", code: "CZE", flag: "🇨🇿", players: ["Patrik Schick", "Adam Hložek"] }
+  B:
+    - { name: "Canadá", code: "CAN", flag: "🇨🇦", players: ["Alphonso Davies", "Jonathan David"] }
+    - { name: "Bosnia", code: "BIH", flag: "🇧🇦", players: ["Edin Džeko", "Ermedin Demirović"] }
+    - { name: "Catar", code: "QAT", flag: "🇶🇦", players: ["Akram Afif", "Almoez Ali"] }
+    - { name: "Suiza", code: "SUI", flag: "🇨🇭", players: ["Granit Xhaka", "Breel Embolo"] }
+  C:
+    - { name: "Brasil", code: "BRA", flag: "🇧🇷", players: ["Vinícius Júnior", "Rodrygo", "Raphinha"] }
+    - { name: "Marruecos", code: "MAR", flag: "🇲🇦", players: ["Achraf Hakimi", "Brahim Díaz"] }
+    - { name: "Haití", code: "HAI", flag: "🇭🇹", players: ["Frantzdy Pierrot"] }
+    - { name: "Escocia", code: "SCO", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", players: ["Scott McTominay", "John McGinn"] }
+  D:
+    - { name: "Estados Unidos", code: "USA", flag: "🇺🇸", players: ["Christian Pulisic", "Weston McKennie"] }
+    - { name: "Paraguay", code: "PAR", flag: "🇵🇾", players: ["Miguel Almirón", "Julio Enciso"] }
+    - { name: "Australia", code: "AUS", flag: "🇦🇺", players: ["Mathew Leckie", "Jackson Irvine"] }
+    - { name: "Turquía", code: "TUR", flag: "🇹🇷", players: ["Arda Güler", "Kenan Yıldız"] }
+  E:
+    - { name: "Alemania", code: "GER", flag: "🇩🇪", players: ["Jamal Musiala", "Florian Wirtz", "Kai Havertz"] }
+    - { name: "Curazao", code: "CUW", flag: "🇨🇼", players: ["Tahith Chong"] }
+    - { name: "Costa de Marfil", code: "CIV", flag: "🇨🇮", players: ["Sébastien Haller", "Simon Adingra"] }
+    - { name: "Ecuador", code: "ECU", flag: "🇪🇨", players: ["Moisés Caicedo", "Enner Valencia"] }
+  F:
+    - { name: "Países Bajos", code: "NED", flag: "🇳🇱", players: ["Cody Gakpo", "Memphis Depay"] }
+    - { name: "Japón", code: "JPN", flag: "🇯🇵", players: ["Takefusa Kubo", "Kaoru Mitoma"] }
+    - { name: "Suecia", code: "SWE", flag: "🇸🇪", players: ["Alexander Isak", "Viktor Gyökeres"] }
+    - { name: "Túnez", code: "TUN", flag: "🇹🇳", players: ["Hannibal Mejbri"] }
+  G:
+    - { name: "Bélgica", code: "BEL", flag: "🇧🇪", players: ["Kevin De Bruyne", "Romelu Lukaku"] }
+    - { name: "Egipto", code: "EGY", flag: "🇪🇬", players: ["Mohamed Salah", "Omar Marmoush"] }
+    - { name: "Irán", code: "IRN", flag: "🇮🇷", players: ["Mehdi Taremi", "Sardar Azmoun"] }
+    - { name: "Nueva Zelanda", code: "NZL", flag: "🇳🇿", players: ["Chris Wood"] }
+  H:
+    - { name: "España", code: "ESP", flag: "🇪🇸", players: ["Lamine Yamal", "Nico Williams", "Pedri"] }
+    - { name: "Cabo Verde", code: "CPV", flag: "🇨🇻", players: ["Ryan Mendes"] }
+    - { name: "Arabia Saudita", code: "KSA", flag: "🇸🇦", players: ["Salem Al-Dawsari"] }
+    - { name: "Uruguay", code: "URU", flag: "🇺🇾", players: ["Federico Valverde", "Darwin Núñez"] }
+  I:
+    - { name: "Francia", code: "FRA", flag: "🇫🇷", players: ["Kylian Mbappé", "Ousmane Dembélé"] }
+    - { name: "Senegal", code: "SEN", flag: "🇸🇳", players: ["Sadio Mané", "Nicolas Jackson"] }
+    - { name: "Irak", code: "IRQ", flag: "🇮🇶", players: ["Aymen Hussein"] }
+    - { name: "Noruega", code: "NOR", flag: "🇳🇴", players: ["Erling Haaland", "Martin Ødegaard"] }
+  J:
+    - { name: "Argentina", code: "ARG", flag: "🇦🇷", players: ["Lionel Messi", "Lautaro Martínez", "Julián Álvarez"] }
+    - { name: "Argelia", code: "ALG", flag: "🇩🇿", players: ["Riyad Mahrez"] }
+    - { name: "Austria", code: "AUT", flag: "🇦🇹", players: ["Marcel Sabitzer"] }
+    - { name: "Jordania", code: "JOR", flag: "🇯🇴", players: ["Mousa Al-Tamari"] }
+  K:
+    - { name: "Portugal", code: "POR", flag: "🇵🇹", players: ["Cristiano Ronaldo", "Bruno Fernandes", "Rafael Leão"] }
+    - { name: "RD Congo", code: "COD", flag: "🇨🇩", players: ["Cédric Bakambu"] }
+    - { name: "Uzbekistán", code: "UZB", flag: "🇺🇿", players: ["Eldor Shomurodov"] }
+    - { name: "Colombia", code: "COL", flag: "🇨🇴", players: ["Luis Díaz", "James Rodríguez"] }
+  L:
+    - { name: "Inglaterra", code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", players: ["Harry Kane", "Jude Bellingham", "Bukayo Saka"] }
+    - { name: "Croacia", code: "CRO", flag: "🇭🇷", players: ["Luka Modrić"] }
+    - { name: "Ghana", code: "GHA", flag: "🇬🇭", players: ["Mohammed Kudus"] }
+    - { name: "Panamá", code: "PAN", flag: "🇵🇦", players: ["Adalberto Carrasquilla"] }
+knockout_slots:
+  - { phase: "round_16", bracket_slot: "R16-1" }
+  - { phase: "round_16", bracket_slot: "R16-2" }
+  - { phase: "round_16", bracket_slot: "R16-3" }
+  - { phase: "round_16", bracket_slot: "R16-4" }
+  - { phase: "round_16", bracket_slot: "R16-5" }
+  - { phase: "round_16", bracket_slot: "R16-6" }
+  - { phase: "round_16", bracket_slot: "R16-7" }
+  - { phase: "round_16", bracket_slot: "R16-8" }
+  - { phase: "quarter", bracket_slot: "QF-1" }
+  - { phase: "quarter", bracket_slot: "QF-2" }
+  - { phase: "quarter", bracket_slot: "QF-3" }
+  - { phase: "quarter", bracket_slot: "QF-4" }
+  - { phase: "semi", bracket_slot: "SF-1" }
+  - { phase: "semi", bracket_slot: "SF-2" }
+  - { phase: "final", bracket_slot: "F-1" }
