@@ -45,6 +45,20 @@ class ScoringServiceTest < ActiveSupport::TestCase
     assert_equal 1, @quiniela.match_hits
   end
 
+  test "round_32 exact score scores 5 (x1 multiplier)" do
+    m = build_match(phase: "round_32", home: @t1, away: @t2, hg: 0, ag: 2)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 0, pred_away: 2)
+    ScoringService.new(@quiniela).call
+    assert_equal 5, @quiniela.reload.total_points
+  end
+
+  test "third_place exact score scores 5 (x1 multiplier)" do
+    m = build_match(phase: "third_place", home: @t1, away: @t2, hg: 3, ag: 1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 3, pred_away: 1)
+    ScoringService.new(@quiniela).call
+    assert_equal 5, @quiniela.reload.total_points
+  end
+
   test "correct winner wrong score scores 2" do
     m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 3, ag: 0)
     MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)

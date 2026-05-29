@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_000014) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_29_010159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_000014) do
     t.string "bracket_slot"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "match_number"
+    t.string "home_label"
+    t.string "away_label"
+    t.string "advances_to"
     t.index ["away_team_id"], name: "index_matches_on_away_team_id"
     t.index ["home_team_id"], name: "index_matches_on_home_team_id"
     t.index ["penalty_winner_id"], name: "index_matches_on_penalty_winner_id"
