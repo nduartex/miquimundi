@@ -76,4 +76,23 @@ class ScoringServiceTest < ActiveSupport::TestCase
     # pred 0-0 is a draw -> no winner pts and not exact; penalty correct = 3
     assert_equal 3, @quiniela.reload.total_points
   end
+
+  test "correct top scorer and top assists each score 10" do
+    p1 = Player.create!(team: @t1, name: "Striker")
+    p2 = Player.create!(team: @t2, name: "Playmaker")
+    TournamentResult.create!(tournament: @tournament, top_scorer_player: p1, top_assists_player: p2)
+    AwardPrediction.create!(quiniela: @quiniela, top_scorer_player: p1, top_assists_player: p2)
+    ScoringService.new(@quiniela).call
+    assert_equal 20, @quiniela.reload.total_points
+  end
+
+  test "only top scorer correct scores 10" do
+    p1 = Player.create!(team: @t1, name: "Striker")
+    p2 = Player.create!(team: @t2, name: "Playmaker")
+    p3 = Player.create!(team: @t3, name: "Other")
+    TournamentResult.create!(tournament: @tournament, top_scorer_player: p1, top_assists_player: p2)
+    AwardPrediction.create!(quiniela: @quiniela, top_scorer_player: p1, top_assists_player: p3)
+    ScoringService.new(@quiniela).call
+    assert_equal 10, @quiniela.reload.total_points
+  end
 end
