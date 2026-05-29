@@ -19,4 +19,13 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     post session_path, params: { email: "nope" }
     assert_response :unprocessable_entity
   end
+
+  test "login hero shows the logo, hook and World Cup countdown" do
+    get new_session_path
+    assert_response :success
+    assert_select "img[alt=?]", "MiquiMundi — Mi Quiniela Mundialista 2026"
+    assert_match "compite con tus amigos", response.body          # hook copy
+    assert_match 'data-controller="countdown"', response.body     # live countdown
+    assert_select "[data-countdown-target=days]"                  # countdown tiles
+  end
 end
