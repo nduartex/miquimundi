@@ -2,6 +2,8 @@
      data-controller="wizard confetti tour bracket"
      data-bracket-data-value="<%= bracket_payload(@tournament, @quiniela).to_json %>"
      data-tour-name-value="mi-quiniela"
+     data-tour-auto-value="<%= current_user.onboarded_at.nil? %>"
+     data-tour-mark-url-value="<%= onboarding_path %>"
      data-tour-steps-value="<%= [
        { el: '#stat-puntos',  title: 'Puntos',  body: 'Tu puntaje total acumulado. Suma según tus aciertos en grupos, eliminatorias y premios.' },
        { el: '#stat-exactos', title: 'Exactos', body: 'Marcadores que clavaste exactos (resultado idéntico). Valen más puntos.' },
@@ -10,7 +12,11 @@
      ].to_json %>">
 
   <header class="flex items-center justify-between mb-6">
-    <h1 class="text-4xl font-extrabold text-white">Mi Quiniela</h1>
+    <div class="flex items-center gap-2">
+      <h1 class="text-4xl font-extrabold text-white">Mi Quiniela</h1>
+      <button type="button" data-action="tour#restart" title="Ver tutorial"
+              class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/80 text-sm font-bold transition cursor-pointer">?</button>
+    </div>
     <div class="text-amber-300 font-extrabold text-3xl font-display tabular-nums"><%= @quiniela.total_points %> <span class="text-lg align-top">pts</span></div>
   </header>
 

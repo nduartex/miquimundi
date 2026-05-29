@@ -10,13 +10,15 @@ import { Controller } from "@hotwired/stimulus"
 //   data-tour-name-value="mi-quiniela"
 //   data-tour-steps-value='[{"el":"#id","title":"…","body":"…"}]'
 export default class extends Controller {
-  static values = { name: String, steps: Array }
+  static values = { name: String, steps: Array, auto: Boolean, markUrl: String }
 
   connect() {
     this.onReposition = () => this.position()
-    if (this.steps.length && !this.completed) {
-      // wait a tick so the layout (and fonts) settle before measuring
-      setTimeout(() => this.start(), 350)
+    // Auto-start: account-based when `auto` is provided by the server,
+    // otherwise fall back to the per-browser localStorage flag.
+    const auto = this.hasAutoValue ? this.autoValue : !this.completed
+    if (this.steps.length && auto) {
+      setTimeout(() => this.start(), 350) // let layout/fonts settle
     }
   }
 
@@ -27,6 +29,9 @@ export default class extends Controller {
   get completed() {
     try { return localStorage.getItem(this.storageKey) === "done" } catch { return false }
   }
+
+  // Public action — replay the tour anytime (ignores any "seen" flag).
+  restart() { this.teardown(); this.start() }
 
   start() {
     this.i = 0
@@ -113,6 +118,14 @@ export default class extends Controller {
 
   finish() {
     try { localStorage.setItem(this.storageKey, "done") } catch { /* ignore */ }
+    if (this.markUrlValue) {
+      const token = document.querySelector('meta[name="csrf-token"]')?.content
+      fetch(this.markUrlValue, {
+        method: "PATCH",
+        headers: token ? { "X-CSRF-Token": token } : {},
+        credentials: "same-origin"
+      }).catch(() => {})
+    }
     this.teardown()
   }
 
