@@ -95,4 +95,40 @@ class ScoringServiceTest < ActiveSupport::TestCase
     ScoringService.new(@quiniela).call
     assert_equal 10, @quiniela.reload.total_points
   end
+
+  test "call is idempotent — running twice does not double points" do
+    GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2)
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)
+
+    ScoringService.new(@quiniela).call
+    first = @quiniela.reload.total_points
+    ScoringService.new(@quiniela).call
+    assert_equal first, @quiniela.reload.total_points
+    assert_equal 13, first # group exact 8 + round_16 exact 5
+  end
+
+  test "non-finished matches are skipped" do
+    m = Match.create!(tournament: @tournament, phase: "round_16", home_team: @t1, away_team: @t2,
+                      status: "scheduled", kickoff_at: 1.day.from_now)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 1, pred_away: 0)
+    ScoringService.new(@quiniela).call
+    assert_equal 0, @quiniela.reload.total_points
+  end
+
+  test "penalty-only correctness does not increment match_hits" do
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 1, ag: 1, pen: @t2)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 0, pred_away: 0, penalty_qualifier: @t2)
+    ScoringService.new(@quiniela).call
+    @quiniela.reload
+    assert_equal 3, @quiniela.total_points
+    assert_equal 0, @quiniela.match_hits
+    assert_equal 0, @quiniela.exact_hits
+  end
+
+  test "persists points_earned on individual predictions" do
+    gp = GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2)
+    ScoringService.new(@quiniela).call
+    assert_equal 8, gp.reload.points_earned
+  end
 end
