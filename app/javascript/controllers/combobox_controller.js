@@ -9,7 +9,7 @@ export default class extends Controller {
 
   connect() {
     const cache = (window.__cbData ||= {})
-    this.data = cache[this.datasetIdValue] ||=
+    this.items = cache[this.datasetIdValue] ||=
       JSON.parse(document.getElementById(this.datasetIdValue)?.textContent || "[]")
     this.active = -1
   }
@@ -18,7 +18,7 @@ export default class extends Controller {
     const q = this.inputTarget.value.trim().toLowerCase()
     if (this.hiddenTarget.value && q !== this.lastChosenLabel) this.hiddenTarget.value = ""
     if (q.length < 1) { this.close(); return }
-    const matches = this.data.filter(
+    const matches = this.items.filter(
       (p) => p.name.toLowerCase().includes(q) || p.country.toLowerCase().includes(q)
     ).slice(0, 8)
     this.render(matches)
