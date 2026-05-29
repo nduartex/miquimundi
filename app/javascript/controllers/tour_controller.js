@@ -99,21 +99,30 @@ export default class extends Controller {
       top: `${r.top - pad}px`, left: `${r.left - pad}px`,
       width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px`
     })
-    // place tooltip below the target if room, else above; clamp horizontally
+    // Tooltip: prefer below the target, else above, using its REAL height so it
+    // never overlaps the highlighted element or runs off-screen.
+    const gap = 14
+    const margin = 12
     const tipW = Math.min(320, window.innerWidth - 24)
-    const below = r.bottom + 16
-    const wantAbove = below + 180 > window.innerHeight
-    let left = Math.max(12, Math.min(r.left, window.innerWidth - tipW - 12))
     this.tooltip.style.width = `${tipW}px`
-    this.tooltip.style.left = `${left}px`
     this.tooltip.style.opacity = "1"
-    if (wantAbove) {
-      this.tooltip.style.top = "auto"
-      this.tooltip.style.bottom = `${window.innerHeight - r.top + 16}px`
+    this.tooltip.style.left = `${Math.max(margin, Math.min(r.left, window.innerWidth - tipW - margin))}px`
+
+    const tipH = this.tooltip.offsetHeight
+    const spaceBelow = window.innerHeight - r.bottom - gap
+    const spaceAbove = r.top - gap
+
+    let top
+    if (tipH <= spaceBelow) {
+      top = r.bottom + gap            // fits below
+    } else if (tipH <= spaceAbove) {
+      top = r.top - gap - tipH        // fits above
     } else {
-      this.tooltip.style.bottom = "auto"
-      this.tooltip.style.top = `${below}px`
+      // not enough either side: clamp to viewport (won't perfectly avoid overlap on tiny screens)
+      top = Math.max(margin, window.innerHeight - tipH - margin)
     }
+    this.tooltip.style.bottom = "auto"
+    this.tooltip.style.top = `${Math.max(margin, top)}px`
   }
 
   finish() {
