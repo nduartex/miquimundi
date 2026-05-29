@@ -7,10 +7,12 @@ class PredictionsController < ApplicationController
     @quiniela.save! if @quiniela.new_record?
 
     ActiveRecord::Base.transaction do
-      save_group_predictions
-      save_best_thirds
-      save_match_predictions
-      save_award_prediction
+      unless @tournament.locked? # group-stage predictions freeze when the World Cup starts
+        save_group_predictions
+        save_best_thirds
+        save_award_prediction
+      end
+      save_match_predictions # has its own knockout-open + per-match kickoff guards
       @quiniela.update!(submitted_at: Time.current)
     end
 

@@ -1,6 +1,7 @@
 tournament:
   name: "Copa Mundial de la FIFA 2026"
   year: 2026
+  starts_at: "2026-06-11T18:00:00Z"   # cierre de la quiniela de grupos
 groups:
   A:
     - { name: "México", code: "MEX", flag: "🇲🇽", players: ["Santiago Giménez", "Hirving Lozano", "Edson Álvarez"] }
