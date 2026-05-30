@@ -29,20 +29,14 @@ class PredictionsController < ApplicationController
     end
 
     unless saved
-      msg = "Completa las 3 fases antes de guardar: falta #{missing.join(", ")}."
-      respond_to do |format|
-        format.html { redirect_to quiniela_path, alert: msg }
-        format.turbo_stream { flash.now[:alert] = msg }
-      end
+      # Redirect (not a turbo_stream): Turbo follows the 302 and renders the flash
+      # on the reloaded page — no per-action turbo_stream template needed.
+      redirect_to quiniela_path, alert: "Completa las 3 fases antes de guardar: falta #{missing.join(", ")}."
       return
     end
 
     ScoringService.new(@quiniela).call
-
-    respond_to do |format|
-      format.html { redirect_to quiniela_path, notice: "¡Quiniela guardada!" }
-      format.turbo_stream { flash.now[:notice] = "¡Quiniela guardada!" }
-    end
+    redirect_to quiniela_path, notice: "¡Quiniela guardada!"
   end
 
   private
