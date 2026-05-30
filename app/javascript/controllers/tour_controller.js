@@ -47,6 +47,9 @@ export default class extends Controller {
     this.backdrop = el("div", "tour-backdrop")
     this.highlight = el("div", "tour-highlight")
     this.tooltip = el("div", "tour-tooltip surface p-4 text-white")
+    // Pin fixed inline so the .surface rules (which set position) can never
+    // knock the tooltip out of fixed positioning via the cascade.
+    this.tooltip.style.position = "fixed"
     this.tooltip.style.opacity = "0"
     document.body.appendChild(this.backdrop)
     document.body.appendChild(this.highlight)
@@ -77,7 +80,7 @@ export default class extends Controller {
         else this.move(1)
       })
     })
-    this.position()
+    this.reveal()
   }
 
   move(delta) {
@@ -88,11 +91,41 @@ export default class extends Controller {
     this.render()
   }
 
+  // Scroll once, on entering a step, so the target AND its tooltip sit centred
+  // as one unit (otherwise centring only the target leaves the card cramped at a
+  // screen edge). The scroll/resize handler then only repositions, never scrolls.
+  reveal() {
+    const step = this.steps[this.i]
+    const target = step && document.querySelector(step.el)
+    if (!target) { this.finish(); return }
+
+    const margin = 12
+    const gap = 14
+    const tipW = Math.min(320, window.innerWidth - 24)
+    this.tooltip.style.width = `${tipW}px`
+    this.tooltip.style.maxHeight = ""
+    this.tooltip.style.overflowY = ""
+
+    const r = target.getBoundingClientRect()
+    const tipH = this.tooltip.offsetHeight
+    const blockH = r.height + gap + tipH
+    // Centre the (target + tooltip) block when it fits; otherwise pin the target
+    // near the top so the tall tooltip has the rest of the screen below it.
+    const desiredTop = blockH <= window.innerHeight - 2 * margin
+      ? (window.innerHeight - blockH) / 2
+      : margin * 2
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.scrollTo({
+      top: Math.max(0, r.top + window.scrollY - desiredTop),
+      behavior: reduce ? "auto" : "smooth"
+    })
+    this.position()
+  }
+
   position() {
     const step = this.steps[this.i]
     const target = step && document.querySelector(step.el)
     if (!target) { this.finish(); return }
-    target.scrollIntoView({ behavior: "smooth", block: "center" })
     const r = target.getBoundingClientRect()
     const pad = 8
     Object.assign(this.highlight.style, {
@@ -108,6 +141,10 @@ export default class extends Controller {
     this.tooltip.style.opacity = "1"
     this.tooltip.style.left = `${Math.max(margin, Math.min(r.left, window.innerWidth - tipW - margin))}px`
 
+    // Reset any height cap from a previous step before measuring.
+    this.tooltip.style.maxHeight = ""
+    this.tooltip.style.overflowY = ""
+
     const tipH = this.tooltip.offsetHeight
     const spaceBelow = window.innerHeight - r.bottom - gap
     const spaceAbove = r.top - gap
@@ -117,9 +154,18 @@ export default class extends Controller {
       top = r.bottom + gap            // fits below
     } else if (tipH <= spaceAbove) {
       top = r.top - gap - tipH        // fits above
+    } else if (spaceBelow >= spaceAbove) {
+      // Doesn't fully fit anywhere: sit just below the target and scroll inside,
+      // so the card never crosses into the highlighted (gold) area.
+      top = r.bottom + gap
+      this.tooltip.style.maxHeight = `${Math.max(80, spaceBelow - margin)}px`
+      this.tooltip.style.overflowY = "auto"
     } else {
-      // not enough either side: clamp to viewport (won't perfectly avoid overlap on tiny screens)
-      top = Math.max(margin, window.innerHeight - tipH - margin)
+      // More room above: pin near the top edge, capped so its bottom stays clear
+      // of the highlight, and scroll inside.
+      top = margin
+      this.tooltip.style.maxHeight = `${Math.max(80, spaceAbove - margin)}px`
+      this.tooltip.style.overflowY = "auto"
     }
     this.tooltip.style.bottom = "auto"
     this.tooltip.style.top = `${Math.max(margin, top)}px`
