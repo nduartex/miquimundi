@@ -58,7 +58,11 @@
     <% end %>
   </nav>
 
-  <%= form_with url: quiniela_predictions_path, method: :post, data: { action: "submit->confetti#burst" } do %>
+  <%= form_with url: quiniela_predictions_path, method: :post, data: {
+        controller: "gate",
+        gate_enforce_value: !@groups_locked,
+        action: "submit->confetti#burst input->gate#refresh change->gate#refresh"
+      } do %>
     <div class="wizard-panel" data-wizard-target="panel">
       <%= render "group_stage", groups: @groups, quiniela: @quiniela, locked: @groups_locked %>
     </div>
@@ -72,18 +76,21 @@
       <%= render "knockouts", matches: @knockouts, quiniela: @quiniela, open: @knockout_open %>
     </div>
 
+    <p data-gate-target="status" hidden role="status"
+       class="mt-6 text-center text-amber-200/90 text-sm font-semibold"></p>
+
     <div class="mt-8 flex items-center justify-between gap-3">
       <button type="button" data-action="wizard#prev" data-wizard-target="back"
               class="px-5 py-3 rounded-xl bg-white/10 text-white font-semibold border border-white/15 hover:bg-white/20 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
         ← Atrás
       </button>
       <button type="button" data-action="wizard#next" data-wizard-target="forward"
-              class="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold transition cursor-pointer">
+              class="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-display font-bold uppercase tracking-wide transition cursor-pointer">
         Siguiente →
       </button>
-      <%= submit_tag "Guardar mi Quiniela",
-            data: { wizard_target: "submit" },
-            class: "flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-rose-500 text-slate-900 font-extrabold text-lg hover:brightness-110 transition cursor-pointer" %>
+      <%= submit_tag "🏆 Guardar mi Quiniela",
+            data: { wizard_target: "submit", gate_target: "submit" },
+            class: "btn-gold flex-1 text-lg" %>
     </div>
   <% end %>
 </div>
