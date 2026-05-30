@@ -1,0 +1,35 @@
+<% tp = thirds_payload(@tournament) %>
+<div class="max-w-3xl mx-auto px-4 py-8">
+  <header class="mb-6">
+    <div class="flex items-center gap-3 mb-1">
+      <% if @owner.favorite_team&.flag_url %>
+        <img src="<%= @owner.favorite_team.flag_url %>" alt="" width="34" height="26"
+             class="w-[34px] h-[26px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+      <% end %>
+      <h1 class="text-3xl font-extrabold text-white">Quiniela de <%= @owner.display_name %></h1>
+    </div>
+    <p class="text-white/50 text-sm">Vista compartida · solo lectura</p>
+  </header>
+
+  <div class="surface p-6 mb-6">
+    <h2 class="font-display text-xl font-bold text-white mb-4">① Grupos</h2>
+    <%= render "quinielas/group_stage", groups: @groups, quiniela: @quiniela, locked: true %>
+  </div>
+
+  <div class="surface p-6 mb-6">
+    <h2 class="font-display text-xl font-bold text-white mb-4">② Mejores terceros</h2>
+    <%= render "quinielas/thirds", groups: @groups, quiniela: @quiniela, locked: true,
+          teams_json: tp[:teams].to_json, groups_json: tp[:groups].to_json %>
+  </div>
+
+  <div class="mb-6">
+    <%= render "quinielas/awards", players: @players, teams: @teams, quiniela: @quiniela, locked: true %>
+  </div>
+
+  <% if @quiniela.match_predictions.exists? %>
+    <div class="surface p-6 mb-6">
+      <h2 class="font-display text-xl font-bold text-white mb-4">④ Eliminatorias</h2>
+      <%= render "quinielas/knockouts", matches: @knockouts, quiniela: @quiniela, open: false %>
+    </div>
+  <% end %>
+</div>
