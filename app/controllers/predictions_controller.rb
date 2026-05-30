@@ -8,6 +8,7 @@ class PredictionsController < ApplicationController
 
     missing = nil
     saved = false
+    just_completed = false
     ActiveRecord::Base.transaction do
       unless @tournament.locked? # group-stage predictions freeze when the World Cup starts
         save_group_predictions
@@ -24,6 +25,13 @@ class PredictionsController < ApplicationController
         raise ActiveRecord::Rollback
       end
 
+      # Mark the milestone the first time the first part is completed, so we only
+      # celebrate it once.
+      if !@tournament.locked? && @quiniela.first_part_completed_at.nil?
+        @quiniela.first_part_completed_at = Time.current
+        just_completed = true
+      end
+
       @quiniela.update!(submitted_at: Time.current)
       saved = true
     end
@@ -36,7 +44,13 @@ class PredictionsController < ApplicationController
     end
 
     ScoringService.new(@quiniela).call
-    redirect_to quiniela_path, notice: "¡Quiniela guardada!"
+
+    # First completion → celebration modal (its own feedback, so skip the toast).
+    if just_completed
+      redirect_to quiniela_path(fase1: 1)
+    else
+      redirect_to quiniela_path, notice: "¡Quiniela guardada!"
+    end
   end
 
   private

@@ -103,4 +103,24 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     q = @user.quinielas.find_by(tournament: @tournament)
     assert_nil q.match_predictions.find_by(match_id: m.id) # locked: not saved
   end
+
+  test "first time completing the first part sets the milestone and redirects with the celebration flag" do
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_not_nil q.first_part_completed_at
+    assert_redirected_to quiniela_path(fase1: 1)
+  end
+
+  test "completing again keeps the original milestone and skips the celebration" do
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    first_ts = q.first_part_completed_at
+    assert_not_nil first_ts
+
+    travel 1.minute do
+      post quiniela_predictions_path, params: complete_first_part_params
+    end
+    assert_redirected_to quiniela_path
+    assert_equal first_ts.to_i, q.reload.first_part_completed_at.to_i
+  end
 end

@@ -7,6 +7,15 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     get restore_path(token: @user.access_token)
   end
 
+  test "shows the celebration modal only when the fase1 flag is present" do
+    get quiniela_path(fase1: 1)
+    assert_select "[data-controller='celebrate']"
+    assert_match(/Completaste la primera fase/i, response.body)
+
+    get quiniela_path
+    assert_select "[data-controller='celebrate']", false
+  end
+
   test "show renders the 4-step wizard with groups, thirds and locked knockouts" do
     get quiniela_path
     assert_response :success
