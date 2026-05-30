@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // "8 best thirds" picker. Shows each group's current 3rd-place team (reactive
 // to the group ordering) and enforces selecting exactly `max` (8).
 export default class extends Controller {
-  static values = { teams: Object, groups: Object, max: { type: Number, default: 8 } }
+  static values = { teams: Object, groups: Object, max: { type: Number, default: 8 }, locked: Boolean }
   static targets = ["checkbox", "option", "counter"]
 
   connect() {
@@ -23,12 +23,16 @@ export default class extends Controller {
     const n = this.selected.length
     if (this.hasCounterTarget) this.counterTarget.textContent = `${n}/${this.maxValue}`
     const full = n >= this.maxValue
-    this.checkboxTargets.forEach((c) => { c.disabled = full && !c.checked })
+    // When locked (read-only/shared views) the checkboxes are disabled server-side
+    // and must stay that way — don't re-enable the checked ones.
+    if (!this.lockedValue) {
+      this.checkboxTargets.forEach((c) => { c.disabled = full && !c.checked })
+    }
     this.optionTargets.forEach((opt) => {
       const cb = opt.querySelector('input[type="checkbox"]')
       opt.classList.toggle("ring-2", cb.checked)
       opt.classList.toggle("ring-amber-300", cb.checked)
-      opt.classList.toggle("opacity-40", cb.disabled)
+      opt.classList.toggle("opacity-40", cb.disabled && !cb.checked)
     })
   }
 

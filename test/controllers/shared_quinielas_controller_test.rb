@@ -31,6 +31,12 @@ class SharedQuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=submit]", false
   end
 
+  test "thirds checkboxes are read-only (disabled, locked controller value)" do
+    get shared_quiniela_path(token: @quiniela.share_token)
+    assert_select "input[name='best_third_groups[]']:not([disabled])", false
+    assert_select "[data-controller='thirds'][data-thirds-locked-value='true']"
+  end
+
   test "an unknown token returns 404" do
     get shared_quiniela_path(token: "does-not-exist")
     assert_response :not_found
