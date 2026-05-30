@@ -31,9 +31,9 @@
       <div>
         <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="username">Elige tu nombre de usuario</label>
         <%= text_field_tag :username, params[:username], id: "username", required: true, autocomplete: "off",
-              minlength: 3, maxlength: 20, placeholder: "ej: martin_10",
+              minlength: 5, maxlength: 20, placeholder: "ej: martin_10",
               class: "field text-lg" %>
-        <p class="text-white/40 text-xs mt-1">Debe ser único. Si ya existe, elige otro.</p>
+        <p class="text-white/40 text-xs mt-1">5 a 20 caracteres (letras, números o símbolos). Debe ser único.</p>
       </div>
 
       <% if @tournament %>
@@ -49,8 +49,8 @@
         </div>
       <% end %>
 
-      <%= f.submit "Crear y entrar",
-            class: "w-full bg-gradient-to-r from-amber-400 to-rose-500 text-slate-900 font-extrabold py-3.5 rounded-xl text-lg hover:brightness-110 transition cursor-pointer" %>
+      <%= f.submit "⚽ Entrar a la cancha",
+            class: "btn-primary w-full text-lg py-3.5" %>
     <% end %>
     <p class="text-white/40 text-xs text-center mt-6">Sin contraseña. Tras crear tu usuario te daremos un <strong class="text-white/60">enlace de acceso</strong> para volver a entrar. ¿Ya tienes uno? Úsalo para reingresar.</p>
   </div>

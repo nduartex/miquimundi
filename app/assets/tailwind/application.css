@@ -1,97 +1,146 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Design tokens — "Vibrant & Block-based" festive system (UI/UX Pro Max)
-   High contrast on a deep stadium-night base; bright sport accents.
+   MIQUIMUNDI — "EL ESTADIO"
+   A real football pitch as the canvas: mown grass stripes, floodlight glow,
+   chalk field markings, trophy gold and bright grass accents. A festive,
+   participatory match-day feel — not a magazine, not a generic gradient.
 --------------------------------------------------------------------------- */
 @theme {
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-poster: "Anton", "Barlow Condensed", ui-sans-serif, sans-serif;
 
-  --color-pitch-900: #0b1220;   /* deep night base */
-  --color-pitch-800: #111a2e;
-  --color-pitch-700: #1b2540;
+  /* Pitch greens */
+  --color-pitch-900: #05210f;
+  --color-pitch-800: #0a3d1f;
+  --color-pitch-700: #0f5a2e;
 
-  --color-gold: #fbbf24;        /* points / highlight */
-  --color-grass: #34d399;       /* exact hits */
-  --color-rose: #fb5d8a;        /* match hits / energy */
-  --color-sky: #38bdf8;         /* links / info */
+  /* Match-day accents */
+  --color-gold: #ffc531;     /* trophy / points */
+  --color-grass: #4ade80;    /* exact hits */
+  --color-rose: #ff5d7d;     /* match hits / energy */
+  --color-sky: #38bdf8;      /* links / info */
+  --color-chalk: #eafff1;    /* field lines */
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
-    /* Stadium-night gradient with a vibrant top glow for energy */
-    background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(251, 93, 138, 0.35), transparent 60%),
-      radial-gradient(900px 500px at 90% 10%, rgba(56, 189, 248, 0.20), transparent 55%),
-      linear-gradient(160deg, #1a1140 0%, #2a1a4a 35%, #3b1d3f 70%, #4a1f2e 100%);
+    color: #f4fbf6;
+    /* Mown grass stripes + warm floodlight glow from the top stands */
+    background-color: #0a3a1e;
+    background-image:
+      radial-gradient(1200px 560px at 50% -12%, rgba(255, 233, 170, 0.22), transparent 60%),
+      radial-gradient(900px 500px at 90% 8%, rgba(74, 222, 128, 0.12), transparent 55%),
+      repeating-linear-gradient(
+        100deg,
+        #0a3a1e 0px, #0a3a1e 64px,
+        #0c4524 64px, #0c4524 128px
+      );
     background-attachment: fixed;
-    color: #f8fafc;
   }
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
-    letter-spacing: 0.01em;
-  }
+
+  /* Field markings (boundary, areas, centre circle, corner flags) are drawn on
+     the <canvas> by the pitch-match controller, kept aligned with the players;
+     it also renders once under reduced-motion. */
+
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
+  .font-poster { font-family: var(--font-poster); letter-spacing: 0.02em; line-height: 0.95; }
 }
 
 @layer components {
-  /* Readable, high-contrast surface (replaces low-contrast white/10 glass) */
+  /* Team-sheet panel: dark turf card with a crisp chalk edge */
   .surface {
-    @apply bg-slate-900/60 border border-white/15 rounded-2xl shadow-xl backdrop-blur-sm;
+    background: rgba(4, 32, 16, 0.78);
+    border: 1.5px solid rgba(234, 255, 241, 0.22);
+    border-radius: 16px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 18px 40px -22px rgba(0, 0, 0, 0.9);
   }
   .surface-soft {
-    @apply bg-slate-900/40 border border-white/10 rounded-2xl;
+    background: rgba(4, 32, 16, 0.55);
+    border: 1px solid rgba(234, 255, 241, 0.14);
+    border-radius: 12px;
   }
 
-  /* Form controls — large, legible, on-style */
+  /* Form controls — large, legible, on-pitch */
   .field {
-    @apply w-full rounded-xl bg-slate-800/90 border border-white/20 text-white
-           px-4 py-3 text-base font-medium
-           focus:outline-none focus:ring-4 focus:ring-amber-300/60 focus:border-amber-300
-           transition;
+    @apply w-full rounded-xl text-white px-4 py-3 text-base font-medium transition;
+    background: rgba(3, 24, 12, 0.85);
+    border: 1.5px solid rgba(234, 255, 241, 0.22);
   }
-  .field option { @apply bg-slate-900 text-white; }
+  .field::placeholder { color: rgba(244, 251, 246, 0.45); }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 4px rgba(255, 197, 49, 0.30);
+  }
+  .field option { background: #05210f; color: #fff; }
 
-  /* Stat tiles */
-  .stat-value { @apply text-3xl font-extrabold leading-none; }
-  .stat-label { @apply text-xs uppercase tracking-wide text-white/60 mt-1; }
+  /* Primary match-day button — bright grass with depth, not a flat gradient */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-display font-extrabold uppercase tracking-wide
+           rounded-xl px-5 py-3 cursor-pointer transition text-white;
+    background: linear-gradient(180deg, #34d36b, #16a34a 60%, #128a3f);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 22px -8px rgba(22, 163, 74, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-primary:hover { filter: brightness(1.07); }
+  .btn-primary:active { transform: translateY(1px); }
+
+  /* Gold variant — for the headline trophy action */
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 font-display font-extrabold uppercase tracking-wide
+           rounded-xl px-5 py-3 cursor-pointer transition;
+    color: #1a1200;
+    background: linear-gradient(180deg, #ffd766, #ffc531 58%, #f0a800);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 22px -8px rgba(255, 197, 49, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .btn-gold:hover { filter: brightness(1.06); }
+  .btn-gold:active { transform: translateY(1px); }
+
+  /* Scoreboard chip */
+  .chip {
+    @apply inline-flex items-center gap-1 font-display font-bold uppercase tracking-wider text-xs px-2.5 py-1 rounded-md;
+    color: #1a1200;
+    background: var(--color-gold);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  /* Stat tiles — jersey-number poster type */
+  .stat-value { @apply text-4xl leading-none; font-family: var(--font-poster); letter-spacing: 0.02em; }
+  .stat-label { @apply text-[10px] uppercase tracking-widest text-white/60 mt-1.5 font-display font-semibold; }
 }
 
 /* Wizard step transitions (respect reduced-motion via media query below) */
-.wizard-panel {
-  transition: opacity 250ms ease-out, transform 250ms ease-out;
-}
+.wizard-panel { transition: opacity 250ms ease-out, transform 250ms ease-out; }
 .wizard-panel[hidden] { display: none; }
-.wizard-panel.is-enter {
-  opacity: 0;
-  transform: translateY(12px);
-}
+.wizard-panel.is-enter { opacity: 0; transform: translateY(12px); }
 
 /* Onboarding tour spotlight + tooltip */
 .tour-backdrop {
   position: fixed; inset: 0; z-index: 1000;
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(2, 14, 7, 0.78);
   transition: opacity 200ms ease-out;
 }
 .tour-highlight {
   position: fixed; z-index: 1001; border-radius: 16px;
-  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.95), 0 0 0 9999px rgba(2, 6, 23, 0.72);
+  box-shadow: 0 0 0 4px rgba(255, 197, 49, 0.95), 0 0 0 9999px rgba(2, 14, 7, 0.78);
   transition: all 250ms ease-out;
   pointer-events: none;
 }
-.tour-tooltip {
-  position: fixed; z-index: 1002; max-width: 320px;
-  transition: all 250ms ease-out;
-}
+.tour-tooltip { position: fixed; z-index: 1002; max-width: 320px; transition: all 250ms ease-out; }
 
-/* Login hero: glow halo behind the logo + entrance animation */
+/* Login hero: floodlight halo behind the logo + entrance animation */
 .hero-glow {
   position: absolute; inset: 0; margin: auto;
-  width: 78%; height: 78%; border-radius: 9999px; z-index: 0;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.5), rgba(251, 93, 138, 0.28) 45%, transparent 70%);
-  filter: blur(42px);
+  width: 80%; height: 80%; border-radius: 9999px; z-index: 0;
+  background: radial-gradient(circle, rgba(255, 197, 49, 0.5), rgba(74, 222, 128, 0.25) 46%, transparent 70%);
+  filter: blur(46px);
 }
 @keyframes heroIn {
   from { opacity: 0; transform: translateY(14px) scale(0.98); }
