@@ -1,3 +1,4 @@
+<% thirds_by_group = locked ? quiniela.group_predictions.includes(:third_team).index_by(&:group_id) : {} %>
 <div data-controller="thirds"
      data-thirds-teams-value="<%= teams_json %>"
      data-thirds-groups-value="<%= groups_json %>"
@@ -17,7 +18,11 @@
                <%= "disabled" if locked %>
                class="w-5 h-5 accent-amber-400 shrink-0 <%= 'cursor-not-allowed' if locked %>">
         <span class="w-9 h-8 rounded-lg bg-white/10 text-white/80 text-xs font-extrabold flex items-center justify-center shrink-0">3º<%= group.name %></span>
-        <span class="flex-1 min-w-0 text-white font-semibold truncate" data-team>—</span>
+        <span class="flex-1 min-w-0 text-white font-semibold truncate" data-team><%
+          # When locked there are no group-order hidden fields for the JS to read,
+          # so render the 3rd-place team server-side. Live (unlocked) pages keep
+          # "—" and let the thirds controller fill it reactively.
+          third = thirds_by_group[group.id]&.third_team if locked %><% if third %><span class="inline-flex items-center gap-1.5"><% if third.flag_url %><img src="<%= third.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15"><% end %><span><%= third.name %></span></span><% else %>—<% end %></span>
       </label>
     <% end %>
   </div>

@@ -36,7 +36,10 @@ export default class extends Controller {
     this.optionTargets.forEach((opt) => {
       const gid = this.groupsValue[opt.dataset.group]
       const inp = document.querySelector(`[name="group_predictions[${gid}][third_team_id]"]`)
-      const team = inp?.value ? this.teamsValue[inp.value] : null
+      // Locked/read-only views have no group-order fields; the 3rd-place team is
+      // rendered server-side, so leave it untouched instead of blanking it.
+      if (!inp) return
+      const team = inp.value ? this.teamsValue[inp.value] : null
       const disp = opt.querySelector("[data-team]")
       if (!disp) return
       if (team) {

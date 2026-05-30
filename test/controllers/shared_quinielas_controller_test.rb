@@ -19,6 +19,12 @@ class SharedQuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_includes @response.body, "sharer" # owner name shown
   end
 
+  test "shows the predicted 3rd-place team server-side (no group-order fields when locked)" do
+    third = @quiniela.group_predictions.first.third_team
+    get shared_quiniela_path(token: @quiniela.share_token)
+    assert_includes @response.body, third.name
+  end
+
   test "does not expose the owner's access token or a save form" do
     get shared_quiniela_path(token: @quiniela.share_token)
     assert_not_includes @response.body, @owner.access_token
