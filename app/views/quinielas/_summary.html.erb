@@ -1,13 +1,13 @@
 <div class="grid grid-cols-3 gap-3 mb-6">
-  <div id="stat-puntos" class="surface p-4 text-center">
+  <div id="stat-puntos" class="surface stat-tile p-4 text-center" style="--accent: var(--color-gold)">
     <div class="stat-value text-amber-300 tabular-nums"><%= quiniela.total_points %></div>
     <div class="stat-label">Puntos</div>
   </div>
-  <div id="stat-exactos" class="surface p-4 text-center">
+  <div id="stat-exactos" class="surface stat-tile p-4 text-center" style="--accent: var(--color-grass)">
     <div class="stat-value text-emerald-300 tabular-nums"><%= quiniela.exact_hits %></div>
     <div class="stat-label">Exactos</div>
   </div>
-  <div id="stat-aciertos" class="surface p-4 text-center">
+  <div id="stat-aciertos" class="surface stat-tile p-4 text-center" style="--accent: var(--color-rose)">
     <div class="stat-value text-rose-300 tabular-nums"><%= quiniela.match_hits %></div>
     <div class="stat-label">Aciertos</div>
   </div>

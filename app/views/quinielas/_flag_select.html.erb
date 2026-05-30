@@ -19,14 +19,14 @@
   </button>
 
   <ul data-flag-select-target="list" role="listbox" hidden
-      class="absolute z-30 mt-1 w-full max-h-64 overflow-auto rounded-xl bg-slate-800 border border-white/20 shadow-2xl py-1">
+      class="absolute z-30 mt-1 w-full max-h-64 overflow-auto rounded-xl bg-pitch-800 border border-chalk/25 shadow-2xl py-1">
     <% teams.each do |team| %>
       <li role="option"
           data-flag-select-target="option"
           data-action="click->flag-select#select"
           data-value="<%= team.id %>"
           aria-selected="<%= team.id == selected_id ? 'true' : 'false' %>"
-          class="flex items-center gap-3 px-3 py-2.5 text-white cursor-pointer hover:bg-white/10 aria-selected:bg-amber-400/20 aria-selected:font-bold">
+          class="flex items-center gap-3 px-3 py-2.5 text-white cursor-pointer hover:bg-white/10 aria-selected:bg-gold/20 aria-selected:font-bold">
         <% if team.flag_url %>
           <img src="<%= team.flag_url %>" alt="" width="26" height="20" loading="lazy"
                class="w-[26px] h-[20px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">

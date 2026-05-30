@@ -64,12 +64,17 @@
 
   <!-- Step indicator -->
   <nav id="wizard-steps" class="grid grid-cols-4 gap-2 mb-6" aria-label="Pasos de la quiniela">
-    <% [["Grupos", "①"], ["Terceros", "②"], ["Premios", "③"], [@knockout_open ? "Eliminatorias" : "Eliminatorias 🔒", "④"]].each_with_index do |(name, num), i| %>
+    <% steps = [
+         { name: "Grupos",   num: "①", accent: "var(--color-grass)" },
+         { name: "Terceros", num: "②", accent: "var(--color-sky)" },
+         { name: "Premios",  num: "③", accent: "var(--color-gold)" },
+         { name: (@knockout_open ? "Eliminatorias" : "Eliminatorias 🔒"), num: "④", accent: "var(--color-rose)" }
+       ] %>
+    <% steps.each_with_index do |s, i| %>
       <button type="button" data-action="wizard#go" data-wizard-step-param="<%= i %>"
-              data-wizard-target="tab"
-              class="group flex flex-col items-center gap-1 py-3 rounded-xl border border-white/15 bg-slate-900/50 text-white/70 font-semibold transition hover:bg-white/10 cursor-pointer aria-[current=true]:bg-amber-400 aria-[current=true]:text-slate-900 aria-[current=true]:border-amber-300">
-        <span class="text-lg font-display"><%= num %></span>
-        <span class="text-xs sm:text-sm text-center leading-tight"><%= name %></span>
+              data-wizard-target="tab" style="--accent: <%= s[:accent] %>" class="wz-tab">
+        <span class="text-lg font-display"><%= s[:num] %></span>
+        <span class="text-xs sm:text-sm text-center leading-tight"><%= s[:name] %></span>
       </button>
     <% end %>
   </nav>
@@ -96,12 +101,10 @@
        class="mt-6 text-center text-amber-200/90 text-sm font-semibold"></p>
 
     <div class="mt-8 flex items-center justify-between gap-3">
-      <button type="button" data-action="wizard#prev" data-wizard-target="back"
-              class="px-5 py-3 rounded-xl bg-white/10 text-white font-semibold border border-white/15 hover:bg-white/20 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+      <button type="button" data-action="wizard#prev" data-wizard-target="back" class="btn-ghost">
         ← Atrás
       </button>
-      <button type="button" data-action="wizard#next" data-wizard-target="forward"
-              class="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-display font-bold uppercase tracking-wide transition cursor-pointer">
+      <button type="button" data-action="wizard#next" data-wizard-target="forward" class="btn-sky">
         Siguiente →
       </button>
       <%= submit_tag "🏆 Guardar mi Quiniela",

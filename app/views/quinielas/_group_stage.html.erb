@@ -1,3 +1,5 @@
+<% # Per-rank accent: 1º-2º grass (clasifican), 3º gold (candidato), 4º muted.
+   row_accents = ["var(--color-grass)", "var(--color-grass)", "var(--color-gold)", "#9fb3a6"] %>
 <p class="text-white/70 mb-4">
   <% if locked %>Tu orden de grupos quedó <strong class="text-white">cerrado</strong>. El 1º y 2º clasifican; el 3º es candidato a mejor tercero.
   <% else %>Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrándolos. El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.<% end %>
@@ -7,9 +9,9 @@
     <% gp = quiniela.group_predictions.find_by(group_id: group.id) %>
     <% ranked_ids = gp&.ranked_team_ids || [] %>
     <% ordered = (ranked_ids.map { |id| group.teams.detect { |t| t.id == id } }.compact + (group.teams.to_a - group.teams.select { |t| ranked_ids.include?(t.id) })).first(4) %>
-    <div class="surface p-5">
+    <div class="surface surface-neon p-5">
       <h3 class="mb-3">
-        <span class="inline-flex items-center rounded-lg bg-amber-400 text-slate-900 font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
+        <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
       </h3>
 
       <div <%= 'data-controller="group-order"'.html_safe unless locked %>>
@@ -24,8 +26,9 @@
           <% ordered.each_with_index do |team, i| %>
             <li <% unless locked %>data-group-order-target="item" data-team-id="<%= team.id %>" draggable="true"
                 data-action="dragstart->group-order#dragStart dragend->group-order#dragEnd dragover->group-order#dragOver drop->group-order#drop"<% end %>
-                class="flex items-center gap-3 rounded-xl bg-slate-800/80 border border-white/15 px-3 py-2.5 <%= locked ? 'cursor-default' : 'cursor-grab active:cursor-grabbing' %>">
-              <span class="w-6 h-6 rounded-md bg-white/10 text-white/80 text-sm font-extrabold flex items-center justify-center shrink-0" data-pos><%= i + 1 %></span>
+                style="--accent: <%= row_accents[i] || row_accents.last %>"
+                class="team-row <%= 'is-out' if i == 3 %> flex items-center gap-3 px-3 py-2.5 <%= locked ? 'cursor-default' : 'cursor-grab active:cursor-grabbing' %>">
+              <span class="w-6 h-6 rounded-md text-sm font-extrabold flex items-center justify-center shrink-0" data-pos><%= i + 1 %></span>
               <% if team.flag_url %>
                 <img src="<%= team.flag_url %>" alt="" width="26" height="20" loading="lazy"
                      class="w-[26px] h-[20px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">

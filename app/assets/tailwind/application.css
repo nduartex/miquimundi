@@ -53,12 +53,22 @@
 @layer components {
   /* Team-sheet panel: dark turf card with a crisp chalk edge */
   .surface {
+    position: relative;
     background: rgba(4, 32, 16, 0.78);
     border: 1.5px solid rgba(234, 255, 241, 0.22);
     border-radius: 16px;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.06),
       0 18px 40px -22px rgba(0, 0, 0, 0.9);
+  }
+  /* Subtle neon rim on every card (stronger on .surface-neon, e.g. group cards). */
+  .surface::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+    background: linear-gradient(135deg, var(--color-sky), var(--color-grass) 42%,
+                var(--color-gold) 72%, var(--color-rose));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0.3; pointer-events: none;
   }
   .surface-soft {
     background: rgba(4, 32, 16, 0.55);
@@ -98,10 +108,33 @@
     color: #1a1200;
     background: linear-gradient(180deg, #ffd766, #ffc531 58%, #f0a800);
     border: 1.5px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 22px -8px rgba(255, 197, 49, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 26px -8px rgba(255, 197, 49, 0.95),
+                0 0 0 1px rgba(255, 197, 49, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
   .btn-gold:hover { filter: brightness(1.06); }
   .btn-gold:active { transform: translateY(1px); }
+  .btn-gold:disabled { filter: grayscale(0.4) brightness(0.9); }
+
+  /* Sky variant — wizard "Siguiente" navigation */
+  .btn-sky {
+    @apply inline-flex items-center justify-center gap-2 font-display font-extrabold uppercase tracking-wide
+           rounded-xl px-5 py-3 cursor-pointer transition text-white;
+    background: linear-gradient(180deg, #5ed0fb, #38bdf8 60%, #0ea5d9);
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 8px 22px -8px rgba(56, 189, 248, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  .btn-sky:hover { filter: brightness(1.07); }
+  .btn-sky:active { transform: translateY(1px); }
+
+  /* Ghost variant — secondary "Atrás" */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-display font-semibold
+           rounded-xl px-5 py-3 cursor-pointer transition text-white;
+    background: rgba(3, 24, 12, 0.55);
+    border: 1.5px solid rgba(234, 255, 241, 0.18);
+  }
+  .btn-ghost:hover { background: rgba(255, 255, 255, 0.08); }
+  .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* Scoreboard chip */
   .chip {
@@ -114,6 +147,72 @@
   /* Stat tiles — jersey-number poster type */
   .stat-value { @apply text-4xl leading-none; font-family: var(--font-poster); letter-spacing: 0.02em; }
   .stat-label { @apply text-[10px] uppercase tracking-widest text-white/60 mt-1.5 font-display font-semibold; }
+}
+
+/* ---------------------------------------------------------------------------
+   "ESTADIO DE NOCHE" — neon edge + per-phase accents (D2 + touches of D3).
+   Keeps the dark pitch background; electrifies the cards instead of covering it.
+--------------------------------------------------------------------------- */
+
+/* Wizard step tabs — dark glass pill that lights up in its phase colour.
+   Each tab sets --accent inline (Grupos grass · Terceros sky · Premios gold ·
+   Eliminatorias rose). */
+.wz-tab {
+  --accent: var(--color-gold);
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+  padding: 0.75rem 0.5rem; border-radius: 0.85rem; cursor: pointer;
+  font-weight: 700; color: rgba(244, 251, 246, 0.72);
+  background: rgba(3, 24, 12, 0.6);
+  border: 1.5px solid rgba(234, 255, 241, 0.14);
+  transition: background 0.18s ease-out, border-color 0.18s ease-out,
+              color 0.18s ease-out, box-shadow 0.18s ease-out;
+}
+.wz-tab:hover { background: rgba(255, 255, 255, 0.07); }
+.wz-tab[aria-current="true"] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, rgba(3, 24, 12, 0.6));
+  box-shadow: 0 0 18px -3px color-mix(in srgb, var(--accent) 80%, transparent),
+              inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Neon gradient edge for emphasis cards (group cards). */
+.surface-neon { position: relative; }
+.surface-neon::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+  background: linear-gradient(135deg, var(--color-sky), var(--color-grass) 42%,
+              var(--color-gold) 72%, var(--color-rose));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.5; pointer-events: none;
+}
+
+/* Group header badge — sky→grass gradient instead of flat amber. */
+.badge-group {
+  background: linear-gradient(90deg, var(--color-sky), var(--color-grass));
+  color: var(--color-pitch-900);
+}
+
+/* Team rows — accent the left edge + position chip by rank (updated live by the
+   group-order controller on drag). */
+.team-row {
+  background: rgba(8, 30, 18, 0.85);
+  border: 1px solid rgba(234, 255, 241, 0.12);
+  border-left: 4px solid var(--accent, rgba(234, 255, 241, 0.14));
+  border-radius: 0.75rem;
+  transition: border-color 0.18s ease-out, opacity 0.18s ease-out;
+}
+.team-row [data-pos] {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+}
+.team-row.is-out { opacity: 0.6; }
+
+/* Stat tiles — lit from their own colour. */
+.stat-tile {
+  border-top: 3px solid color-mix(in srgb, var(--accent, var(--color-gold)) 80%, transparent);
+  box-shadow: 0 0 22px -8px color-mix(in srgb, var(--accent, var(--color-gold)) 70%, transparent),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* Wizard step transitions (respect reduced-motion via media query below) */
