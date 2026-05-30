@@ -6,6 +6,8 @@ class PredictionsController < ApplicationController
     @quiniela = current_user.quiniela_for(@tournament)
     @quiniela.save! if @quiniela.new_record?
 
+    missing = nil
+    saved = false
     ActiveRecord::Base.transaction do
       unless @tournament.locked? # group-stage predictions freeze when the World Cup starts
         save_group_predictions
@@ -13,7 +15,26 @@ class PredictionsController < ApplicationController
         save_award_prediction
       end
       save_match_predictions # has its own knockout-open + per-match kickoff guards
+
+      # The first part can only be saved when all three phases are complete. The
+      # check is skipped once the tournament is locked (first part already frozen;
+      # saves then only carry knockout predictions).
+      if !@tournament.locked? && !@quiniela.reload.first_part_complete?
+        missing = @quiniela.first_part_missing
+        raise ActiveRecord::Rollback
+      end
+
       @quiniela.update!(submitted_at: Time.current)
+      saved = true
+    end
+
+    unless saved
+      msg = "Completa las 3 fases antes de guardar: falta #{missing.join(", ")}."
+      respond_to do |format|
+        format.html { redirect_to quiniela_path, alert: msg }
+        format.turbo_stream { flash.now[:alert] = msg }
+      end
+      return
     end
 
     ScoringService.new(@quiniela).call

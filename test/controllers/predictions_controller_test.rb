@@ -10,50 +10,62 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     get restore_path(token: @user.access_token) # log in via personal link
   end
 
-  test "saving group predictions creates records and a quiniela" do
-    post quiniela_predictions_path, params: {
-      group_predictions: {
-        @group.id.to_s => { first_team_id: @teams[0].id, second_team_id: @teams[1].id }
+  # Full first part for the seeded tournament. `thirds` overridable to test capping.
+  def complete_first_part_params(thirds: %w[A B C D E F G H])
+    player = Player.first
+    team = Team.first
+    {
+      group_predictions: @tournament.groups.order(:name).each_with_object({}) do |g, h|
+        t = g.teams.to_a
+        h[g.id.to_s] = {
+          first_team_id: t[0].id, second_team_id: t[1].id,
+          third_team_id: t[2].id, fourth_team_id: t[3].id
+        }
+      end,
+      best_third_groups: thirds,
+      award_prediction: {
+        balon_oro_player_id: player.id, bota_oro_player_id: player.id,
+        guante_oro_player_id: player.id, young_player_id: player.id,
+        fair_play_team_id: team.id
       }
     }
+  end
+
+  test "a complete first part saves records and submits" do
+    post quiniela_predictions_path, params: complete_first_part_params
     quiniela = @user.quinielas.find_by(tournament: @tournament)
     assert_not_nil quiniela
+    assert quiniela.submitted?
     gp = quiniela.group_predictions.find_by(group: @group)
     assert_equal @teams[0].id, gp.first_team_id
   end
 
-  test "saving sets submitted_at and triggers scoring" do
-    post quiniela_predictions_path, params: {
-      group_predictions: { @group.id.to_s => { first_team_id: @teams[0].id, second_team_id: @teams[1].id } }
-    }
-    assert @user.quinielas.find_by(tournament: @tournament).submitted?
-  end
-
-  test "saving stores the full 1-4 group ranking" do
-    post quiniela_predictions_path, params: {
-      group_predictions: {
-        @group.id.to_s => {
-          first_team_id: @teams[0].id, second_team_id: @teams[1].id,
-          third_team_id: @teams[2].id, fourth_team_id: @teams[3].id
-        }
-      }
-    }
+  test "a complete first part stores the full 1-4 group ranking" do
+    post quiniela_predictions_path, params: complete_first_part_params
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
     assert_equal [@teams[0].id, @teams[1].id, @teams[2].id, @teams[3].id], gp.ranked_team_ids
   end
 
-  test "saving stores the 8 best-third group picks (capped at 8)" do
-    letters = %w[A B C D E F G H I]  # 9 sent
-    post quiniela_predictions_path, params: { best_third_groups: letters }
+  test "best-third group picks are capped at 8" do
+    post quiniela_predictions_path, params: complete_first_part_params(thirds: %w[A B C D E F G H I])
     q = @user.quinielas.find_by(tournament: @tournament)
     assert_equal 8, q.best_third_groups.size
     assert_equal %w[A B C D E F G H], q.best_third_groups
   end
 
-  test "group predictions are frozen and not overwritten once the tournament starts" do
+  test "an incomplete first part is rejected: nothing saved, not submitted, alert shown" do
     post quiniela_predictions_path, params: {
       group_predictions: { @group.id.to_s => { first_team_id: @teams[0].id, second_team_id: @teams[1].id } }
     }
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_not_nil q                       # quiniela shell exists (created on entry)
+    assert_not q.submitted?                # gate rolled back submitted_at
+    assert_equal 0, q.group_predictions.count # partial save rolled back too
+    assert_match(/Completa las 3 fases/, flash[:alert])
+  end
+
+  test "group predictions are frozen and not overwritten once the tournament starts" do
+    post quiniela_predictions_path, params: complete_first_part_params
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
     assert_equal @teams[0].id, gp.first_team_id
 
@@ -62,6 +74,12 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
       group_predictions: { @group.id.to_s => { first_team_id: @teams[2].id, second_team_id: @teams[3].id } }
     }
     assert_equal @teams[0].id, gp.reload.first_team_id # original kept, not overwritten
+  end
+
+  test "after kickoff the gate does not block a knockout-only save" do
+    @tournament.update!(locked_at: 1.day.ago) # World Cup started: first part frozen
+    post quiniela_predictions_path, params: {} # nothing to save, but must not be gate-blocked
+    assert @user.quinielas.find_by(tournament: @tournament).submitted?
   end
 
   test "knockout score predictions are ignored while the stage is locked" do
