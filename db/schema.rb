@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_29_041110) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_30_164201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -125,6 +125,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_29_041110) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "best_third_groups", default: [], null: false
+    t.string "share_token", null: false
+    t.index ["share_token"], name: "index_quinielas_on_share_token", unique: true
     t.index ["tournament_id"], name: "index_quinielas_on_tournament_id"
     t.index ["user_id"], name: "index_quinielas_on_user_id"
   end
