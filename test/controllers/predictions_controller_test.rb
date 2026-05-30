@@ -64,6 +64,19 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Completa las 3 fases/, flash[:alert])
   end
 
+  test "pre-lock, omitting best_third_groups is treated as deselect-all and rejected" do
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_equal 8, q.best_third_groups.size
+
+    # Re-submit without the thirds param (every checkbox unchecked). Treated as a
+    # clear, so the first part is incomplete and the gate rejects the save (rather
+    # than silently keeping the prior 8 and re-submitting).
+    post quiniela_predictions_path, params: complete_first_part_params.except(:best_third_groups)
+    assert_match(/Completa las 3 fases/, flash[:alert])
+    assert_equal 8, q.reload.best_third_groups.size # prior valid state intact (rolled back)
+  end
+
   test "group predictions are frozen and not overwritten once the tournament starts" do
     post quiniela_predictions_path, params: complete_first_part_params
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)

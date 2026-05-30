@@ -7,8 +7,11 @@
      { field: "fair_play_team_id",    label: "Fair Play",           pts: 5,  kind: :team,   tip: "Premio al equipo con mejor juego limpio (mejor conducta disciplinaria del torneo)." }
    ] %>
 
-<%# Shared players dataset for the typeahead (embedded once) %>
-<script type="application/json" id="players-json"><%== players_dataset(@tournament).to_json %></script>
+<%# Shared players dataset for the typeahead (embedded once). Skipped when locked:
+    the comboboxes are disabled and never read it, so it would be a wasted query. %>
+<% unless locked %>
+  <script type="application/json" id="players-json"><%== players_dataset(@tournament).to_json %></script>
+<% end %>
 
 <div class="surface p-6">
   <h3 class="font-display text-2xl font-bold text-white mb-1">🏆 Premios</h3>

@@ -61,10 +61,16 @@ class PredictionsController < ApplicationController
   end
 
   # Exactly the group letters the user nominated as qualifying best thirds.
+  # Pre-lock, an absent param means every checkbox was unchecked, so clear the
+  # selection (no stale value survives a "deselect all"). The param is only
+  # legitimately absent post-lock, where the first part is already frozen.
   def save_best_thirds
-    return unless params.key?(:best_third_groups)
-    letters = Array(params[:best_third_groups]).reject(&:blank?).first(8)
-    @quiniela.update!(best_third_groups: letters)
+    if params.key?(:best_third_groups)
+      letters = Array(params[:best_third_groups]).reject(&:blank?).first(8)
+      @quiniela.update!(best_third_groups: letters)
+    elsif !@tournament.locked?
+      @quiniela.update!(best_third_groups: [])
+    end
   end
 
   def save_match_predictions

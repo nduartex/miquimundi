@@ -42,8 +42,9 @@ class Quiniela < ApplicationRecord
   def groups_complete?
     expected = tournament.groups.count
     return false if expected.zero?
-    return false unless group_predictions.size == expected
-    group_predictions.all? { |gp| gp.ranked_team_ids.size == 4 }
+    preds = group_predictions.to_a
+    return false unless preds.size == expected
+    preds.all? { |gp| gp.ranked_team_ids.size == 4 }
   end
 
   def best_thirds_complete?
