@@ -44,10 +44,16 @@ class PredictionsController < ApplicationController
     end
 
     ScoringService.new(@quiniela).call
+    earned = AchievementEvaluator.new(@quiniela, current_rank: @quiniela.current_rank).call
 
-    # First completion → celebration modal (its own feedback, so skip the toast).
-    if just_completed
-      redirect_to quiniela_path(fase1: 1)
+    # First completion shows the milestone modal; newly earned achievements show
+    # their banner. Either is its own feedback, so skip the plain toast.
+    params_out = {}
+    params_out[:fase1] = 1 if just_completed
+    params_out[:logros] = earned.map(&:key).join(",") if earned.any?
+
+    if params_out.any?
+      redirect_to quiniela_path(params_out)
     else
       redirect_to quiniela_path, notice: "¡Quiniela guardada!"
     end

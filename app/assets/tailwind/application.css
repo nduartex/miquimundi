@@ -262,3 +262,15 @@
   .toast-in { animation: none; }
   .toast-out { transition: none; }
 }
+
+/* Leader-change crown fly-in. */
+@keyframes crownFly {
+  0%   { transform: translateY(-40px) scale(0.6) rotate(-20deg); opacity: 0; }
+  35%  { transform: translateY(0) scale(1.25) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-4px) scale(1) rotate(0deg); opacity: 0; }
+}
+.crown-fly {
+  position: fixed; z-index: 1200; font-size: 2rem; pointer-events: none;
+  animation: crownFly 1.6s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) { .crown-fly { animation: none; opacity: 0; } }

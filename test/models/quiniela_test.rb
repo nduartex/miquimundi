@@ -67,4 +67,23 @@ class QuinielaTest < ActiveSupport::TestCase
     assert_not @quiniela.reload.first_part_complete?
     assert(@quiniela.first_part_missing.any? { |m| m.include?("premios") })
   end
+
+  test "current_rank is 1 for the top scorer and increases below" do
+    @quiniela.update!(total_points: 100)
+    other = User.create!(username: "second").quinielas.create!(tournament: @tournament, total_points: 40)
+    assert_equal 1, @quiniela.current_rank
+    assert_equal 2, other.current_rank
+  end
+
+  test "champion_correct? compares predicted final winner to the real one" do
+    final = @tournament.matches.find_by(phase: "final")
+    teams = Team.limit(2).to_a
+    final.update!(home_team: teams[0], away_team: teams[1],
+                  home_goals: 2, away_goals: 1, status: "finished")
+    @quiniela.match_predictions.create!(match: final, pred_home: 3, pred_away: 0)
+    assert @quiniela.champion_correct?           # predicted home wins == real home wins
+
+    @quiniela.match_predictions.find_by(match: final).update!(pred_home: 0, pred_away: 3)
+    assert_not @quiniela.reload.champion_correct? # predicted away, home won
+  end
 end

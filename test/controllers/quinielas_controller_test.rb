@@ -79,4 +79,27 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     get quiniela_path
     assert_match 'data-tour-auto-value="false"', response.body
   end
+
+  test "shows the achievements section with earned and locked badges" do
+    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
+    q.achievements.create!(key: "profeta", earned_at: Time.current)
+    get quiniela_path
+    assert_match "Mis logros", response.body
+    assert_match "Profeta", response.body       # earned
+    assert_match "Nostradamus", response.body    # locked but listed
+  end
+
+  test "shows the share-card button with player data when submitted" do
+    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
+    q.update!(submitted_at: Time.current, total_points: 42)
+    get quiniela_path
+    assert_select "[data-controller='share-card']"
+    assert_select "[data-share-card-points-value='42']"
+  end
+
+  test "no share-card button before submitting" do
+    @user.quinielas.find_or_create_by!(tournament: Tournament.current).update!(submitted_at: nil)
+    get quiniela_path
+    assert_select "[data-controller='share-card']", false
+  end
 end

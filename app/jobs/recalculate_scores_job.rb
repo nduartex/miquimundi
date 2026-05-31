@@ -3,8 +3,9 @@ class RecalculateScoresJob < ApplicationJob
 
   def perform(tournament_id)
     tournament = Tournament.find(tournament_id)
-    Quiniela.where(tournament_id: tournament.id).find_each do |quiniela|
-      ScoringService.new(quiniela).call
+    tournament.quinielas_relation.find_each { |q| ScoringService.new(q).call }
+    RankingsController.ranked(tournament).each_with_index do |quiniela, i|
+      AchievementEvaluator.new(quiniela, current_rank: i + 1).call
     end
     Turbo::StreamsChannel.broadcast_replace_to(
       "ranking_#{tournament.id}",

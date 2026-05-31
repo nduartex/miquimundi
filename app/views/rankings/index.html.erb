@@ -9,8 +9,10 @@
     <h1 class="font-display text-4xl font-extrabold text-white">🏆 Ranking Global</h1>
     <p class="text-white/60 mt-1">Posiciones en vivo de todos los participantes.</p>
   </header>
-  <%= turbo_stream_from "ranking_#{@tournament.id}" %>
-  <div id="ranking">
-    <%= render "table", quinielas: @quinielas %>
+  <div data-controller="leaderboard">
+    <%= turbo_stream_from "ranking_#{@tournament.id}" %>
+    <div id="ranking">
+      <%= render "table", quinielas: @quinielas %>
+    </div>
   </div>
 </div>

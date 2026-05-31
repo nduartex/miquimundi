@@ -4,6 +4,7 @@ class Quiniela < ApplicationRecord
   has_many :group_predictions, dependent: :destroy
   has_many :match_predictions, dependent: :destroy
   has_one :award_prediction, dependent: :destroy
+  has_many :achievements, dependent: :destroy
 
   has_secure_token :share_token
 
@@ -18,6 +19,36 @@ class Quiniela < ApplicationRecord
       .where.not(pred_home: nil)
       .where.not(pred_away: nil)
       .exists?
+  end
+
+  # Approximate live rank within the tournament (ties ignored — fine for the
+  # "+10 places" achievement trigger).
+  def current_rank
+    tournament.quinielas_relation.where("total_points > ?", total_points).count + 1
+  end
+
+  def final_match
+    tournament.matches.find_by(phase: "final")
+  end
+
+  def predicted_champion
+    m = final_match
+    return nil unless m
+    mp = match_predictions.find_by(match_id: m.id)
+    return nil unless mp
+    Team.find_by(id: mp.predicted_winner_team_id || mp.penalty_qualifier_id)
+  end
+
+  def real_champion
+    m = final_match
+    return nil unless m&.finished?
+    Team.find_by(id: m.actual_winner_team_id || m.penalty_winner_id)
+  end
+
+  def champion_correct?
+    predicted = predicted_champion
+    real = real_champion
+    predicted.present? && real.present? && predicted.id == real.id
   end
 
   # The "first part" (Grupos + Terceros + Premios) is complete only when all

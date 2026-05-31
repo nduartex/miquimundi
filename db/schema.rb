@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_30_201427) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_30_214318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "achievements", force: :cascade do |t|
+    t.bigint "quiniela_id", null: false
+    t.string "key", null: false
+    t.datetime "earned_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiniela_id", "key"], name: "index_achievements_on_quiniela_id_and_key", unique: true
+    t.index ["quiniela_id"], name: "index_achievements_on_quiniela_id"
+  end
 
   create_table "award_predictions", force: :cascade do |t|
     t.bigint "quiniela_id", null: false
@@ -126,6 +136,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_30_201427) do
     t.jsonb "best_third_groups", default: [], null: false
     t.string "share_token", null: false
     t.datetime "first_part_completed_at"
+    t.integer "worst_rank"
     t.index ["share_token"], name: "index_quinielas_on_share_token", unique: true
     t.index ["tournament_id"], name: "index_quinielas_on_tournament_id"
     t.index ["user_id"], name: "index_quinielas_on_user_id"
@@ -180,6 +191,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_30_201427) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "achievements", "quinielas"
   add_foreign_key "award_predictions", "players", column: "balon_oro_player_id"
   add_foreign_key "award_predictions", "players", column: "bota_oro_player_id"
   add_foreign_key "award_predictions", "players", column: "guante_oro_player_id"

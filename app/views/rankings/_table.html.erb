@@ -10,7 +10,7 @@
     <% quinielas.each_with_index do |q, i| %>
       <% lead = i.zero? %>
       <% medal = ["🥇", "🥈", "🥉"][i] %>
-      <div class="flex items-center surface <%= lead ? 'gap-4 p-5 ring-2 ring-amber-300 bg-gradient-to-r from-amber-400/15 to-transparent shadow-amber-300/10' : 'gap-3 p-3' %>">
+      <div data-user-id="<%= q.user_id %>" class="flex items-center surface <%= lead ? 'gap-4 p-5 ring-2 ring-amber-300 bg-gradient-to-r from-amber-400/15 to-transparent shadow-amber-300/10' : 'gap-3 p-3' %>">
         <span class="text-center font-display font-extrabold <%= lead ? 'w-11 text-3xl text-amber-300' : 'w-9 text-lg text-white/80' %>">
           <%= medal || (i + 1) %>
         </span>
@@ -22,6 +22,7 @@
                    class="<%= lead ? 'w-[26px] h-[19px]' : 'w-[22px] h-[16px]' %> rounded-sm object-cover ring-1 ring-white/15 shrink-0">
             <% end %>
             <span class="truncate"><%= q.user.display_name %></span>
+            <% q.achievements.each do |a| %><span class="shrink-0" title="<%= AchievementCatalog.find(a.key)&.name %>"><%= AchievementCatalog.find(a.key)&.emoji %></span><% end %>
           </span>
         </div>
         <span class="text-emerald-300 font-semibold tabular-nums <%= lead ? 'text-base' : 'text-sm' %>" title="Aciertos exactos"><%= q.exact_hits %>✓</span>

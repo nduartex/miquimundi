@@ -23,6 +23,8 @@
 
   <%= render "summary", quiniela: @quiniela %>
 
+  <%= render "achievements", quiniela: @quiniela %>
+
   <div id="access-link" class="surface p-4 mb-6 <%= 'ring-2 ring-amber-300' if params[:welcome] %>" data-controller="clipboard">
     <div class="flex items-center gap-2 mb-2">
       <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
@@ -53,6 +55,21 @@
         <button type="button" data-action="clipboard#copy" data-clipboard-target="btn"
                 class="px-4 rounded-xl bg-sky-400 text-slate-900 font-bold shrink-0 cursor-pointer">Copiar</button>
       </div>
+    </div>
+
+    <% champ = @quiniela.predicted_champion %>
+    <div class="mb-6" data-controller="share-card"
+         data-share-card-username-value="<%= @quiniela.user.display_name %>"
+         data-share-card-flag-value="<%= @quiniela.user.favorite_team&.flag_emoji %>"
+         data-share-card-points-value="<%= @quiniela.total_points %>"
+         data-share-card-exact-value="<%= @quiniela.exact_hits %>"
+         data-share-card-hits-value="<%= @quiniela.match_hits %>"
+         data-share-card-rank-value="<%= @quiniela.current_rank %>"
+         data-share-card-champion-value="<%= champ&.name %>"
+         data-share-card-champion-flag-value="<%= champ&.flag_emoji %>">
+      <button type="button" data-action="share-card#share" class="btn-primary w-full">
+        📲 Compartir mi tarjeta
+      </button>
     </div>
   <% end %>
 
@@ -130,6 +147,23 @@
             Cerrar
           </button>
         </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if params[:logros].present? %>
+    <% keys = params[:logros].to_s.split(",") %>
+    <% epic = (keys & AchievementCatalog::EPIC_KEYS).any? %>
+    <div data-controller="celebrate" data-celebrate-level-value="<%= epic ? 'epic' : 'normal' %>"
+         class="fixed inset-x-0 top-4 z-[1100] flex justify-center px-4">
+      <div class="surface surface-neon p-4 max-w-md w-full flex items-center gap-3 hero-in">
+        <span class="text-3xl"><%= keys.map { |k| AchievementCatalog.find(k)&.emoji }.join %></span>
+        <div class="flex-1 min-w-0">
+          <div class="font-display font-extrabold text-gold uppercase tracking-wide">¡Logro desbloqueado!</div>
+          <div class="text-white/85 text-sm truncate"><%= keys.map { |k| AchievementCatalog.find(k)&.name }.compact.join(" · ") %></div>
+        </div>
+        <button type="button" data-action="celebrate#close" aria-label="Cerrar"
+                class="text-white/55 hover:text-white text-2xl leading-none cursor-pointer">&times;</button>
       </div>
     </div>
   <% end %>

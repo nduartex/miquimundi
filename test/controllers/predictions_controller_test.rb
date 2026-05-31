@@ -123,4 +123,14 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to quiniela_path
     assert_equal first_ts.to_i, q.reload.first_part_completed_at.to_i
   end
+
+  test "earning an achievement on save redirects with the logros flag" do
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    q.update!(worst_rank: 15) # simulate having been far down the ranking
+
+    post quiniela_predictions_path, params: complete_first_part_params
+    assert q.reload.achievements.exists?(key: "remontada")
+    assert_match(/logros=remontada/, @response.headers["Location"].to_s)
+  end
 end

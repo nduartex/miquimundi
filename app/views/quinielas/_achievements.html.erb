@@ -1,0 +1,16 @@
+<% earned = quiniela.achievements.index_by(&:key) %>
+<div class="surface p-5 mb-6">
+  <h3 class="font-display font-extrabold text-xl text-white uppercase tracking-wide mb-4">🏅 Mis logros</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <% AchievementCatalog::ALL.each do |a| %>
+      <% got = earned[a.key] %>
+      <div class="rounded-xl border p-3 flex items-center gap-3 <%= got ? 'border-gold/60 bg-gold/10' : 'border-white/10 bg-pitch-900/40 opacity-70' %>">
+        <span class="text-2xl <%= 'grayscale' unless got %>"><%= a.emoji %></span>
+        <div class="min-w-0">
+          <div class="font-display font-bold text-white truncate"><%= a.name %></div>
+          <div class="text-white/60 text-xs leading-snug"><%= got ? "¡Desbloqueado!" : a.description %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
