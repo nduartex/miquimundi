@@ -28,6 +28,14 @@
     </div>
 
     <%= form_with url: session_path, method: :post, class: "space-y-4" do |f| %>
+      <%# Anti-bot (invisible): a honeypot field bots tend to fill, plus a signed
+          timestamp to reject instant/scripted and stale submissions. %>
+      <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden">
+        <label for="nickname">No llenar este campo</label>
+        <%= text_field_tag :nickname, nil, id: "nickname", tabindex: -1, autocomplete: "off" %>
+      </div>
+      <%= hidden_field_tag :signup_ts, @signup_ts %>
+
       <div>
         <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="username">Elige tu nombre de usuario</label>
         <%= text_field_tag :username, params[:username], id: "username", required: true, autocomplete: "off",
@@ -50,6 +58,7 @@
       <% end %>
 
       <%= f.submit "⚽ Entrar a la cancha",
+            data: { turbo_submits_with: "Creando…" },
             class: "btn-primary w-full text-lg py-3.5" %>
     <% end %>
     <p class="text-white/40 text-xs text-center mt-6">Sin contraseña. Tras crear tu usuario te daremos un <strong class="text-white/60">enlace de acceso</strong> para volver a entrar. ¿Ya tienes uno? Úsalo para reingresar.</p>
