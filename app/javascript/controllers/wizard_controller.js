@@ -29,7 +29,10 @@ export default class extends Controller {
     const panel = this.panelTargets[i]
     panel.classList.add("is-enter")
     requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove("is-enter")))
-    this.element.scrollIntoView({ behavior: "smooth", block: "start" })
+    // Scroll to the step tabs (not the whole page), so changing phase doesn't
+    // jump past the header/summary all the way to the top.
+    const anchor = this.element.querySelector("#wizard-steps") || this.element
+    anchor.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   render() {

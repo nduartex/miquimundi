@@ -1,16 +1,34 @@
 <% earned = quiniela.achievements.index_by(&:key) %>
-<div class="surface p-5 mb-6">
+<div class="surface p-5 mb-6" data-controller="achievements-share">
+  <script type="application/json" data-achievements-share-target="data"><%== achievements_card_data(quiniela).to_json %></script>
   <h3 class="font-display font-extrabold text-xl text-white uppercase tracking-wide mb-4">🏅 Mis logros</h3>
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
     <% AchievementCatalog::ALL.each do |a| %>
-      <% got = earned[a.key] %>
+      <% got = earned.key?(a.key) %>
       <div class="rounded-xl border p-3 flex items-center gap-3 <%= got ? 'border-gold/60 bg-gold/10' : 'border-white/10 bg-pitch-900/40 opacity-70' %>">
         <span class="text-2xl <%= 'grayscale' unless got %>"><%= a.emoji %></span>
         <div class="min-w-0">
           <div class="font-display font-bold text-white truncate"><%= a.name %></div>
-          <div class="text-white/60 text-xs leading-snug"><%= got ? "¡Desbloqueado!" : a.description %></div>
+          <div class="text-white/60 text-xs leading-snug"><%= a.description %></div>
+          <% if a.note %><div class="text-white/45 text-[11px] italic leading-snug mt-0.5">(<%= a.note %>)</div><% end %>
         </div>
       </div>
     <% end %>
   </div>
+
+  <% if earned.any? %>
+    <button type="button" data-action="achievements-share#share" class="btn-primary w-full mt-4">
+      📲 Compartir mis logros
+    </button>
+    <div data-achievements-share-target="preview" class="hidden mt-3 text-center">
+      <img data-achievements-share-target="image"
+           class="mx-auto w-full max-w-[260px] rounded-2xl border border-emerald-200/20 shadow-lg"
+           alt="Mis logros del Mundial">
+      <a data-achievements-share-target="download" download="mis-logros-mundial.png"
+         class="btn-ghost w-full mt-3">⬇️ Descargar</a>
+      <p class="text-xs text-white/50 mt-2">Guárdala y subila a tu historia de IG o WhatsApp</p>
+    </div>
+  <% else %>
+    <p class="text-xs text-white/60 mt-4 text-center">Desbloqueá tu primer logro para poder compartirlo. 🔓</p>
+  <% end %>
 </div>

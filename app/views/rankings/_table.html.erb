@@ -10,26 +10,49 @@
     <% quinielas.each_with_index do |q, i| %>
       <% lead = i.zero? %>
       <% medal = ["🥇", "🥈", "🥉"][i] %>
-      <div data-user-id="<%= q.user_id %>" class="flex items-center surface <%= lead ? 'gap-4 p-5 ring-2 ring-amber-300 bg-gradient-to-r from-amber-400/15 to-transparent shadow-amber-300/10' : 'gap-3 p-3' %>">
-        <span class="text-center font-display font-extrabold <%= lead ? 'w-11 text-3xl text-amber-300' : 'w-9 text-lg text-white/80' %>">
-          <%= medal || (i + 1) %>
-        </span>
-        <div class="flex-1 min-w-0">
-          <% if lead %><div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest">👑 Líder</div><% end %>
-          <span class="flex items-center gap-2 text-white font-semibold truncate <%= 'text-xl' if lead %>">
-            <% if q.user.favorite_team&.flag_url %>
-              <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
-                   class="<%= lead ? 'w-[26px] h-[19px]' : 'w-[22px] h-[16px]' %> rounded-sm object-cover ring-1 ring-white/15 shrink-0">
-            <% end %>
-            <span class="truncate"><%= q.user.display_name %></span>
-            <% q.achievements.each do |a| %><span class="shrink-0" title="<%= AchievementCatalog.find(a.key)&.name %>"><%= AchievementCatalog.find(a.key)&.emoji %></span><% end %>
-          </span>
+      <% if lead %>
+        <%# Leader: single row on desktop (sm+), stacked on mobile so the name never gets cut. %>
+        <div data-user-id="<%= q.user_id %>" class="surface p-5 ring-2 ring-amber-300 bg-gradient-to-r from-amber-400/15 to-transparent shadow-amber-300/10 flex flex-col sm:flex-row sm:items-center sm:gap-4">
+          <div class="flex items-center gap-4 min-w-0 sm:flex-1">
+            <span class="text-center font-display font-extrabold w-11 text-3xl text-amber-300 shrink-0"><%= medal %></span>
+            <div class="flex-1 min-w-0">
+              <div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest">👑 Líder</div>
+              <span class="flex items-center gap-2 text-white font-semibold text-xl truncate">
+                <% if q.user.favorite_team&.flag_url %>
+                  <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
+                       class="w-[26px] h-[19px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+                <% end %>
+                <span class="truncate"><%= q.user.display_name %></span>
+                <% q.achievements.each do |a| %><span class="shrink-0" title="<%= AchievementCatalog.find(a.key)&.name %>"><%= AchievementCatalog.find(a.key)&.emoji %></span><% end %>
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-4 mt-3 sm:mt-0 shrink-0">
+            <span class="text-emerald-300 font-semibold tabular-nums text-base" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
+            <span class="text-rose-300 font-semibold tabular-nums text-base" title="Partidos acertados"><%= q.match_hits %>⚽</span>
+            <span class="text-amber-300 font-display font-extrabold tabular-nums text-3xl text-right sm:w-16"><%= q.total_points %></span>
+            <span class="hidden sm:inline text-white/45 text-xs w-12 text-right tabular-nums">—</span>
+          </div>
         </div>
-        <span class="text-emerald-300 font-semibold tabular-nums <%= lead ? 'text-base' : 'text-sm' %>" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
-        <span class="text-rose-300 font-semibold tabular-nums <%= lead ? 'text-base' : 'text-sm' %>" title="Partidos acertados"><%= q.match_hits %>⚽</span>
-        <span class="text-amber-300 font-display font-extrabold text-right tabular-nums <%= lead ? 'text-3xl w-16' : 'text-xl w-14' %>"><%= q.total_points %></span>
-        <span class="text-white/45 text-xs w-12 text-right tabular-nums"><%= lead ? "—" : "-#{leader - q.total_points}" %></span>
-      </div>
+      <% else %>
+        <div data-user-id="<%= q.user_id %>" class="flex items-center surface gap-3 p-3">
+          <span class="text-center font-display font-extrabold w-9 text-lg text-white/80"><%= medal || (i + 1) %></span>
+          <div class="flex-1 min-w-0">
+            <span class="flex items-center gap-2 text-white font-semibold truncate">
+              <% if q.user.favorite_team&.flag_url %>
+                <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
+                     class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+              <% end %>
+              <span class="truncate"><%= q.user.display_name %></span>
+              <% q.achievements.each do |a| %><span class="shrink-0" title="<%= AchievementCatalog.find(a.key)&.name %>"><%= AchievementCatalog.find(a.key)&.emoji %></span><% end %>
+            </span>
+          </div>
+          <span class="text-emerald-300 font-semibold tabular-nums text-sm" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
+          <span class="text-rose-300 font-semibold tabular-nums text-sm" title="Partidos acertados"><%= q.match_hits %>⚽</span>
+          <span class="text-amber-300 font-display font-extrabold text-right tabular-nums text-xl w-14"><%= q.total_points %></span>
+          <span class="text-white/45 text-xs w-12 text-right tabular-nums">-<%= leader - q.total_points %></span>
+        </div>
+      <% end %>
     <% end %>
   </div>
 <% end %>

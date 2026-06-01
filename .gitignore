@@ -36,3 +36,6 @@
 # Compiled CSS build artifacts
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# Brainstorming visual companion
+.superpowers/

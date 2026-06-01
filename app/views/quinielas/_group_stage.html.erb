@@ -2,7 +2,7 @@
    row_accents = ["var(--color-grass)", "var(--color-grass)", "var(--color-gold)", "#9fb3a6"] %>
 <p class="text-white/70 mb-4">
   <% if locked %>Tu orden de grupos quedó <strong class="text-white">cerrado</strong>. El 1º y 2º clasifican; el 3º es candidato a mejor tercero.
-  <% else %>Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrándolos. El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.<% end %>
+  <% else %>Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrando desde <span class="text-white">⠿</span> (funciona también en el celular). El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.<% end %>
 </p>
 <div class="grid sm:grid-cols-2 gap-4">
   <% groups.each do |group| %>
@@ -24,17 +24,22 @@
 
         <ul <%= 'data-group-order-target="list"'.html_safe unless locked %> class="space-y-2 <%= 'opacity-80' if locked %>">
           <% ordered.each_with_index do |team, i| %>
-            <li <% unless locked %>data-group-order-target="item" data-team-id="<%= team.id %>" draggable="true"
-                data-action="dragstart->group-order#dragStart dragend->group-order#dragEnd dragover->group-order#dragOver drop->group-order#drop"<% end %>
+            <li <% unless locked %>data-group-order-target="item" data-team-id="<%= team.id %>"<% end %>
                 style="--accent: <%= row_accents[i] || row_accents.last %>"
-                class="team-row <%= 'is-out' if i == 3 %> flex items-center gap-3 px-3 py-2.5 <%= locked ? 'cursor-default' : 'cursor-grab active:cursor-grabbing' %>">
+                class="team-row <%= 'is-out' if i == 3 %> flex items-center gap-3 px-3 py-2.5 transition-transform <%= 'cursor-default' if locked %>">
               <span class="w-6 h-6 rounded-md text-sm font-extrabold flex items-center justify-center shrink-0" data-pos><%= i + 1 %></span>
               <% if team.flag_url %>
                 <img src="<%= team.flag_url %>" alt="" width="26" height="20" loading="lazy"
                      class="w-[26px] h-[20px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
               <% end %>
               <span class="flex-1 text-white font-semibold truncate"><%= team.name %></span>
-              <span class="text-white/30 text-lg select-none" aria-hidden="true"><%= locked ? "🔒" : "⠿" %></span>
+              <% if locked %>
+                <span class="text-white/30 text-lg select-none" aria-hidden="true">🔒</span>
+              <% else %>
+                <span data-action="pointerdown->group-order#start"
+                      class="touch-none cursor-grab active:cursor-grabbing text-white/30 hover:text-white/70 text-xl leading-none select-none shrink-0 px-2 -mr-1"
+                      title="Arrastrar" aria-hidden="true">⠿</span>
+              <% end %>
             </li>
           <% end %>
         </ul>

@@ -32,4 +32,21 @@ class AchievementEvaluatorTest < ActiveSupport::TestCase
     newly = AchievementEvaluator.new(@quiniela, current_rank: 5).call # climbed 10
     assert_includes newly.map(&:key), "remontada"
   end
+
+  test "awards The GOAT to the rank-1 quiniela with points and revokes it when overtaken" do
+    @quiniela.update!(total_points: 42)
+    newly = AchievementEvaluator.new(@quiniela, current_rank: 1).call
+    assert_includes newly.map(&:key), "goat"
+    assert @quiniela.achievements.exists?(key: "goat")
+
+    # Dropped to 2nd: the exclusive badge is revoked.
+    AchievementEvaluator.new(@quiniela, current_rank: 2).call
+    assert_not @quiniela.achievements.exists?(key: "goat")
+  end
+
+  test "does not award The GOAT to a leader with zero points" do
+    @quiniela.update!(total_points: 0)
+    newly = AchievementEvaluator.new(@quiniela, current_rank: 1).call
+    assert_not_includes newly.map(&:key), "goat"
+  end
 end

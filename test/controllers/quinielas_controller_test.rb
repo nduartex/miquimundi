@@ -40,7 +40,8 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'data-controller="group-order"', response.body
     assert_match "https://flagcdn.com/mx.svg", response.body
-    assert_select "li[draggable=true]"
+    assert_select "li[data-group-order-target='item']"                       # sortable rows
+    assert_select "[data-action='pointerdown->group-order#start']"           # touch/mouse drag handle
     assert_select "input[type=hidden][name=?]", "group_predictions[#{Group.find_by(name: 'A').id}][fourth_team_id]"
   end
 
@@ -80,26 +81,66 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_match 'data-tour-auto-value="false"', response.body
   end
 
-  test "shows the achievements section with earned and locked badges" do
+  test "lists all achievements (earned and locked) and offers to share when any is unlocked" do
     q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
     q.achievements.create!(key: "profeta", earned_at: Time.current)
     get quiniela_path
     assert_match "Mis logros", response.body
-    assert_match "Profeta", response.body       # earned
-    assert_match "Nostradamus", response.body    # locked but listed
+    assert_match "Profeta", response.body                       # unlocked
+    assert_match "Nostradamus", response.body                   # locked but still listed (greyed)
+    assert_select "[data-action='achievements-share#share']"     # share button present
   end
 
-  test "shows the share-card button with player data when submitted" do
-    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
-    q.update!(submitted_at: Time.current, total_points: 42)
+  test "hides the share button when no achievement is unlocked" do
+    @user.quinielas.find_or_create_by!(tournament: Tournament.current)
     get quiniela_path
-    assert_select "[data-controller='share-card']"
-    assert_select "[data-share-card-points-value='42']"
+    assert_match "Mis logros", response.body
+    assert_match "Nostradamus", response.body                   # locked badges still listed
+    assert_select "[data-action='achievements-share#share']", false
+    assert_match "Desbloqueá tu primer logro", response.body
+  end
+
+  test "enables the prediction share card when the first part is complete" do
+    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
+    complete_first_part!(q)
+    q.update!(submitted_at: Time.current)
+    get quiniela_path
+    assert_select "[data-controller~='share-card']"
+    assert_select "[data-action='share-card#share']"            # enabled button
+    assert_select "[data-share-card-target='data']"             # embedded prediction JSON
+    assert_match "MI PREDICCIÓN", response.body
+  end
+
+  test "disables the prediction share card with a hint when incomplete" do
+    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
+    q.update!(submitted_at: Time.current)
+    get quiniela_path
+    assert_select "[data-controller~='share-card']"
+    assert_select "[data-action='share-card#share']", false     # no enabled button
+    assert_select "button[disabled]"
+    assert_match "para generar tu imagen", response.body
   end
 
   test "no share-card button before submitting" do
     @user.quinielas.find_or_create_by!(tournament: Tournament.current).update!(submitted_at: nil)
     get quiniela_path
-    assert_select "[data-controller='share-card']", false
+    assert_select "[data-controller~='share-card']", false
+  end
+
+  private
+
+  def complete_first_part!(quiniela)
+    Tournament.current.groups.each do |g|
+      t = g.teams.to_a
+      quiniela.group_predictions.create!(
+        group: g, first_team: t[0], second_team: t[1], third_team: t[2], fourth_team: t[3]
+      )
+    end
+    quiniela.update!(best_third_groups: %w[A B C D E F G H])
+    player = Player.first
+    quiniela.create_award_prediction!(
+      balon_oro_player: player, bota_oro_player: player, guante_oro_player: player,
+      young_player: player, fair_play_team: Team.first
+    )
   end
 end
