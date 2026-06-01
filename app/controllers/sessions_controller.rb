@@ -1,13 +1,18 @@
 class SessionsController < ApplicationController
   include SignupProtection
 
+  # Every rendered form (initial or re-rendered after an error/limit) needs a
+  # fresh signed timestamp, so a normal error doesn't leave the user with an
+  # empty/stale token that the time-trap would then reject. Declared before the
+  # rate-limit guard so even a 429 page carries a usable timestamp.
+  before_action :assign_signup_timestamp, only: %i[new create]
+
   # Raw per-IP guard against hammering the endpoint (counts every request).
   rate_limit to: 20, within: 1.minute, only: :create, with: -> { reject_signup_rate_limited }
 
   def new
     redirect_to quiniela_path if signed_in?
     @tournament = Tournament.current
-    @signup_ts = signup_timestamp
   end
 
   # Registers a new username (rejects duplicates). Re-entry is via the personal
@@ -48,5 +53,11 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to new_session_path, notice: "Sesión cerrada."
+  end
+
+  private
+
+  def assign_signup_timestamp
+    @signup_ts = signup_timestamp
   end
 end

@@ -6,6 +6,7 @@ export default class extends Controller {
   static targets = ["panel"]
 
   open() {
+    if (!this.panelTarget.classList.contains("hidden")) return // already open
     this.panelTarget.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
     this._esc = (e) => { if (e.key === "Escape") this.close() }

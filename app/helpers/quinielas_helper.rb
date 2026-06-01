@@ -4,30 +4,36 @@ module QuinielasHelper
   #   teams:  id => { name, flag }
   #   groups: "A" => groupId
   def thirds_payload(tournament)
-    teams = {}
-    groups = {}
-    tournament.groups.includes(:teams).order(:name).each do |group|
-      group.teams.each { |t| teams[t.id] = { name: t.name, flag: t.flag_url } }
-      groups[group.name] = group.id
+    Rails.cache.fetch("datasets/v2/thirds_payload/#{tournament.id}", expires_in: 12.hours) do
+      teams = {}
+      groups = {}
+      tournament.groups.includes(:teams).order(:name).each do |group|
+        group.teams.each { |t| teams[t.id] = { name: t.name, flag: t.flag_url } }
+        groups[group.name] = group.id
+      end
+      { teams: teams, groups: groups }
     end
-    { teams: teams, groups: groups }
   end
 
   # All players as a searchable dataset for the awards typeahead:
   # [{ id, name, country, flag }]
   def players_dataset(tournament)
-    Player.joins(team: :group)
-          .where(groups: { tournament_id: tournament.id })
-          .includes(:team)
-          .order(:name)
-          .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url } }
+    Rails.cache.fetch("datasets/v2/players/#{tournament.id}", expires_in: 12.hours) do
+      Player.joins(team: :group)
+            .where(groups: { tournament_id: tournament.id })
+            .includes(:team)
+            .order(:name)
+            .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url } }
+    end
   end
 
   # All national teams as a searchable dataset for the favorite-team picker.
   def teams_dataset(tournament)
-    tournament.groups.includes(:teams).order(:name).flat_map(&:teams)
-              .sort_by(&:name)
-              .map { |t| { id: t.id, name: t.name, country: "", flag: t.flag_url } }
+    Rails.cache.fetch("datasets/v2/teams/#{tournament.id}", expires_in: 12.hours) do
+      tournament.groups.includes(:teams).order(:name).flat_map(&:teams)
+                .sort_by(&:name)
+                .map { |t| { id: t.id, name: t.name, country: "", flag: t.flag_url } }
+    end
   end
 
   # Ranked team ids 1st..4th for a group: saved prediction order padded with

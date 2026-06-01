@@ -71,6 +71,30 @@ class QuinielasHelperTest < ActionView::TestCase
     assert_empty data[:achievements]
   end
 
+  test "teams_dataset is cached per tournament and reused" do
+    first = teams_dataset(@tournament)
+    Team.update_all(name: "ZZZ")                      # change the DB underneath
+    assert_equal first, teams_dataset(@tournament)    # served from cache, not rebuilt
+    Rails.cache.clear
+    refute_equal first, teams_dataset(@tournament)    # rebuilt after the cache clears
+  end
+
+  test "players_dataset is cached per tournament and reused" do
+    first = players_dataset(@tournament)
+    Player.update_all(name: "ZZZ")
+    assert_equal first, players_dataset(@tournament)  # served from cache
+    Rails.cache.clear
+    refute_equal first, players_dataset(@tournament)  # rebuilt after clear
+  end
+
+  test "thirds_payload is cached per tournament and reused" do
+    first = thirds_payload(@tournament)
+    Team.update_all(name: "ZZZ")
+    assert_equal first, thirds_payload(@tournament)   # served from cache
+    Rails.cache.clear
+    refute_equal first, thirds_payload(@tournament)   # rebuilt after clear
+  end
+
   test "prediction_card_data degrades gracefully when empty" do
     data = prediction_card_data(@quiniela)
 

@@ -1,8 +1,6 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
-  setup { Rails.cache.clear }
-
   # Honeypot --------------------------------------------------------------
 
   test "a filled honeypot field silently blocks registration" do
@@ -165,6 +163,27 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "User.count", 1 do
       post session_path, params: { username: "realhuman", signup_ts: ts, nickname: "" },
            headers: { "REMOTE_ADDR" => "203.0.113.7" }
+    end
+  end
+
+  test "after a validation error the re-rendered form keeps a usable timestamp" do
+    User.create!(username: "takenx")
+    get new_session_path
+    ts = css_select("input[name=signup_ts]").first["value"]
+    travel 5.seconds
+
+    # First try: username already taken → 422, form re-renders.
+    post session_path, params: { username: "takenx", signup_ts: ts, nickname: "" },
+         headers: { "REMOTE_ADDR" => "198.51.100.9" }
+    assert_response :unprocessable_entity
+    retry_ts = css_select("input[name=signup_ts]").first["value"]
+    assert retry_ts.present?, "the re-rendered form must still carry a signup timestamp"
+
+    # Retry with a good username using the re-rendered form → should succeed.
+    travel 3.seconds
+    assert_difference "User.count", 1 do
+      post session_path, params: { username: "freshname", signup_ts: retry_ts, nickname: "" },
+           headers: { "REMOTE_ADDR" => "198.51.100.9" }
     end
   end
 

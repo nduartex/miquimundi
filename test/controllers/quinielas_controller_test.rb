@@ -39,7 +39,7 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     get quiniela_path
     assert_response :success
     assert_match 'data-controller="group-order"', response.body
-    assert_match "https://flagcdn.com/mx.svg", response.body
+    assert_match "/flags/mx.png", response.body
     assert_select "li[data-group-order-target='item']"                       # sortable rows
     assert_select "[data-action='pointerdown->group-order#start']"           # touch/mouse drag handle
     assert_select "input[type=hidden][name=?]", "group_predictions[#{Group.find_by(name: 'A').id}][fourth_team_id]"

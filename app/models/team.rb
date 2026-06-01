@@ -26,9 +26,11 @@ class Team < ApplicationRecord
     [name, flag_emoji].compact.join("  ")
   end
 
-  # Real flag image (SVG) URL, or nil when the code is unknown.
+  # Real flag image URL, or nil when the code is unknown. Served from our own
+  # public/flags/ (downloaded from flagcdn) so we don't depend on a third-party
+  # CDN at runtime and the assets stay tiny (~5KB PNGs) and CDN-cacheable.
   def flag_url
     iso = ISO2[code]
-    iso && "https://flagcdn.com/#{iso}.svg"
+    iso && "/flags/#{iso}.png"
   end
 end
