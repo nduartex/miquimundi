@@ -6,7 +6,13 @@
      data-thirds-max-value="8">
   <div class="flex items-center justify-between mb-4">
     <p class="text-white/70 pr-3">Elige los <strong class="text-white">8 mejores terceros</strong> que clasifican a dieciseisavos.</p>
-    <span class="shrink-0 px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold tabular-nums" data-thirds-target="counter">0/8</span>
+    <span class="hidden sm:inline-block shrink-0 px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold tabular-nums" data-thirds-target="counter">0/8</span>
+  </div>
+
+  <%# Mobile only: a counter pinned just below the top nav while you scroll the
+      12 groups, so you always see how many thirds you've picked. %>
+  <div class="sm:hidden sticky top-16 z-30 mb-3 flex justify-end pointer-events-none">
+    <span class="pointer-events-auto px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold tabular-nums shadow-lg shadow-black/40" data-thirds-target="counter">0/8</span>
   </div>
 
   <div class="grid sm:grid-cols-2 gap-2">

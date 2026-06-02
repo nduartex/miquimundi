@@ -21,7 +21,8 @@ export default class extends Controller {
 
   enforce() {
     const n = this.selected.length
-    if (this.hasCounterTarget) this.counterTarget.textContent = `${n}/${this.maxValue}`
+    // Update every counter (desktop inline + mobile sticky pill).
+    this.counterTargets.forEach((c) => { c.textContent = `${n}/${this.maxValue}` })
     const full = n >= this.maxValue
     // When locked (read-only/shared views) the checkboxes are disabled server-side
     // and must stay that way — don't re-enable the checked ones.
