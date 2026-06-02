@@ -14,15 +14,23 @@ export default class extends Controller {
 
   connect() { this.sync() }
 
-  // Pointer drag (mouse + touch) initiated from a row's grip handle.
+  // Pointer drag (mouse + touch). Desktop (mouse/pen): grab the row from
+  // anywhere. Touch: only from the ⠿ grip, so a finger can still scroll the
+  // list without hijacking it into a drag.
   start(event) {
     if (event.button != null && event.button !== 0) return // left button / touch only
+    if (event.pointerType === "touch" && !event.target.closest("[data-grip]")) return
     const item = event.currentTarget.closest("[data-group-order-target='item']")
     if (!item) return
     event.preventDefault()
 
     this.dragging = item
+    // Desktop (mouse/pen): the card lifts and tracks the cursor freely, and is
+    // dropped wherever you release it. Touch: live reorder between slots.
+    this.follow = event.pointerType !== "touch"
+    this.grabOffset = event.clientY - item.getBoundingClientRect().top
     event.currentTarget.setPointerCapture?.(event.pointerId)
+    item.style.transition = "none" // instant tracking; no easing lag while dragging
     item.classList.add(...DRAG_CLASSES)
 
     this._move = this.onMove.bind(this)
@@ -34,7 +42,33 @@ export default class extends Controller {
 
   onMove(event) {
     if (!this.dragging) return
-    const y = event.clientY
+    if (this.follow) {
+      // Free movement: glue the grabbed point of the card to the cursor.
+      this.dragging.style.transform = "none"
+      const top = this.dragging.getBoundingClientRect().top
+      this.dragging.style.transform = `translateY(${event.clientY - top - this.grabOffset}px) scale(1.02)`
+      return
+    }
+    this.placeAt(event.clientY)
+    this.sync()
+  }
+
+  onEnd(event) {
+    if (!this.dragging) return
+    // Desktop: settle into the slot under the release point.
+    if (this.follow && event) this.placeAt(event.clientY)
+    this.dragging.style.transform = "" // snap into the final slot (transition still off)
+    this.dragging.style.transition = ""
+    this.dragging.classList.remove(...DRAG_CLASSES)
+    this.dragging = null
+    document.removeEventListener("pointermove", this._move)
+    document.removeEventListener("pointerup", this._end)
+    document.removeEventListener("pointercancel", this._end)
+    this.sync()
+  }
+
+  // Moves the dragged row into the slot whose midpoint sits below `y`.
+  placeAt(y) {
     const others = this.itemTargets.filter((el) => el !== this.dragging)
     const before = others.find((el) => {
       const r = el.getBoundingClientRect()
@@ -45,17 +79,6 @@ export default class extends Controller {
     } else if (this.listTarget.lastElementChild !== this.dragging) {
       this.listTarget.appendChild(this.dragging)
     }
-    this.sync()
-  }
-
-  onEnd() {
-    if (!this.dragging) return
-    this.dragging.classList.remove(...DRAG_CLASSES)
-    this.dragging = null
-    document.removeEventListener("pointermove", this._move)
-    document.removeEventListener("pointerup", this._end)
-    document.removeEventListener("pointercancel", this._end)
-    this.sync()
   }
 
   reorder(from, to) {

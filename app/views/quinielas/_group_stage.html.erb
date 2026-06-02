@@ -24,9 +24,9 @@
 
         <ul <%= 'data-group-order-target="list"'.html_safe unless locked %> class="space-y-2 <%= 'opacity-80' if locked %>">
           <% ordered.each_with_index do |team, i| %>
-            <li <% unless locked %>data-group-order-target="item" data-team-id="<%= team.id %>"<% end %>
+            <li <% unless locked %>data-group-order-target="item" data-team-id="<%= team.id %>" data-action="pointerdown->group-order#start"<% end %>
                 style="--accent: <%= row_accents[i] || row_accents.last %>"
-                class="team-row <%= 'is-out' if i == 3 %> flex items-center gap-3 px-3 py-2.5 transition-transform <%= 'cursor-default' if locked %>">
+                class="team-row <%= 'is-out' if i == 3 %> flex items-center gap-3 px-3 py-2.5 transition-transform <%= locked ? 'cursor-default' : 'md:cursor-grab md:active:cursor-grabbing' %>">
               <span class="w-6 h-6 rounded-md text-sm font-extrabold flex items-center justify-center shrink-0" data-pos><%= i + 1 %></span>
               <% if team.flag_url %>
                 <img src="<%= team.flag_url %>" alt="" width="26" height="20" loading="lazy"
@@ -36,7 +36,7 @@
               <% if locked %>
                 <span class="text-white/30 text-lg select-none" aria-hidden="true">🔒</span>
               <% else %>
-                <span data-action="pointerdown->group-order#start"
+                <span data-grip
                       class="touch-none cursor-grab active:cursor-grabbing text-white/30 hover:text-white/70 text-xl leading-none select-none shrink-0 px-2 -mr-1"
                       title="Arrastrar" aria-hidden="true">⠿</span>
               <% end %>
