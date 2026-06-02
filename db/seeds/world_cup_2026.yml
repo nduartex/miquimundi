@@ -1,68 +1,2712 @@
+# Mundial 2026 — torneo, grupos con rosters confirmados (26 por selección,
+# name + position) y bracket de eliminación. Los porteros llevan
+# position: goalkeeper (se usan para filtrar el premio Guante de Oro).
 tournament:
-  name: "Copa Mundial de la FIFA 2026"
+  name: Copa Mundial de la FIFA 2026
   year: 2026
-  starts_at: "2026-06-11T18:00:00Z"   # cierre de la quiniela de grupos
+  starts_at: '2026-06-11T18:00:00Z'
 groups:
   A:
-    - { name: "México", code: "MEX", flag: "🇲🇽", players: ["Santiago Giménez", "Hirving Lozano", "Edson Álvarez"] }
-    - { name: "Sudáfrica", code: "RSA", flag: "🇿🇦", players: ["Percy Tau", "Lyle Foster"] }
-    - { name: "Corea del Sur", code: "KOR", flag: "🇰🇷", players: ["Son Heung-min", "Lee Kang-in"] }
-    - { name: "Chequia", code: "CZE", flag: "🇨🇿", players: ["Patrik Schick", "Adam Hložek"] }
+  - name: México
+    code: MEX
+    flag: "\U0001F1F2\U0001F1FD"
+    players:
+    - name: Guillermo Ochoa
+      position: goalkeeper
+    - name: Raúl Rangel
+      position: goalkeeper
+    - name: Carlos Acevedo
+      position: goalkeeper
+    - name: Jesús Gallardo
+      position: defender
+    - name: César Montes
+      position: defender
+    - name: Jorge Sánchez
+      position: defender
+    - name: Johan Vásquez
+      position: defender
+    - name: Israel Reyes
+      position: defender
+    - name: Mateo Chávez
+      position: defender
+    - name: Edson Álvarez
+      position: midfielder
+    - name: Orbelín Pineda
+      position: midfielder
+    - name: Roberto Alvarado
+      position: midfielder
+    - name: Luis Romo
+      position: midfielder
+    - name: Luis Chávez
+      position: midfielder
+    - name: Érik Lira
+      position: midfielder
+    - name: Gilberto Mora
+      position: midfielder
+    - name: Brian Gutiérrez
+      position: midfielder
+    - name: Obed Vargas
+      position: midfielder
+    - name: Álvaro Fidalgo
+      position: midfielder
+    - name: Raúl Jiménez
+      position: forward
+    - name: Alexis Vega
+      position: forward
+    - name: Santiago Giménez
+      position: forward
+    - name: César Huerta
+      position: forward
+    - name: Julián Quiñones
+      position: forward
+    - name: Guillermo Martínez
+      position: forward
+    - name: Armando González
+      position: forward
+  - name: Sudáfrica
+    code: RSA
+    flag: "\U0001F1FF\U0001F1E6"
+    players:
+    - name: Ronwen Williams
+      position: goalkeeper
+    - name: Ricardo Goss
+      position: goalkeeper
+    - name: Sipho Chaine
+      position: goalkeeper
+    - name: Khuliso Mudau
+      position: defender
+    - name: Aubrey Modiba
+      position: defender
+    - name: Mbekezeli Mbokazi
+      position: defender
+    - name: Nkosinathi Sibisi
+      position: defender
+    - name: Khulumani Ndamane
+      position: defender
+    - name: Ime Okon
+      position: defender
+    - name: Thabang Matuludi
+      position: defender
+    - name: Samukele Kabini
+      position: defender
+    - name: Bradley Cross
+      position: defender
+    - name: Olwethu Makhanya
+      position: defender
+    - name: Teboho Mokoena
+      position: midfielder
+    - name: Thalente Mbatha
+      position: midfielder
+    - name: Sphephelo Sithole
+      position: midfielder
+    - name: Jayden Adams
+      position: midfielder
+    - name: Themba Zwane
+      position: midfielder
+    - name: Relebohile Mofokeng
+      position: midfielder
+    - name: Lyle Foster
+      position: forward
+    - name: Oswin Appollis
+      position: forward
+    - name: Tshepang Moremi
+      position: forward
+    - name: Evidence Makgopa
+      position: forward
+    - name: Iqraam Rayners
+      position: forward
+    - name: Thapelo Maseko
+      position: forward
+    - name: Kamogelo Sebelebele
+      position: forward
+  - name: Corea del Sur
+    code: KOR
+    flag: "\U0001F1F0\U0001F1F7"
+    players:
+    - name: Kim Seung-gyu
+      position: goalkeeper
+    - name: Jo Hyeon-woo
+      position: goalkeeper
+    - name: Song Bum-keun
+      position: goalkeeper
+    - name: Kim Min-jae
+      position: defender
+    - name: Kim Moon-hwan
+      position: defender
+    - name: Seol Young-woo
+      position: defender
+    - name: Lee Tae-seok
+      position: defender
+    - name: Park Jin-seob
+      position: defender
+    - name: Kim Tae-hyeon
+      position: defender
+    - name: Lee Han-beom
+      position: defender
+    - name: Jens Castrop
+      position: defender
+    - name: Lee Ki-hyuk
+      position: defender
+    - name: Cho Yu-min
+      position: defender
+    - name: Lee Jae-sung
+      position: midfielder
+    - name: Hwang Hee-chan
+      position: midfielder
+    - name: Hwang In-beom
+      position: midfielder
+    - name: Lee Kang-in
+      position: midfielder
+    - name: Paik Seung-ho
+      position: midfielder
+    - name: Kim Jin-gyu
+      position: midfielder
+    - name: Lee Dong-gyeong
+      position: midfielder
+    - name: Bae Jun-ho
+      position: midfielder
+    - name: Eom Ji-sung
+      position: midfielder
+    - name: Yang Hyun-jun
+      position: midfielder
+    - name: Son Heung-min
+      position: forward
+    - name: Cho Gue-sung
+      position: forward
+    - name: Oh Hyeon-gyu
+      position: forward
+  - name: Chequia
+    code: CZE
+    flag: "\U0001F1E8\U0001F1FF"
+    players:
+    - name: Matěj Kovář
+      position: goalkeeper
+    - name: Jindřich Staněk
+      position: goalkeeper
+    - name: Lukáš Horníček
+      position: goalkeeper
+    - name: Vladimír Coufal
+      position: defender
+    - name: David Douděra
+      position: defender
+    - name: Tomáš Holeš
+      position: defender
+    - name: Robin Hranáč
+      position: defender
+    - name: Štěpán Chaloupek
+      position: defender
+    - name: David Jurásek
+      position: defender
+    - name: Ladislav Krejčí
+      position: defender
+    - name: Jaroslav Zelený
+      position: defender
+    - name: David Zima
+      position: defender
+    - name: Lukáš Červ
+      position: midfielder
+    - name: Vladimír Darida
+      position: midfielder
+    - name: Lukáš Provod
+      position: midfielder
+    - name: Michal Sadílek
+      position: midfielder
+    - name: Hugo Sochůrek
+      position: midfielder
+    - name: Alexandr Sojka
+      position: midfielder
+    - name: Tomáš Souček
+      position: midfielder
+    - name: Pavel Šulc
+      position: midfielder
+    - name: Denis Višinský
+      position: midfielder
+    - name: Adam Hložek
+      position: forward
+    - name: Tomáš Chorý
+      position: forward
+    - name: Mojmír Chytil
+      position: forward
+    - name: Jan Kuchta
+      position: forward
+    - name: Patrik Schick
+      position: forward
   B:
-    - { name: "Canadá", code: "CAN", flag: "🇨🇦", players: ["Alphonso Davies", "Jonathan David"] }
-    - { name: "Bosnia", code: "BIH", flag: "🇧🇦", players: ["Edin Džeko", "Ermedin Demirović"] }
-    - { name: "Catar", code: "QAT", flag: "🇶🇦", players: ["Akram Afif", "Almoez Ali"] }
-    - { name: "Suiza", code: "SUI", flag: "🇨🇭", players: ["Granit Xhaka", "Breel Embolo"] }
+  - name: Canadá
+    code: CAN
+    flag: "\U0001F1E8\U0001F1E6"
+    players:
+    - name: Dayne St. Clair
+      position: goalkeeper
+    - name: Maxime Crépeau
+      position: goalkeeper
+    - name: Owen Goodman
+      position: goalkeeper
+    - name: Alistair Johnston
+      position: defender
+    - name: Luc de Fougerolles
+      position: defender
+    - name: Alfie Jones
+      position: defender
+    - name: Joel Waterman
+      position: defender
+    - name: Derek Cornelius
+      position: defender
+    - name: Moïse Bombito
+      position: defender
+    - name: Alphonso Davies
+      position: defender
+    - name: Richie Laryea
+      position: defender
+    - name: Niko Sigur
+      position: defender
+    - name: Mathieu Choinière
+      position: midfielder
+    - name: Stephen Eustáquio
+      position: midfielder
+    - name: Ismaël Koné
+      position: midfielder
+    - name: Liam Millar
+      position: midfielder
+    - name: Jacob Shaffelburg
+      position: midfielder
+    - name: Ali Ahmed
+      position: midfielder
+    - name: Jonathan Osorio
+      position: midfielder
+    - name: Nathan Saliba
+      position: midfielder
+    - name: Tajon Buchanan
+      position: midfielder
+    - name: Marcelo Flores
+      position: midfielder
+    - name: Cyle Larin
+      position: forward
+    - name: Jonathan David
+      position: forward
+    - name: Tani Oluwaseyi
+      position: forward
+    - name: Promise David
+      position: forward
+  - name: Bosnia
+    code: BIH
+    flag: "\U0001F1E7\U0001F1E6"
+    players:
+    - name: Nikola Vasilj
+      position: goalkeeper
+    - name: Martin Zlomislić
+      position: goalkeeper
+    - name: Osman Hadžikić
+      position: goalkeeper
+    - name: Sead Kolašinac
+      position: defender
+    - name: Amar Dedić
+      position: defender
+    - name: Nihad Mujakić
+      position: defender
+    - name: Nikola Katić
+      position: defender
+    - name: Tarik Muharemović
+      position: defender
+    - name: Stjepan Radeljić
+      position: defender
+    - name: Dennis Hadžikadunić
+      position: defender
+    - name: Nidal Čelik
+      position: defender
+    - name: Amir Hadžiahmetović
+      position: midfielder
+    - name: Ivan Šunjić
+      position: midfielder
+    - name: Ivan Bašić
+      position: midfielder
+    - name: Dženis Burnić
+      position: midfielder
+    - name: Ermin Mahmić
+      position: midfielder
+    - name: Benjamin Tahirović
+      position: midfielder
+    - name: Amar Memić
+      position: midfielder
+    - name: Armin Gigović
+      position: midfielder
+    - name: Kerim Alajbegović
+      position: forward
+    - name: Esmir Bajraktarević
+      position: forward
+    - name: Ermedin Demirović
+      position: forward
+    - name: Jovo Lukić
+      position: forward
+    - name: Samed Baždar
+      position: forward
+    - name: Haris Tabaković
+      position: forward
+    - name: Edin Džeko
+      position: forward
+  - name: Catar
+    code: QAT
+    flag: "\U0001F1F6\U0001F1E6"
+    players:
+    - name: Meshaal Barsham
+      position: goalkeeper
+    - name: Salah Zakaria
+      position: goalkeeper
+    - name: Mahmoud Abunada
+      position: goalkeeper
+    - name: Pedro Miguel
+      position: defender
+    - name: Sultan Al Brake
+      position: defender
+    - name: Al-Hashmi Al-Hussain
+      position: defender
+    - name: Ayoub Al-Alawi
+      position: defender
+    - name: Issa Laye
+      position: defender
+    - name: Lucas Mendes
+      position: defender
+    - name: Mohammed Waad
+      position: defender
+    - name: Niall Mason
+      position: defender
+    - name: Ahmed Fathi
+      position: midfielder
+    - name: Jassem Jaber
+      position: midfielder
+    - name: Assim Madibo
+      position: midfielder
+    - name: Abdulaziz Hatem
+      position: midfielder
+    - name: Karim Boudiaf
+      position: midfielder
+    - name: Mohammed Al Mannai
+      position: midfielder
+    - name: Almoez Ali
+      position: forward
+    - name: Akram Afif
+      position: forward
+    - name: Tahseen Mohammed
+      position: forward
+    - name: Edmílson Junior
+      position: forward
+    - name: Ahmed Alaa
+      position: forward
+    - name: Hassan Al-Haydos
+      position: forward
+    - name: Mubarak Shannan
+      position: forward
+    - name: Mohammed Muntari
+      position: forward
+    - name: Yusuf Abdurisag
+      position: forward
+  - name: Suiza
+    code: SUI
+    flag: "\U0001F1E8\U0001F1ED"
+    players:
+    - name: Gregor Kobel
+      position: goalkeeper
+    - name: Yvon Mvogo
+      position: goalkeeper
+    - name: Marvin Keller
+      position: goalkeeper
+    - name: Manuel Akanji
+      position: defender
+    - name: Nico Elvedi
+      position: defender
+    - name: Ricardo Rodríguez
+      position: defender
+    - name: Silvan Widmer
+      position: defender
+    - name: Miro Muheim
+      position: defender
+    - name: Aurèle Amenda
+      position: defender
+    - name: Eray Cömert
+      position: defender
+    - name: Luca Jaquez
+      position: defender
+    - name: Granit Xhaka
+      position: midfielder
+    - name: Johan Manzambi
+      position: midfielder
+    - name: Remo Freuler
+      position: midfielder
+    - name: Denis Zakaria
+      position: midfielder
+    - name: Ardon Jashari
+      position: midfielder
+    - name: Djibril Sow
+      position: midfielder
+    - name: Christian Fassnacht
+      position: midfielder
+    - name: Michel Aebischer
+      position: midfielder
+    - name: Fabian Rieder
+      position: midfielder
+    - name: Rubén Vargas
+      position: midfielder
+    - name: Breel Embolo
+      position: forward
+    - name: Noah Okafor
+      position: forward
+    - name: Dan Ndoye
+      position: forward
+    - name: Zeki Amdouni
+      position: forward
+    - name: Cédric Itten
+      position: forward
   C:
-    - { name: "Brasil", code: "BRA", flag: "🇧🇷", players: ["Vinícius Júnior", "Rodrygo", "Raphinha"] }
-    - { name: "Marruecos", code: "MAR", flag: "🇲🇦", players: ["Achraf Hakimi", "Brahim Díaz"] }
-    - { name: "Haití", code: "HAI", flag: "🇭🇹", players: ["Frantzdy Pierrot"] }
-    - { name: "Escocia", code: "SCO", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", players: ["Scott McTominay", "John McGinn"] }
+  - name: Brasil
+    code: BRA
+    flag: "\U0001F1E7\U0001F1F7"
+    players:
+    - name: Alisson
+      position: goalkeeper
+    - name: Ederson
+      position: goalkeeper
+    - name: Weverton
+      position: goalkeeper
+    - name: Marquinhos
+      position: defender
+    - name: Gabriel Magalhães
+      position: defender
+    - name: Bremer
+      position: defender
+    - name: Danilo
+      position: defender
+    - name: Alex Sandro
+      position: defender
+    - name: Léo Pereira
+      position: defender
+    - name: Wesley
+      position: defender
+    - name: Douglas Santos
+      position: defender
+    - name: Ibañez
+      position: defender
+    - name: Casemiro
+      position: midfielder
+    - name: Bruno Guimarães
+      position: midfielder
+    - name: Lucas Paquetá
+      position: midfielder
+    - name: André
+      position: midfielder
+    - name: Fabinho
+      position: midfielder
+    - name: Vinícius Júnior
+      position: forward
+    - name: Raphinha
+      position: forward
+    - name: Neymar
+      position: forward
+    - name: Matheus Cunha
+      position: forward
+    - name: Gabriel Martinelli
+      position: forward
+    - name: Endrick
+      position: forward
+    - name: Igor Thiago
+      position: forward
+    - name: Luiz Henrique
+      position: forward
+    - name: Rayan
+      position: forward
+  - name: Marruecos
+    code: MAR
+    flag: "\U0001F1F2\U0001F1E6"
+    players:
+    - name: Yassine Bounou
+      position: goalkeeper
+    - name: Munir El Kajoui
+      position: goalkeeper
+    - name: Reda Tagnaouti
+      position: goalkeeper
+    - name: Achraf Hakimi
+      position: defender
+    - name: Noussair Mazraoui
+      position: defender
+    - name: Nayef Aguerd
+      position: defender
+    - name: Chadi Riad
+      position: defender
+    - name: Issa Diop
+      position: defender
+    - name: Anass Salah-Eddine
+      position: defender
+    - name: Zakaria El Ouahdi
+      position: defender
+    - name: Youssef Belammari
+      position: defender
+    - name: Redouane Halhal
+      position: defender
+    - name: Sofyan Amrabat
+      position: midfielder
+    - name: Azzedine Ounahi
+      position: midfielder
+    - name: Bilal El Khannouss
+      position: midfielder
+    - name: Ismael Saibari
+      position: midfielder
+    - name: Neil El Aynaoui
+      position: midfielder
+    - name: Samir El Mourabet
+      position: midfielder
+    - name: Ayyoub Bouaddi
+      position: midfielder
+    - name: Brahim Díaz
+      position: forward
+    - name: Ayoub El Kaabi
+      position: forward
+    - name: Abde Ezzalzouli
+      position: forward
+    - name: Soufiane Rahimi
+      position: forward
+    - name: Chemsdine Talbi
+      position: forward
+    - name: Gessime Yassine
+      position: forward
+    - name: Ayoube Amaimouni
+      position: forward
+  - name: Haití
+    code: HAI
+    flag: "\U0001F1ED\U0001F1F9"
+    players:
+    - name: Johny Placide
+      position: goalkeeper
+    - name: Josué Duverger
+      position: goalkeeper
+    - name: Alexandre Pierre
+      position: goalkeeper
+    - name: Ricardo Adé
+      position: defender
+    - name: Carlens Arcus
+      position: defender
+    - name: Duke Lacroix
+      position: defender
+    - name: Jean-Kévin Duverne
+      position: defender
+    - name: Hannes Delcroix
+      position: defender
+    - name: Martin Expérience
+      position: defender
+    - name: Wilguens Paugain
+      position: defender
+    - name: Keeto Thermoncy
+      position: defender
+    - name: Jean-Ricner Bellegarde
+      position: midfielder
+    - name: Leverton Pierre
+      position: midfielder
+    - name: Carl-Fred Sainte
+      position: midfielder
+    - name: Danley Jean Jacques
+      position: midfielder
+    - name: Dominique Simon
+      position: midfielder
+    - name: Woodensky Pierre
+      position: midfielder
+    - name: Duckens Nazon
+      position: forward
+    - name: Derrick Etienne Jr.
+      position: forward
+    - name: Frantzdy Pierrot
+      position: forward
+    - name: Wilson Isidor
+      position: forward
+    - name: Yassine Fortune
+      position: forward
+    - name: Louicius Don Deedson
+      position: forward
+    - name: Lenny Joseph
+      position: forward
+    - name: Josué Casimir
+      position: forward
+    - name: Ruben Providence
+      position: forward
+  - name: Escocia
+    code: SCO
+    flag: "\U0001F3F4\U000E0067\U000E0062\U000E0073\U000E0063\U000E0074\U000E007F"
+    players:
+    - name: Craig Gordon
+      position: goalkeeper
+    - name: Angus Gunn
+      position: goalkeeper
+    - name: Liam Kelly
+      position: goalkeeper
+    - name: Grant Hanley
+      position: defender
+    - name: Jack Hendry
+      position: defender
+    - name: Aaron Hickey
+      position: defender
+    - name: Dominic Hyam
+      position: defender
+    - name: Scott McKenna
+      position: defender
+    - name: Nathan Patterson
+      position: defender
+    - name: Anthony Ralston
+      position: defender
+    - name: Andy Robertson
+      position: defender
+    - name: John Souttar
+      position: defender
+    - name: Kieran Tierney
+      position: defender
+    - name: Ryan Christie
+      position: midfielder
+    - name: Findlay Curtis
+      position: midfielder
+    - name: Lewis Ferguson
+      position: midfielder
+    - name: Ben Gannon-Doak
+      position: midfielder
+    - name: Billy Gilmour
+      position: midfielder
+    - name: John McGinn
+      position: midfielder
+    - name: Kenny McLean
+      position: midfielder
+    - name: Scott McTominay
+      position: midfielder
+    - name: Ché Adams
+      position: forward
+    - name: Lyndon Dykes
+      position: forward
+    - name: George Hirst
+      position: forward
+    - name: Lawrence Shankland
+      position: forward
+    - name: Ross Stewart
+      position: forward
   D:
-    - { name: "Estados Unidos", code: "USA", flag: "🇺🇸", players: ["Christian Pulisic", "Weston McKennie"] }
-    - { name: "Paraguay", code: "PAR", flag: "🇵🇾", players: ["Miguel Almirón", "Julio Enciso"] }
-    - { name: "Australia", code: "AUS", flag: "🇦🇺", players: ["Mathew Leckie", "Jackson Irvine"] }
-    - { name: "Turquía", code: "TUR", flag: "🇹🇷", players: ["Arda Güler", "Kenan Yıldız"] }
+  - name: Estados Unidos
+    code: USA
+    flag: "\U0001F1FA\U0001F1F8"
+    players:
+    - name: Matt Turner
+      position: goalkeeper
+    - name: Matt Freese
+      position: goalkeeper
+    - name: Chris Brady
+      position: goalkeeper
+    - name: Sergiño Dest
+      position: defender
+    - name: Chris Richards
+      position: defender
+    - name: Antonee Robinson
+      position: defender
+    - name: Auston Trusty
+      position: defender
+    - name: Miles Robinson
+      position: defender
+    - name: Tim Ream
+      position: defender
+    - name: Alex Freeman
+      position: defender
+    - name: Maximilian Arfsten
+      position: defender
+    - name: Mark McKenzie
+      position: defender
+    - name: Joe Scally
+      position: defender
+    - name: Tyler Adams
+      position: midfielder
+    - name: Giovanni Reyna
+      position: midfielder
+    - name: Weston McKennie
+      position: midfielder
+    - name: Sebastian Berhalter
+      position: midfielder
+    - name: Cristian Roldan
+      position: midfielder
+    - name: Malik Tillman
+      position: midfielder
+    - name: Ricardo Pepi
+      position: forward
+    - name: Christian Pulisic
+      position: forward
+    - name: Brenden Aaronson
+      position: forward
+    - name: Haji Wright
+      position: forward
+    - name: Folarin Balogun
+      position: forward
+    - name: Timothy Weah
+      position: forward
+    - name: Alejandro Zendejas
+      position: forward
+  - name: Paraguay
+    code: PAR
+    flag: "\U0001F1F5\U0001F1FE"
+    players:
+    - name: Gatito Fernández
+      position: goalkeeper
+    - name: Orlando Gill
+      position: goalkeeper
+    - name: Gastón Olveira
+      position: goalkeeper
+    - name: Gustavo Gómez
+      position: defender
+    - name: Júnior Alonso
+      position: defender
+    - name: Fabián Balbuena
+      position: defender
+    - name: Omar Alderete
+      position: defender
+    - name: Juan José Cáceres
+      position: defender
+    - name: Gustavo Velázquez
+      position: defender
+    - name: José Canale
+      position: defender
+    - name: Alexandro Maidana
+      position: defender
+    - name: Miguel Almirón
+      position: midfielder
+    - name: Kaku
+      position: midfielder
+    - name: Andrés Cubas
+      position: midfielder
+    - name: Ramón Sosa
+      position: midfielder
+    - name: Diego Gómez
+      position: midfielder
+    - name: Damián Bobadilla
+      position: midfielder
+    - name: Braian Ojeda
+      position: midfielder
+    - name: Matías Galarza
+      position: midfielder
+    - name: Maurício
+      position: midfielder
+    - name: Antonio Sanabria
+      position: forward
+    - name: Julio Enciso
+      position: forward
+    - name: Gabriel Ávalos
+      position: forward
+    - name: Álex Arce
+      position: forward
+    - name: Isidro Pitta
+      position: forward
+    - name: Gustavo Caballero
+      position: forward
+  - name: Australia
+    code: AUS
+    flag: "\U0001F1E6\U0001F1FA"
+    players:
+    - name: Mathew Ryan
+      position: goalkeeper
+    - name: Paul Izzo
+      position: goalkeeper
+    - name: Patrick Beach
+      position: goalkeeper
+    - name: Miloš Degenek
+      position: defender
+    - name: Alessandro Circati
+      position: defender
+    - name: Jacob Italiano
+      position: defender
+    - name: Jordan Bos
+      position: defender
+    - name: Jason Geria
+      position: defender
+    - name: Kai Trewin
+      position: defender
+    - name: Aziz Behich
+      position: defender
+    - name: Harry Souttar
+      position: defender
+    - name: Cameron Burgess
+      position: defender
+    - name: Lucas Herrington
+      position: defender
+    - name: Connor Metcalfe
+      position: midfielder
+    - name: Ajdin Hrustic
+      position: midfielder
+    - name: Aiden O'Neill
+      position: midfielder
+    - name: Cammy Devlin
+      position: midfielder
+    - name: Jackson Irvine
+      position: midfielder
+    - name: Paul Okon-Engstler
+      position: midfielder
+    - name: Mathew Leckie
+      position: forward
+    - name: Mohamed Touré
+      position: forward
+    - name: Awer Mabil
+      position: forward
+    - name: Nestory Irankunda
+      position: forward
+    - name: Cristian Volpato
+      position: forward
+    - name: Nishan Velupillay
+      position: forward
+    - name: Tete Yengi
+      position: forward
+  - name: Turquía
+    code: TUR
+    flag: "\U0001F1F9\U0001F1F7"
+    players:
+    - name: Uğurcan Çakır
+      position: goalkeeper
+    - name: Mert Günok
+      position: goalkeeper
+    - name: Altay Bayındır
+      position: goalkeeper
+    - name: Merih Demiral
+      position: defender
+    - name: Zeki Çelik
+      position: defender
+    - name: Çağlar Söyüncü
+      position: defender
+    - name: Mert Müldür
+      position: defender
+    - name: Ferdi Kadıoğlu
+      position: defender
+    - name: Ozan Kabak
+      position: defender
+    - name: Abdülkerim Bardakcı
+      position: defender
+    - name: Eren Elmalı
+      position: defender
+    - name: Samet Akaydin
+      position: defender
+    - name: Hakan Çalhanoğlu
+      position: midfielder
+    - name: Kaan Ayhan
+      position: midfielder
+    - name: Orkun Kökçü
+      position: midfielder
+    - name: İsmail Yüksek
+      position: midfielder
+    - name: Salih Özcan
+      position: midfielder
+    - name: Demir Ege Tıknaz
+      position: midfielder
+    - name: Kerem Aktürkoğlu
+      position: forward
+    - name: İrfan Can Kahveci
+      position: forward
+    - name: Barış Alper Yılmaz
+      position: forward
+    - name: Arda Güler
+      position: forward
+    - name: Kenan Yıldız
+      position: forward
+    - name: Yunus Akgün
+      position: forward
+    - name: Deniz Gül
+      position: forward
+    - name: Can Uzun
+      position: forward
   E:
-    - { name: "Alemania", code: "GER", flag: "🇩🇪", players: ["Jamal Musiala", "Florian Wirtz", "Kai Havertz"] }
-    - { name: "Curazao", code: "CUW", flag: "🇨🇼", players: ["Tahith Chong"] }
-    - { name: "Costa de Marfil", code: "CIV", flag: "🇨🇮", players: ["Sébastien Haller", "Simon Adingra"] }
-    - { name: "Ecuador", code: "ECU", flag: "🇪🇨", players: ["Moisés Caicedo", "Enner Valencia"] }
+  - name: Alemania
+    code: GER
+    flag: "\U0001F1E9\U0001F1EA"
+    players:
+    - name: Manuel Neuer
+      position: goalkeeper
+    - name: Oliver Baumann
+      position: goalkeeper
+    - name: Alexander Nübel
+      position: goalkeeper
+    - name: Antonio Rüdiger
+      position: defender
+    - name: Waldemar Anton
+      position: defender
+    - name: Jonathan Tah
+      position: defender
+    - name: Nico Schlotterbeck
+      position: defender
+    - name: Nathaniel Brown
+      position: defender
+    - name: David Raum
+      position: defender
+    - name: Malick Thiaw
+      position: defender
+    - name: Aleksandar Pavlović
+      position: midfielder
+    - name: Joshua Kimmich
+      position: midfielder
+    - name: Leon Goretzka
+      position: midfielder
+    - name: Jamie Leweling
+      position: midfielder
+    - name: Jamal Musiala
+      position: midfielder
+    - name: Pascal Groß
+      position: midfielder
+    - name: Angelo Stiller
+      position: midfielder
+    - name: Florian Wirtz
+      position: midfielder
+    - name: Leroy Sané
+      position: midfielder
+    - name: Nadiem Amiri
+      position: midfielder
+    - name: Felix Nmecha
+      position: midfielder
+    - name: Lennart Karl
+      position: midfielder
+    - name: Kai Havertz
+      position: forward
+    - name: Nick Woltemade
+      position: forward
+    - name: Maximilian Beier
+      position: forward
+    - name: Deniz Undav
+      position: forward
+  - name: Curazao
+    code: CUW
+    flag: "\U0001F1E8\U0001F1FC"
+    players:
+    - name: Eloy Room
+      position: goalkeeper
+    - name: Tyrick Bodak
+      position: goalkeeper
+    - name: Trevor Doornbusch
+      position: goalkeeper
+    - name: Shurandy Sambo
+      position: defender
+    - name: Juriën Gaari
+      position: defender
+    - name: Roshon van Eijma
+      position: defender
+    - name: Sherel Floranus
+      position: defender
+    - name: Armando Obispo
+      position: defender
+    - name: Joshua Brenet
+      position: defender
+    - name: Riechedly Bazoer
+      position: defender
+    - name: Deveron Fonville
+      position: defender
+    - name: Godfried Roemeratoe
+      position: midfielder
+    - name: Juninho Bacuna
+      position: midfielder
+    - name: Livano Comenencia
+      position: midfielder
+    - name: Leandro Bacuna
+      position: midfielder
+    - name: Tyrese Noslin
+      position: midfielder
+    - name: Ar'jany Martha
+      position: midfielder
+    - name: Kevin Felida
+      position: midfielder
+    - name: Jürgen Locadia
+      position: forward
+    - name: Jeremy Antonisse
+      position: forward
+    - name: Sontje Hansen
+      position: forward
+    - name: Kenji Gorré
+      position: forward
+    - name: Jearl Margaritha
+      position: forward
+    - name: Brandley Kuwas
+      position: forward
+    - name: Gervane Kastaneer
+      position: forward
+    - name: Tahith Chong
+      position: forward
+  - name: Costa de Marfil
+    code: CIV
+    flag: "\U0001F1E8\U0001F1EE"
+    players:
+    - name: Yahia Fofana
+      position: goalkeeper
+    - name: Alban Lafont
+      position: goalkeeper
+    - name: Mohamed Koné
+      position: goalkeeper
+    - name: Ghislain Konan
+      position: defender
+    - name: Odilon Kossounou
+      position: defender
+    - name: Wilfried Singo
+      position: defender
+    - name: Evan Ndicka
+      position: defender
+    - name: Emmanuel Agbadou
+      position: defender
+    - name: Guéla Doué
+      position: defender
+    - name: Ousmane Diomande
+      position: defender
+    - name: Christopher Opéri
+      position: defender
+    - name: Franck Kessié
+      position: midfielder
+    - name: Jean Michaël Seri
+      position: midfielder
+    - name: Ibrahim Sangaré
+      position: midfielder
+    - name: Seko Fofana
+      position: midfielder
+    - name: Christ Inao Oulaï
+      position: midfielder
+    - name: Parfait Guiagon
+      position: midfielder
+    - name: Nicolas Pépé
+      position: forward
+    - name: Oumar Diakité
+      position: forward
+    - name: Simon Adingra
+      position: forward
+    - name: Evann Guessand
+      position: forward
+    - name: Amad Diallo
+      position: forward
+    - name: Yan Diomande
+      position: forward
+    - name: Bazoumana Touré
+      position: forward
+    - name: Elye Wahi
+      position: forward
+    - name: Ange-Yoan Bonny
+      position: forward
+  - name: Ecuador
+    code: ECU
+    flag: "\U0001F1EA\U0001F1E8"
+    players:
+    - name: Hernán Galíndez
+      position: goalkeeper
+    - name: Moisés Ramírez
+      position: goalkeeper
+    - name: Gonzalo Valle
+      position: goalkeeper
+    - name: Félix Torres
+      position: defender
+    - name: Piero Hincapié
+      position: defender
+    - name: Joel Ordóñez
+      position: defender
+    - name: Willian Pacho
+      position: defender
+    - name: Pervis Estupiñán
+      position: defender
+    - name: Ángelo Preciado
+      position: defender
+    - name: Jackson Porozo
+      position: defender
+    - name: Jordy Alcívar
+      position: midfielder
+    - name: Denil Castillo
+      position: midfielder
+    - name: John Yeboah
+      position: midfielder
+    - name: Kendry Páez
+      position: midfielder
+    - name: Alan Minda
+      position: midfielder
+    - name: Pedro Vite
+      position: midfielder
+    - name: Gonzalo Plata
+      position: midfielder
+    - name: Alan Franco
+      position: midfielder
+    - name: Moisés Caicedo
+      position: midfielder
+    - name: Yaimar Medina
+      position: midfielder
+    - name: Kevin Rodríguez
+      position: forward
+    - name: Enner Valencia
+      position: forward
+    - name: Anthony Valencia
+      position: forward
+    - name: Jordy Caicedo
+      position: forward
+    - name: Nilson Angulo
+      position: forward
+    - name: Jeremy Arévalo
+      position: forward
   F:
-    - { name: "Países Bajos", code: "NED", flag: "🇳🇱", players: ["Cody Gakpo", "Memphis Depay"] }
-    - { name: "Japón", code: "JPN", flag: "🇯🇵", players: ["Takefusa Kubo", "Kaoru Mitoma"] }
-    - { name: "Suecia", code: "SWE", flag: "🇸🇪", players: ["Alexander Isak", "Viktor Gyökeres"] }
-    - { name: "Túnez", code: "TUN", flag: "🇹🇳", players: ["Hannibal Mejbri"] }
+  - name: Países Bajos
+    code: NED
+    flag: "\U0001F1F3\U0001F1F1"
+    players:
+    - name: Mark Flekken
+      position: goalkeeper
+    - name: Robin Roefs
+      position: goalkeeper
+    - name: Bart Verbruggen
+      position: goalkeeper
+    - name: Nathan Aké
+      position: defender
+    - name: Denzel Dumfries
+      position: defender
+    - name: Jorrel Hato
+      position: defender
+    - name: Jurriën Timber
+      position: defender
+    - name: Micky van de Ven
+      position: defender
+    - name: Virgil van Dijk
+      position: defender
+    - name: Jan Paul van Hecke
+      position: defender
+    - name: Mats Wieffer
+      position: defender
+    - name: Frenkie de Jong
+      position: midfielder
+    - name: Marten de Roon
+      position: midfielder
+    - name: Ryan Gravenberch
+      position: midfielder
+    - name: Justin Kluivert
+      position: midfielder
+    - name: Teun Koopmeiners
+      position: midfielder
+    - name: Tijjani Reijnders
+      position: midfielder
+    - name: Guus Til
+      position: midfielder
+    - name: Quinten Timber
+      position: midfielder
+    - name: Brian Brobbey
+      position: forward
+    - name: Memphis Depay
+      position: forward
+    - name: Cody Gakpo
+      position: forward
+    - name: Noa Lang
+      position: forward
+    - name: Donyell Malen
+      position: forward
+    - name: Crysencio Summerville
+      position: forward
+    - name: Wout Weghorst
+      position: forward
+  - name: Japón
+    code: JPN
+    flag: "\U0001F1EF\U0001F1F5"
+    players:
+    - name: Zion Suzuki
+      position: goalkeeper
+    - name: Keisuke Osako
+      position: goalkeeper
+    - name: Tomoki Hayakawa
+      position: goalkeeper
+    - name: Hiroki Ito
+      position: defender
+    - name: Ko Itakura
+      position: defender
+    - name: Takehiro Tomiyasu
+      position: defender
+    - name: Tsuyoshi Watanabe
+      position: defender
+    - name: Yukinari Sugawara
+      position: defender
+    - name: Shogo Taniguchi
+      position: defender
+    - name: Ayumu Seko
+      position: defender
+    - name: Junnosuke Suzuki
+      position: defender
+    - name: Yuto Nagatomo
+      position: defender
+    - name: Wataru Endo
+      position: midfielder
+    - name: Kaishu Sano
+      position: midfielder
+    - name: Daichi Kamada
+      position: midfielder
+    - name: Ao Tanaka
+      position: midfielder
+    - name: Junya Ito
+      position: midfielder
+    - name: Takefusa Kubo
+      position: midfielder
+    - name: Ritsu Doan
+      position: midfielder
+    - name: Keito Nakamura
+      position: midfielder
+    - name: Yuito Suzuki
+      position: midfielder
+    - name: Daizen Maeda
+      position: forward
+    - name: Ayase Ueda
+      position: forward
+    - name: Koki Ogawa
+      position: forward
+    - name: Keisuke Goto
+      position: forward
+    - name: Kento Shiogai
+      position: forward
+  - name: Suecia
+    code: SWE
+    flag: "\U0001F1F8\U0001F1EA"
+    players:
+    - name: Kristoffer Nordfeldt
+      position: goalkeeper
+    - name: Viktor Johansson
+      position: goalkeeper
+    - name: Jacob Widell Zetterström
+      position: goalkeeper
+    - name: Gustaf Lagerbielke
+      position: defender
+    - name: Victor Lindelöf
+      position: defender
+    - name: Gabriel Gudmundsson
+      position: defender
+    - name: Daniel Svensson
+      position: defender
+    - name: Elliot Stroud
+      position: defender
+    - name: Carl Starfelt
+      position: defender
+    - name: Isak Hien
+      position: defender
+    - name: Herman Johansson
+      position: defender
+    - name: Hjalmar Ekdal
+      position: defender
+    - name: Eric Smith
+      position: defender
+    - name: Lucas Bergvall
+      position: midfielder
+    - name: Jesper Karlström
+      position: midfielder
+    - name: Yasin Ayari
+      position: midfielder
+    - name: Mattias Svanberg
+      position: midfielder
+    - name: Besfort Zeneli
+      position: midfielder
+    - name: Ken Sema
+      position: midfielder
+    - name: Gustaf Nilsson
+      position: forward
+    - name: Benjamin Nygren
+      position: forward
+    - name: Anthony Elanga
+      position: forward
+    - name: Viktor Gyökeres
+      position: forward
+    - name: Taha Ali
+      position: forward
+    - name: Alexander Isak
+      position: forward
+    - name: Alexander Bernhardsson
+      position: forward
+  - name: Túnez
+    code: TUN
+    flag: "\U0001F1F9\U0001F1F3"
+    players:
+    - name: Sabri Ben Hassen
+      position: goalkeeper
+    - name: Abdelmouhib Chamakh
+      position: goalkeeper
+    - name: Aymen Dahman
+      position: goalkeeper
+    - name: Ali Abdi
+      position: defender
+    - name: Adem Arous
+      position: defender
+    - name: Mohamed Amine Ben Hamida
+      position: defender
+    - name: Dylan Bronn
+      position: defender
+    - name: Raed Chikhaoui
+      position: defender
+    - name: Moutaz Neffati
+      position: defender
+    - name: Omar Rekik
+      position: defender
+    - name: Montassar Talbi
+      position: defender
+    - name: Yan Valery
+      position: defender
+    - name: Mortadha Ben Ouanes
+      position: midfielder
+    - name: Anis Ben Slimane
+      position: midfielder
+    - name: Ismaël Gharbi
+      position: midfielder
+    - name: Rani Khedira
+      position: midfielder
+    - name: Mohamed Hadj Mahmoud
+      position: midfielder
+    - name: Hannibal Mejbri
+      position: midfielder
+    - name: Ellyes Skhiri
+      position: midfielder
+    - name: Elias Achouri
+      position: forward
+    - name: Khalil Ayari
+      position: forward
+    - name: Firas Chaouat
+      position: forward
+    - name: Rayan Elloumi
+      position: forward
+    - name: Hazem Mastouri
+      position: forward
+    - name: Elias Saad
+      position: forward
+    - name: Sébastien Tounekti
+      position: forward
   G:
-    - { name: "Bélgica", code: "BEL", flag: "🇧🇪", players: ["Kevin De Bruyne", "Romelu Lukaku"] }
-    - { name: "Egipto", code: "EGY", flag: "🇪🇬", players: ["Mohamed Salah", "Omar Marmoush"] }
-    - { name: "Irán", code: "IRN", flag: "🇮🇷", players: ["Mehdi Taremi", "Sardar Azmoun"] }
-    - { name: "Nueva Zelanda", code: "NZL", flag: "🇳🇿", players: ["Chris Wood"] }
+  - name: Bélgica
+    code: BEL
+    flag: "\U0001F1E7\U0001F1EA"
+    players:
+    - name: Thibaut Courtois
+      position: goalkeeper
+    - name: Mats Sels
+      position: goalkeeper
+    - name: Senne Lammens
+      position: goalkeeper
+    - name: Timothy Castagne
+      position: defender
+    - name: Zeno Debast
+      position: defender
+    - name: Maxime De Cuyper
+      position: defender
+    - name: Koni De Winter
+      position: defender
+    - name: Brandon Mechele
+      position: defender
+    - name: Thomas Meunier
+      position: defender
+    - name: Nathan Ngoy
+      position: defender
+    - name: Joaquin Seys
+      position: defender
+    - name: Arthur Theate
+      position: defender
+    - name: Kevin De Bruyne
+      position: midfielder
+    - name: Amadou Onana
+      position: midfielder
+    - name: Nicolas Raskin
+      position: midfielder
+    - name: Youri Tielemans
+      position: midfielder
+    - name: Hans Vanaken
+      position: midfielder
+    - name: Axel Witsel
+      position: midfielder
+    - name: Charles De Ketelaere
+      position: forward
+    - name: Jérémy Doku
+      position: forward
+    - name: Mathias Fernandez-Pardo
+      position: forward
+    - name: Romelu Lukaku
+      position: forward
+    - name: Dodi Lukebakio
+      position: forward
+    - name: Alexis Saelemaekers
+      position: forward
+    - name: Lucas Stassin
+      position: forward
+    - name: Leandro Trossard
+      position: forward
+  - name: Egipto
+    code: EGY
+    flag: "\U0001F1EA\U0001F1EC"
+    players:
+    - name: Mohamed El Shenawy
+      position: goalkeeper
+    - name: Mostafa Shobeir
+      position: goalkeeper
+    - name: El-Mahdi Soliman
+      position: goalkeeper
+    - name: Mohamed Alaa
+      position: goalkeeper
+    - name: Mohamed Hani
+      position: defender
+    - name: Tarek Alaa
+      position: defender
+    - name: Hamdy Fathy
+      position: defender
+    - name: Rami Rabia
+      position: defender
+    - name: Yasser Ibrahim
+      position: defender
+    - name: Hossam Abdelmaguid
+      position: defender
+    - name: Mohamed Abdelmonem
+      position: defender
+    - name: Ahmed Fotouh
+      position: defender
+    - name: Karim Hafez
+      position: defender
+    - name: Marwan Attia
+      position: midfielder
+    - name: Mohanad Lasheen
+      position: midfielder
+    - name: Nabil Emad
+      position: midfielder
+    - name: Mahmoud Saber
+      position: midfielder
+    - name: Ahmed Zizo
+      position: midfielder
+    - name: Emam Ashour
+      position: midfielder
+    - name: Mostafa Ziko
+      position: midfielder
+    - name: Ibrahim Adel
+      position: midfielder
+    - name: Haissem Hassan
+      position: midfielder
+    - name: Mahmoud Trezeguet
+      position: forward
+    - name: Mohamed Salah
+      position: forward
+    - name: Omar Marmoush
+      position: forward
+    - name: Hamza Abdelkarim
+      position: forward
+  - name: Irán
+    code: IRN
+    flag: "\U0001F1EE\U0001F1F7"
+    players:
+    - name: Alireza Beiranvand
+      position: goalkeeper
+    - name: Seyed Hossein Hosseini
+      position: goalkeeper
+    - name: Payam Niazmand
+      position: goalkeeper
+    - name: Danial Eiri
+      position: defender
+    - name: Ehsan Hajsafi
+      position: defender
+    - name: Saleh Hardani
+      position: defender
+    - name: Hossein Kanaani
+      position: defender
+    - name: Shoja Khalilzadeh
+      position: defender
+    - name: Milad Mohammadi
+      position: defender
+    - name: Ali Nemati
+      position: defender
+    - name: Ramin Rezaeian
+      position: defender
+    - name: Rouzbeh Cheshmi
+      position: midfielder
+    - name: Saeid Ezatolahi
+      position: midfielder
+    - name: Mehdi Ghaedi
+      position: midfielder
+    - name: Saman Ghoddos
+      position: midfielder
+    - name: Mohammad Ghorbani
+      position: midfielder
+    - name: Alireza Jahanbakhsh
+      position: midfielder
+    - name: Mohammad Mohebi
+      position: midfielder
+    - name: Amir Mohammad Razzaghinia
+      position: midfielder
+    - name: Mehdi Torabi
+      position: midfielder
+    - name: Aria Yousefi
+      position: midfielder
+    - name: Ali Alipour
+      position: forward
+    - name: Dennis Dargahi
+      position: forward
+    - name: Amirhossein Hosseinzadeh
+      position: forward
+    - name: Mehdi Taremi
+      position: forward
+    - name: Shahriar Moghanlou
+      position: forward
+  - name: Nueva Zelanda
+    code: NZL
+    flag: "\U0001F1F3\U0001F1FF"
+    players:
+    - name: Max Crocombe
+      position: goalkeeper
+    - name: Alex Paulsen
+      position: goalkeeper
+    - name: Michael Woud
+      position: goalkeeper
+    - name: Tyler Bindon
+      position: defender
+    - name: Michael Boxall
+      position: defender
+    - name: Liberato Cacace
+      position: defender
+    - name: Francis de Vries
+      position: defender
+    - name: Callan Elliot
+      position: defender
+    - name: Tim Payne
+      position: defender
+    - name: Nando Pijnaker
+      position: defender
+    - name: Tommy Smith
+      position: defender
+    - name: Finn Surman
+      position: defender
+    - name: Lachlan Bayliss
+      position: midfielder
+    - name: Joe Bell
+      position: midfielder
+    - name: Matt Garbett
+      position: midfielder
+    - name: Ben Old
+      position: midfielder
+    - name: Alex Rufer
+      position: midfielder
+    - name: Sarpreet Singh
+      position: midfielder
+    - name: Marko Stamenić
+      position: midfielder
+    - name: Ryan Thomas
+      position: midfielder
+    - name: Kosta Barbarouses
+      position: forward
+    - name: Eli Just
+      position: forward
+    - name: Callum McCowatt
+      position: forward
+    - name: Jesse Randall
+      position: forward
+    - name: Ben Waine
+      position: forward
+    - name: Chris Wood
+      position: forward
   H:
-    - { name: "España", code: "ESP", flag: "🇪🇸", players: ["Lamine Yamal", "Nico Williams", "Pedri"] }
-    - { name: "Cabo Verde", code: "CPV", flag: "🇨🇻", players: ["Ryan Mendes"] }
-    - { name: "Arabia Saudita", code: "KSA", flag: "🇸🇦", players: ["Salem Al-Dawsari"] }
-    - { name: "Uruguay", code: "URU", flag: "🇺🇾", players: ["Federico Valverde", "Darwin Núñez"] }
+  - name: España
+    code: ESP
+    flag: "\U0001F1EA\U0001F1F8"
+    players:
+    - name: Unai Simón
+      position: goalkeeper
+    - name: David Raya
+      position: goalkeeper
+    - name: Joan García
+      position: goalkeeper
+    - name: Marc Cucurella
+      position: defender
+    - name: Pau Cubarsí
+      position: defender
+    - name: Aymeric Laporte
+      position: defender
+    - name: Alejandro Grimaldo
+      position: defender
+    - name: Pedro Porro
+      position: defender
+    - name: Eric García
+      position: defender
+    - name: Marcos Llorente
+      position: defender
+    - name: Marc Pubill
+      position: defender
+    - name: Gavi
+      position: midfielder
+    - name: Rodri
+      position: midfielder
+    - name: Pedri
+      position: midfielder
+    - name: Martín Zubimendi
+      position: midfielder
+    - name: Fabián Ruiz
+      position: midfielder
+    - name: Álex Baena
+      position: midfielder
+    - name: Mikel Merino
+      position: midfielder
+    - name: Lamine Yamal
+      position: forward
+    - name: Nico Williams
+      position: forward
+    - name: Dani Olmo
+      position: forward
+    - name: Ferran Torres
+      position: forward
+    - name: Mikel Oyarzabal
+      position: forward
+    - name: Yéremy Pino
+      position: forward
+    - name: Borja Iglesias
+      position: forward
+    - name: Víctor Muñoz
+      position: forward
+  - name: Cabo Verde
+    code: CPV
+    flag: "\U0001F1E8\U0001F1FB"
+    players:
+    - name: Vozinha
+      position: goalkeeper
+    - name: Márcio Rosa
+      position: goalkeeper
+    - name: CJ dos Santos
+      position: goalkeeper
+    - name: Steven Moreira
+      position: defender
+    - name: Wagner Pina
+      position: defender
+    - name: João Paulo
+      position: defender
+    - name: Sidny Lopes Cabral
+      position: defender
+    - name: Logan Costa
+      position: defender
+    - name: Roberto Lopes
+      position: defender
+    - name: Kelvin Pires
+      position: defender
+    - name: Stopira
+      position: defender
+    - name: Diney
+      position: midfielder
+    - name: Jamiro Monteiro
+      position: midfielder
+    - name: Telmo Arcanjo
+      position: midfielder
+    - name: Yannick Semedo
+      position: midfielder
+    - name: Laros Duarte
+      position: midfielder
+    - name: Deroy Duarte
+      position: midfielder
+    - name: Kevin Pina
+      position: midfielder
+    - name: Ryan Mendes
+      position: forward
+    - name: Willy Semedo
+      position: forward
+    - name: Garry Rodrigues
+      position: forward
+    - name: Jovane Cabral
+      position: forward
+    - name: Nuno da Costa
+      position: forward
+    - name: Dailon Livramento
+      position: forward
+    - name: Gilson Benchimol
+      position: forward
+    - name: Hélio Varela
+      position: forward
+  - name: Arabia Saudita
+    code: KSA
+    flag: "\U0001F1F8\U0001F1E6"
+    players:
+    - name: Mohammed Al-Owais
+      position: goalkeeper
+    - name: Nawaf Al-Aqidi
+      position: goalkeeper
+    - name: Ahmed Al-Kassar
+      position: goalkeeper
+    - name: Abdulelah Al-Amri
+      position: defender
+    - name: Hassan Al-Tambakti
+      position: defender
+    - name: Jehad Al-Thikri
+      position: defender
+    - name: Ali Lajami
+      position: defender
+    - name: Hassan Kadesh
+      position: defender
+    - name: Saud Abdulhamid
+      position: defender
+    - name: Mohammed Abu Al-Shamat
+      position: defender
+    - name: Ali Majrashi
+      position: defender
+    - name: Moteb Al-Harbi
+      position: defender
+    - name: Nawaf Boushal
+      position: defender
+    - name: Sultan Al-Ghannam
+      position: defender
+    - name: Mohamed Kanno
+      position: midfielder
+    - name: Abdullah Al-Khaibari
+      position: midfielder
+    - name: Ziyad Al-Johani
+      position: midfielder
+    - name: Nasser Al-Dawsari
+      position: midfielder
+    - name: Musab Al-Juwayr
+      position: midfielder
+    - name: Alaa Al-Hajji
+      position: midfielder
+    - name: Salem Al-Dawsari
+      position: midfielder
+    - name: Khalid Al-Ghannam
+      position: midfielder
+    - name: Ayman Yahya
+      position: midfielder
+    - name: Firas Al-Buraikan
+      position: forward
+    - name: Saleh Al-Shehri
+      position: forward
+    - name: Abdullah Al-Hamdan
+      position: forward
+  - name: Uruguay
+    code: URU
+    flag: "\U0001F1FA\U0001F1FE"
+    players:
+    - name: Sergio Rochet
+      position: goalkeeper
+    - name: Fernando Muslera
+      position: goalkeeper
+    - name: Santiago Mele
+      position: goalkeeper
+    - name: Guillermo Varela
+      position: defender
+    - name: Ronald Araújo
+      position: defender
+    - name: José María Giménez
+      position: defender
+    - name: Santiago Bueno
+      position: defender
+    - name: Sebastián Cáceres
+      position: defender
+    - name: Mathías Olivera
+      position: defender
+    - name: Joaquín Piquerez
+      position: defender
+    - name: Matías Viña
+      position: defender
+    - name: Manuel Ugarte
+      position: midfielder
+    - name: Emiliano Martínez
+      position: midfielder
+    - name: Rodrigo Bentancur
+      position: midfielder
+    - name: Federico Valverde
+      position: midfielder
+    - name: Agustín Canobbio
+      position: midfielder
+    - name: Juan Manuel Sanabria
+      position: midfielder
+    - name: Giorgian de Arrascaeta
+      position: midfielder
+    - name: Nicolás de la Cruz
+      position: midfielder
+    - name: Rodrigo Zalazar
+      position: midfielder
+    - name: Facundo Pellistri
+      position: midfielder
+    - name: Maximiliano Araújo
+      position: midfielder
+    - name: Brian Rodríguez
+      position: midfielder
+    - name: Rodrigo Aguirre
+      position: forward
+    - name: Federico Viñas
+      position: forward
+    - name: Darwin Núñez
+      position: forward
   I:
-    - { name: "Francia", code: "FRA", flag: "🇫🇷", players: ["Kylian Mbappé", "Ousmane Dembélé"] }
-    - { name: "Senegal", code: "SEN", flag: "🇸🇳", players: ["Sadio Mané", "Nicolas Jackson"] }
-    - { name: "Irak", code: "IRQ", flag: "🇮🇶", players: ["Aymen Hussein"] }
-    - { name: "Noruega", code: "NOR", flag: "🇳🇴", players: ["Erling Haaland", "Martin Ødegaard"] }
+  - name: Francia
+    code: FRA
+    flag: "\U0001F1EB\U0001F1F7"
+    players:
+    - name: Mike Maignan
+      position: goalkeeper
+    - name: Brice Samba
+      position: goalkeeper
+    - name: Robin Risser
+      position: goalkeeper
+    - name: Lucas Digne
+      position: defender
+    - name: Malo Gusto
+      position: defender
+    - name: Lucas Hernández
+      position: defender
+    - name: Théo Hernández
+      position: defender
+    - name: Ibrahima Konaté
+      position: defender
+    - name: Jules Koundé
+      position: defender
+    - name: Maxence Lacroix
+      position: defender
+    - name: William Saliba
+      position: defender
+    - name: Dayot Upamecano
+      position: defender
+    - name: N'Golo Kanté
+      position: midfielder
+    - name: Manu Koné
+      position: midfielder
+    - name: Adrien Rabiot
+      position: midfielder
+    - name: Aurélien Tchouaméni
+      position: midfielder
+    - name: Warren Zaïre-Emery
+      position: midfielder
+    - name: Maghnes Akliouche
+      position: forward
+    - name: Bradley Barcola
+      position: forward
+    - name: Rayan Cherki
+      position: forward
+    - name: Ousmane Dembélé
+      position: forward
+    - name: Désiré Doué
+      position: forward
+    - name: Jean-Philippe Mateta
+      position: forward
+    - name: Kylian Mbappé
+      position: forward
+    - name: Michael Olise
+      position: forward
+    - name: Marcus Thuram
+      position: forward
+  - name: Senegal
+    code: SEN
+    flag: "\U0001F1F8\U0001F1F3"
+    players:
+    - name: Édouard Mendy
+      position: goalkeeper
+    - name: Mory Diaw
+      position: goalkeeper
+    - name: Yehvann Diouf
+      position: goalkeeper
+    - name: Kalidou Koulibaly
+      position: defender
+    - name: Krépin Diatta
+      position: defender
+    - name: Antoine Mendy
+      position: defender
+    - name: El Hadji Malick Diouf
+      position: defender
+    - name: Mamadou Sarr
+      position: defender
+    - name: Moussa Niakhaté
+      position: defender
+    - name: Moustapha Mbow
+      position: defender
+    - name: Abdoulaye Seck
+      position: defender
+    - name: Ismaïl Jakobs
+      position: defender
+    - name: Ilay Camara
+      position: defender
+    - name: Idrissa Gana Gueye
+      position: midfielder
+    - name: Pape Gueye
+      position: midfielder
+    - name: Lamine Camara
+      position: midfielder
+    - name: Habib Diarra
+      position: midfielder
+    - name: Pathé Ciss
+      position: midfielder
+    - name: Pape Matar Sarr
+      position: midfielder
+    - name: Bara Sapoko Ndiaye
+      position: midfielder
+    - name: Sadio Mané
+      position: forward
+    - name: Ismaïla Sarr
+      position: forward
+    - name: Iliman Ndiaye
+      position: forward
+    - name: Assane Diao
+      position: forward
+    - name: Ibrahim Mbaye
+      position: forward
+    - name: Nicolas Jackson
+      position: forward
+  - name: Irak
+    code: IRQ
+    flag: "\U0001F1EE\U0001F1F6"
+    players:
+    - name: Fahad Talib
+      position: goalkeeper
+    - name: Jalal Hassan
+      position: goalkeeper
+    - name: Ahmed Basil
+      position: goalkeeper
+    - name: Hussein Ali
+      position: defender
+    - name: Manaf Younis
+      position: defender
+    - name: Zaid Tahseen
+      position: defender
+    - name: Rebin Sulaka
+      position: defender
+    - name: Akam Hashem
+      position: defender
+    - name: Merchas Doski
+      position: defender
+    - name: Ahmed Yahya
+      position: defender
+    - name: Zaid Ismail
+      position: defender
+    - name: Frans Putros
+      position: defender
+    - name: Mustafa Saadoon
+      position: defender
+    - name: Amir Al-Ammari
+      position: midfielder
+    - name: Kevin Yakob
+      position: midfielder
+    - name: Zidane Iqbal
+      position: midfielder
+    - name: Aimar Sher
+      position: midfielder
+    - name: Ibrahim Bayesh
+      position: midfielder
+    - name: Ahmed Qasim
+      position: midfielder
+    - name: Youssef Amyn
+      position: midfielder
+    - name: Marko Farji
+      position: midfielder
+    - name: Ali Jassim
+      position: forward
+    - name: Ali Al-Hamadi
+      position: forward
+    - name: Ali Yousef
+      position: forward
+    - name: Aymen Hussein
+      position: forward
+    - name: Mohanad Ali
+      position: forward
+  - name: Noruega
+    code: NOR
+    flag: "\U0001F1F3\U0001F1F4"
+    players:
+    - name: Ørjan Nyland
+      position: goalkeeper
+    - name: Egil Selvik
+      position: goalkeeper
+    - name: Sander Tangvik
+      position: goalkeeper
+    - name: Kristoffer Ajer
+      position: defender
+    - name: Julian Ryerson
+      position: defender
+    - name: Leo Skiri Østigård
+      position: defender
+    - name: Marcus Holmgren Pedersen
+      position: defender
+    - name: David Møller Wolfe
+      position: defender
+    - name: Fredrik André Bjørkan
+      position: defender
+    - name: Torbjørn Heggem
+      position: defender
+    - name: Sondre Langås
+      position: defender
+    - name: Henrik Falchener
+      position: defender
+    - name: Sander Berge
+      position: midfielder
+    - name: Patrick Berg
+      position: midfielder
+    - name: Kristian Thorstvedt
+      position: midfielder
+    - name: Morten Thorsby
+      position: midfielder
+    - name: Martin Ødegaard
+      position: midfielder
+    - name: Thelo Aasgaard
+      position: midfielder
+    - name: Fredrik Aursnes
+      position: midfielder
+    - name: Erling Haaland
+      position: forward
+    - name: Alexander Sørloth
+      position: forward
+    - name: Jørgen Strand Larsen
+      position: forward
+    - name: Antonio Nusa
+      position: forward
+    - name: Oscar Bobb
+      position: forward
+    - name: Jens Petter Hauge
+      position: forward
+    - name: Andreas Schjelderup
+      position: forward
   J:
-    - { name: "Argentina", code: "ARG", flag: "🇦🇷", players: ["Lionel Messi", "Lautaro Martínez", "Julián Álvarez"] }
-    - { name: "Argelia", code: "ALG", flag: "🇩🇿", players: ["Riyad Mahrez"] }
-    - { name: "Austria", code: "AUT", flag: "🇦🇹", players: ["Marcel Sabitzer"] }
-    - { name: "Jordania", code: "JOR", flag: "🇯🇴", players: ["Mousa Al-Tamari"] }
+  - name: Argentina
+    code: ARG
+    flag: "\U0001F1E6\U0001F1F7"
+    players:
+    - name: Emiliano Martínez
+      position: goalkeeper
+    - name: Gerónimo Rulli
+      position: goalkeeper
+    - name: Juan Musso
+      position: goalkeeper
+    - name: Leonardo Balerdi
+      position: defender
+    - name: Nicolás Tagliafico
+      position: defender
+    - name: Gonzalo Montiel
+      position: defender
+    - name: Lisandro Martínez
+      position: defender
+    - name: Cristian Romero
+      position: defender
+    - name: Nicolás Otamendi
+      position: defender
+    - name: Facundo Medina
+      position: defender
+    - name: Nahuel Molina
+      position: defender
+    - name: Leandro Paredes
+      position: midfielder
+    - name: Rodrigo De Paul
+      position: midfielder
+    - name: Valentín Barco
+      position: midfielder
+    - name: Giovani Lo Celso
+      position: midfielder
+    - name: Exequiel Palacios
+      position: midfielder
+    - name: Enzo Fernández
+      position: midfielder
+    - name: Alexis Mac Allister
+      position: midfielder
+    - name: Julián Álvarez
+      position: forward
+    - name: Lionel Messi
+      position: forward
+    - name: Nicolás González
+      position: forward
+    - name: Thiago Almada
+      position: forward
+    - name: Giuliano Simeone
+      position: forward
+    - name: Nico Paz
+      position: forward
+    - name: José Manuel López
+      position: forward
+    - name: Lautaro Martínez
+      position: forward
+  - name: Argelia
+    code: ALG
+    flag: "\U0001F1E9\U0001F1FF"
+    players:
+    - name: Luca Zidane
+      position: goalkeeper
+    - name: Oussama Benbot
+      position: goalkeeper
+    - name: Abdelatif Ramdane
+      position: goalkeeper
+    - name: Rafik Belghali
+      position: defender
+    - name: Samir Chergui
+      position: defender
+    - name: Rayan Aït-Nouri
+      position: defender
+    - name: Jaouen Hadjam
+      position: defender
+    - name: Aïssa Mandi
+      position: defender
+    - name: Ramy Bensebaïni
+      position: defender
+    - name: Zineddine Belaïd
+      position: defender
+    - name: Achref Abada
+      position: defender
+    - name: Mohamed Amine Tougaï
+      position: defender
+    - name: Nabil Bentaleb
+      position: midfielder
+    - name: Hicham Boudaoui
+      position: midfielder
+    - name: Houssem Aouar
+      position: midfielder
+    - name: Farès Chaïbi
+      position: midfielder
+    - name: Ibrahim Maza
+      position: midfielder
+    - name: Yacine Titraoui
+      position: midfielder
+    - name: Ramiz Zerrouki
+      position: midfielder
+    - name: Mohamed Amoura
+      position: forward
+    - name: Nadhir Benbouali
+      position: forward
+    - name: Adil Boulbina
+      position: forward
+    - name: Farès Ghedjemis
+      position: forward
+    - name: Amine Gouiri
+      position: forward
+    - name: Anis Hadj Moussa
+      position: forward
+    - name: Riyad Mahrez
+      position: forward
+  - name: Austria
+    code: AUT
+    flag: "\U0001F1E6\U0001F1F9"
+    players:
+    - name: Alexander Schlager
+      position: goalkeeper
+    - name: Patrick Pentz
+      position: goalkeeper
+    - name: Florian Wiegele
+      position: goalkeeper
+    - name: David Affengruber
+      position: defender
+    - name: David Alaba
+      position: defender
+    - name: Kevin Danso
+      position: defender
+    - name: Marco Friedl
+      position: defender
+    - name: Philipp Lienhart
+      position: defender
+    - name: Phillipp Mwene
+      position: defender
+    - name: Stefan Posch
+      position: defender
+    - name: Alexander Prass
+      position: defender
+    - name: Michael Svoboda
+      position: defender
+    - name: Christoph Baumgartner
+      position: midfielder
+    - name: Carney Chukwuemeka
+      position: midfielder
+    - name: Florian Grillitsch
+      position: midfielder
+    - name: Konrad Laimer
+      position: midfielder
+    - name: Marcel Sabitzer
+      position: midfielder
+    - name: Xaver Schlager
+      position: midfielder
+    - name: Nicolas Seiwald
+      position: midfielder
+    - name: Romano Schmid
+      position: midfielder
+    - name: Alessandro Schöpf
+      position: midfielder
+    - name: Paul Wanner
+      position: midfielder
+    - name: Patrick Wimmer
+      position: midfielder
+    - name: Marko Arnautović
+      position: forward
+    - name: Michael Gregoritsch
+      position: forward
+    - name: Saša Kalajdžić
+      position: forward
+  - name: Jordania
+    code: JOR
+    flag: "\U0001F1EF\U0001F1F4"
+    players:
+    - name: Yazeed Abu Laila
+      position: goalkeeper
+    - name: Abdallah Al-Fakhouri
+      position: goalkeeper
+    - name: Mohamed Al-Emwasi
+      position: goalkeeper
+    - name: Nour Bani Attiah
+      position: goalkeeper
+    - name: Yazan Al-Arab
+      position: defender
+    - name: Mohammad Abu Al-Nadi
+      position: defender
+    - name: Saleem Obaid
+      position: defender
+    - name: Yousef Abu Al-Jazar
+      position: defender
+    - name: Mohammad Abu Hashish
+      position: defender
+    - name: Husam Abu Dahab
+      position: defender
+    - name: Abdallah Nasib
+      position: defender
+    - name: Hadi Al-Hourani
+      position: defender
+    - name: Noor Al-Rawabdeh
+      position: midfielder
+    - name: Rajaei Ayed
+      position: midfielder
+    - name: Ibrahim Sadeh
+      position: midfielder
+    - name: Amer Jamous
+      position: midfielder
+    - name: Mohammad Al-Dawoud
+      position: midfielder
+    - name: Nizar Al-Rashdan
+      position: midfielder
+    - name: Yousef Qashi
+      position: midfielder
+    - name: Mohannad Semreen
+      position: forward
+    - name: Mohannad Abu Taha
+      position: forward
+    - name: Mousa Al-Tamari
+      position: forward
+    - name: Yazan Al-Naimat
+      position: forward
+    - name: Ali Olwan
+      position: forward
+    - name: Mahmoud Al-Mardi
+      position: forward
+    - name: Ibrahim Sabra
+      position: forward
   K:
-    - { name: "Portugal", code: "POR", flag: "🇵🇹", players: ["Cristiano Ronaldo", "Bruno Fernandes", "Rafael Leão"] }
-    - { name: "RD Congo", code: "COD", flag: "🇨🇩", players: ["Cédric Bakambu"] }
-    - { name: "Uzbekistán", code: "UZB", flag: "🇺🇿", players: ["Eldor Shomurodov"] }
-    - { name: "Colombia", code: "COL", flag: "🇨🇴", players: ["Luis Díaz", "James Rodríguez"] }
+  - name: Portugal
+    code: POR
+    flag: "\U0001F1F5\U0001F1F9"
+    players:
+    - name: Diogo Costa
+      position: goalkeeper
+    - name: José Sá
+      position: goalkeeper
+    - name: Rui Silva
+      position: goalkeeper
+    - name: Rúben Dias
+      position: defender
+    - name: João Cancelo
+      position: defender
+    - name: Nélson Semedo
+      position: defender
+    - name: Nuno Mendes
+      position: defender
+    - name: Diogo Dalot
+      position: defender
+    - name: Gonçalo Inácio
+      position: defender
+    - name: Matheus Nunes
+      position: defender
+    - name: Renato Veiga
+      position: defender
+    - name: Tomás Araújo
+      position: defender
+    - name: Bernardo Silva
+      position: midfielder
+    - name: Bruno Fernandes
+      position: midfielder
+    - name: Rúben Neves
+      position: midfielder
+    - name: Vitinha
+      position: midfielder
+    - name: João Neves
+      position: midfielder
+    - name: Samú Costa
+      position: midfielder
+    - name: Cristiano Ronaldo
+      position: forward
+    - name: João Félix
+      position: forward
+    - name: Rafael Leão
+      position: forward
+    - name: Gonçalo Guedes
+      position: forward
+    - name: Gonçalo Ramos
+      position: forward
+    - name: Pedro Neto
+      position: forward
+    - name: Francisco Trincão
+      position: forward
+    - name: Francisco Conceição
+      position: forward
+  - name: RD Congo
+    code: COD
+    flag: "\U0001F1E8\U0001F1E9"
+    players:
+    - name: Lionel Mpasi
+      position: goalkeeper
+    - name: Timothy Fayulu
+      position: goalkeeper
+    - name: Matthieu Epolo
+      position: goalkeeper
+    - name: Chancel Mbemba
+      position: defender
+    - name: Arthur Masuaku
+      position: defender
+    - name: Gédéon Kalulu
+      position: defender
+    - name: Joris Kayembe
+      position: defender
+    - name: Dylan Batubinsika
+      position: defender
+    - name: Axel Tuanzebe
+      position: defender
+    - name: Aaron Wan-Bissaka
+      position: defender
+    - name: Steve Kapuadi
+      position: defender
+    - name: Samuel Moutoussamy
+      position: midfielder
+    - name: Edo Kayembe
+      position: midfielder
+    - name: Charles Pickel
+      position: midfielder
+    - name: Gaël Kakuta
+      position: midfielder
+    - name: Noah Sadiki
+      position: midfielder
+    - name: Aaron Tshibola
+      position: midfielder
+    - name: Ngal'ayel Mukau
+      position: midfielder
+    - name: Brian Cipenga
+      position: midfielder
+    - name: Cédric Bakambu
+      position: forward
+    - name: Meschak Elia
+      position: forward
+    - name: Théo Bongonda
+      position: forward
+    - name: Fiston Mayele
+      position: forward
+    - name: Yoane Wissa
+      position: forward
+    - name: Nathanaël Mbuku
+      position: forward
+    - name: Simon Banza
+      position: forward
+  - name: Uzbekistán
+    code: UZB
+    flag: "\U0001F1FA\U0001F1FF"
+    players:
+    - name: Utkir Yusupov
+      position: goalkeeper
+    - name: Abduvohid Nematov
+      position: goalkeeper
+    - name: Botirali Ergashev
+      position: goalkeeper
+    - name: Rustam Ashurmatov
+      position: defender
+    - name: Farrukh Sayfiev
+      position: defender
+    - name: Khojiakbar Alijonov
+      position: defender
+    - name: Sherzod Nasrullaev
+      position: defender
+    - name: Umar Eshmurodov
+      position: defender
+    - name: Abdukodir Khusanov
+      position: defender
+    - name: Abdulla Abdullaev
+      position: defender
+    - name: Otabek Shukurov
+      position: midfielder
+    - name: Odiljon Hamrobekov
+      position: midfielder
+    - name: Jamshid Iskanderov
+      position: midfielder
+    - name: Akmal Mozgovoy
+      position: midfielder
+    - name: Azizjon Ganiev
+      position: midfielder
+    - name: Jasurbek Jaloliddinov
+      position: midfielder
+    - name: Umarali Rakhmonaliev
+      position: midfielder
+    - name: Sherzod Esanov
+      position: midfielder
+    - name: Eldor Shomurodov
+      position: forward
+    - name: Igor Sergeev
+      position: forward
+    - name: Jaloliddin Masharipov
+      position: forward
+    - name: Oston Urunov
+      position: forward
+    - name: Dostonbek Khamdamov
+      position: forward
+    - name: Abbosbek Fayzullaev
+      position: forward
+    - name: Azizbek Amonov
+      position: forward
+    - name: Sherzod Temirov
+      position: forward
+  - name: Colombia
+    code: COL
+    flag: "\U0001F1E8\U0001F1F4"
+    players:
+    - name: David Ospina
+      position: goalkeeper
+    - name: Camilo Vargas
+      position: goalkeeper
+    - name: Álvaro Montero
+      position: goalkeeper
+    - name: Davinson Sánchez
+      position: defender
+    - name: Santiago Arias
+      position: defender
+    - name: Yerry Mina
+      position: defender
+    - name: Daniel Muñoz
+      position: defender
+    - name: Johan Mojica
+      position: defender
+    - name: Jhon Lucumí
+      position: defender
+    - name: Deiver Machado
+      position: defender
+    - name: Willer Ditta
+      position: defender
+    - name: James Rodríguez
+      position: midfielder
+    - name: Jefferson Lerma
+      position: midfielder
+    - name: Juan Fernando Quintero
+      position: midfielder
+    - name: Jhon Arias
+      position: midfielder
+    - name: Richard Ríos
+      position: midfielder
+    - name: Kevin Castaño
+      position: midfielder
+    - name: Jorge Carrascal
+      position: midfielder
+    - name: Jaminton Campaz
+      position: midfielder
+    - name: Juan Portilla
+      position: midfielder
+    - name: Gustavo Puerta
+      position: midfielder
+    - name: Luis Díaz
+      position: forward
+    - name: Jhon Córdoba
+      position: forward
+    - name: Luis Suárez
+      position: forward
+    - name: Cucho Hernández
+      position: forward
+    - name: Andrés Gómez
+      position: forward
   L:
-    - { name: "Inglaterra", code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", players: ["Harry Kane", "Jude Bellingham", "Bukayo Saka"] }
-    - { name: "Croacia", code: "CRO", flag: "🇭🇷", players: ["Luka Modrić"] }
-    - { name: "Ghana", code: "GHA", flag: "🇬🇭", players: ["Mohammed Kudus"] }
-    - { name: "Panamá", code: "PAN", flag: "🇵🇦", players: ["Adalberto Carrasquilla"] }
+  - name: Inglaterra
+    code: ENG
+    flag: "\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F"
+    players:
+    - name: Dean Henderson
+      position: goalkeeper
+    - name: Jordan Pickford
+      position: goalkeeper
+    - name: James Trafford
+      position: goalkeeper
+    - name: Dan Burn
+      position: defender
+    - name: Marc Guéhi
+      position: defender
+    - name: Reece James
+      position: defender
+    - name: Ezri Konsa
+      position: defender
+    - name: Tino Livramento
+      position: defender
+    - name: Nico O'Reilly
+      position: defender
+    - name: Jarell Quansah
+      position: defender
+    - name: Djed Spence
+      position: defender
+    - name: John Stones
+      position: defender
+    - name: Elliot Anderson
+      position: midfielder
+    - name: Jude Bellingham
+      position: midfielder
+    - name: Eberechi Eze
+      position: midfielder
+    - name: Jordan Henderson
+      position: midfielder
+    - name: Kobbie Mainoo
+      position: midfielder
+    - name: Declan Rice
+      position: midfielder
+    - name: Morgan Rogers
+      position: midfielder
+    - name: Anthony Gordon
+      position: forward
+    - name: Harry Kane
+      position: forward
+    - name: Noni Madueke
+      position: forward
+    - name: Marcus Rashford
+      position: forward
+    - name: Bukayo Saka
+      position: forward
+    - name: Ivan Toney
+      position: forward
+    - name: Ollie Watkins
+      position: forward
+  - name: Croacia
+    code: CRO
+    flag: "\U0001F1ED\U0001F1F7"
+    players:
+    - name: Dominik Livaković
+      position: goalkeeper
+    - name: Dominik Kotarski
+      position: goalkeeper
+    - name: Ivor Pandur
+      position: goalkeeper
+    - name: Joško Gvardiol
+      position: defender
+    - name: Duje Ćaleta-Car
+      position: defender
+    - name: Josip Šutalo
+      position: defender
+    - name: Josip Stanišić
+      position: defender
+    - name: Marin Pongračić
+      position: defender
+    - name: Martin Erlić
+      position: defender
+    - name: Luka Vušković
+      position: defender
+    - name: Luka Modrić
+      position: midfielder
+    - name: Mateo Kovačić
+      position: midfielder
+    - name: Mario Pašalić
+      position: midfielder
+    - name: Nikola Vlašić
+      position: midfielder
+    - name: Luka Sučić
+      position: midfielder
+    - name: Martin Baturina
+      position: midfielder
+    - name: Kristijan Jakić
+      position: midfielder
+    - name: Petar Sučić
+      position: midfielder
+    - name: Nikola Moro
+      position: midfielder
+    - name: Toni Fruk
+      position: midfielder
+    - name: Ivan Perišić
+      position: forward
+    - name: Andrej Kramarić
+      position: forward
+    - name: Ante Budimir
+      position: forward
+    - name: Marco Pašalić
+      position: forward
+    - name: Petar Musa
+      position: forward
+    - name: Igor Matanović
+      position: forward
+  - name: Ghana
+    code: GHA
+    flag: "\U0001F1EC\U0001F1ED"
+    players:
+    - name: Benjamin Asare
+      position: goalkeeper
+    - name: Lawrence Ati-Zigi
+      position: goalkeeper
+    - name: Joseph Anang
+      position: goalkeeper
+    - name: Baba Abdul Rahman
+      position: defender
+    - name: Gideon Mensah
+      position: defender
+    - name: Marvin Senaya
+      position: defender
+    - name: Alidu Seidu
+      position: defender
+    - name: Abdul Mumin
+      position: defender
+    - name: Jerome Opoku
+      position: defender
+    - name: Jonas Adjetey
+      position: defender
+    - name: Kojo Peprah Oppong
+      position: defender
+    - name: Derrick Luckassen
+      position: defender
+    - name: Thomas Partey
+      position: midfielder
+    - name: Elisha Owusu
+      position: midfielder
+    - name: Kwasi Sibo
+      position: midfielder
+    - name: Augustine Boakye
+      position: midfielder
+    - name: Caleb Yirenkyi
+      position: midfielder
+    - name: Abdul Fatawu Issahaku
+      position: midfielder
+    - name: Kamaldeen Sulemana
+      position: midfielder
+    - name: Jordan Ayew
+      position: forward
+    - name: Antoine Semenyo
+      position: forward
+    - name: Iñaki Williams
+      position: forward
+    - name: Ernest Nuamah
+      position: forward
+    - name: Christopher Bonsu Baah
+      position: forward
+    - name: Brandon Thomas-Asante
+      position: forward
+    - name: Prince Kwabena Adu
+      position: forward
+  - name: Panamá
+    code: PAN
+    flag: "\U0001F1F5\U0001F1E6"
+    players:
+    - name: Orlando Mosquera
+      position: goalkeeper
+    - name: Luis Mejía
+      position: goalkeeper
+    - name: César Samudio
+      position: goalkeeper
+    - name: César Blackman
+      position: defender
+    - name: Jorge Gutiérrez
+      position: defender
+    - name: Amir Murillo
+      position: defender
+    - name: Fidel Escobar
+      position: defender
+    - name: Andrés Andrade
+      position: defender
+    - name: Edgardo Fariña
+      position: defender
+    - name: José Córdoba
+      position: defender
+    - name: Eric Davis
+      position: defender
+    - name: Jiovany Ramos
+      position: defender
+    - name: Roderick Miller
+      position: defender
+    - name: Aníbal Godoy
+      position: midfielder
+    - name: Carlos Harvey
+      position: midfielder
+    - name: Cristian Martínez
+      position: midfielder
+    - name: José Luis Rodríguez
+      position: midfielder
+    - name: César Yanis
+      position: midfielder
+    - name: Yoel Bárcenas
+      position: midfielder
+    - name: Azarías Londoño
+      position: midfielder
+    - name: Adalberto Carrasquilla
+      position: midfielder
+    - name: Alberto Quintero
+      position: midfielder
+    - name: Ismael Díaz
+      position: forward
+    - name: Cecilio Waterman
+      position: forward
+    - name: José Fajardo
+      position: forward
+    - name: Tomás Rodríguez
+      position: forward
+
 # Official 2026 FIFA World Cup knockout bracket (matches 73-104).
 # home_label / away_label = the "cruce" each slot is fed from.
 # advances_to = bracket_slot of the next match the winner plays.

@@ -17,8 +17,12 @@ class SeedLoader
           t.name = team_data["name"]
           t.flag_emoji = team_data["flag"]
         end
-        Array(team_data["players"]).each do |player_name|
-          Player.find_or_create_by!(team: team, name: player_name)
+        Array(team_data["players"]).each do |player_data|
+          # Players may be a bare name (legacy) or a { name:, position: } hash.
+          name     = player_data.is_a?(Hash) ? player_data["name"] : player_data
+          position = player_data.is_a?(Hash) ? player_data["position"] : nil
+          player = Player.find_or_create_by!(team: team, name: name)
+          player.update!(position: position) if position.present? && player.position != position
         end
       end
     end

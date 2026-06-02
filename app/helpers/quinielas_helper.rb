@@ -16,14 +16,15 @@ module QuinielasHelper
   end
 
   # All players as a searchable dataset for the awards typeahead:
-  # [{ id, name, country, flag }]
+  # [{ id, name, country, flag, position }]. `position` lets the Guante de Oro
+  # combobox restrict suggestions to goalkeepers.
   def players_dataset(tournament)
-    Rails.cache.fetch("datasets/v2/players/#{tournament.id}", expires_in: 12.hours) do
+    Rails.cache.fetch("datasets/v3/players/#{tournament.id}", expires_in: 12.hours) do
       Player.joins(team: :group)
             .where(groups: { tournament_id: tournament.id })
             .includes(:team)
             .order(:name)
-            .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url } }
+            .map { |p| { id: p.id, name: p.name, country: p.team.name, flag: p.team.flag_url, position: p.position } }
     end
   end
 

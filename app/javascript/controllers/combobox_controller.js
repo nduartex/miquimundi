@@ -5,12 +5,20 @@ import { Controller } from "@hotwired/stimulus"
 // the chosen player id into a hidden field.
 export default class extends Controller {
   static targets = ["input", "hidden", "list"]
-  static values = { datasetId: { type: String, default: "players-json" } }
+  static values = {
+    datasetId: { type: String, default: "players-json" },
+    position: { type: String, default: "" },
+  }
 
   connect() {
     const cache = (window.__cbData ||= {})
-    this.items = cache[this.datasetIdValue] ||=
+    const all = cache[this.datasetIdValue] ||=
       JSON.parse(document.getElementById(this.datasetIdValue)?.textContent || "[]")
+    // When a position is set (e.g. Guante de Oro → goalkeeper) only that
+    // position is suggested; otherwise every player is searchable.
+    this.items = this.positionValue
+      ? all.filter((p) => p.position === this.positionValue)
+      : all
     this.active = -1
   }
 

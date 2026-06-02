@@ -2,7 +2,7 @@
 <% award_defs = [
      { field: "balon_oro_player_id",  label: "Balón de Oro",        pts: 10, kind: :player, tip: "Mejor jugador de todo el Mundial." },
      { field: "bota_oro_player_id",   label: "Bota de Oro",         pts: 10, kind: :player, tip: "Máximo goleador del torneo." },
-     { field: "guante_oro_player_id", label: "Guante de Oro",       pts: 8,  kind: :player, tip: "Mejor arquero del Mundial." },
+     { field: "guante_oro_player_id", label: "Guante de Oro",       pts: 8,  kind: :player, position: "goalkeeper", tip: "Mejor arquero del Mundial." },
      { field: "young_player_id",      label: "Mejor jugador joven", pts: 6,  kind: :player, tip: "Mejor futbolista joven del torneo." },
      { field: "fair_play_team_id",    label: "Fair Play",           pts: 5,  kind: :team,   tip: "Premio al equipo con mejor juego limpio (mejor conducta disciplinaria del torneo)." }
    ] %>
@@ -33,7 +33,8 @@
 
       <% if a[:kind] == :player %>
         <% selected = award&.public_send(a[:field].sub("_id", "")) %>
-        <div class="relative" data-controller="combobox">
+        <div class="relative" data-controller="combobox"
+             <%= "data-combobox-position-value=#{a[:position]}".html_safe if a[:position] %>>
           <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, data: { combobox_target: "hidden" } %>
           <input type="text" data-combobox-target="input" autocomplete="off"
                  value="<%= selected&.name %>" placeholder="Escribe un jugador…"
