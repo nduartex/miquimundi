@@ -1,0 +1,21 @@
+default: &default
+  dispatchers:
+    - polling_interval: 1
+  workers:
+    - polling_interval: 0.1
+      queues: "*"
+      threads: 3
+  schedulers:
+    - recurring_schedule: clear_solid_queue_finished_jobs
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  # Disable forking to prevent port binding issues with Puma
+  fork_supervisor: false
+
