@@ -79,7 +79,7 @@ module QuinielasHelper
 
     { title: "MI PREDICCIÓN",
       username: quiniela.user.display_name,
-      userFlag: quiniela.user.favorite_team&.flag_emoji,
+      userFlag: quiniela.user.favorite_team&.flag_url,
       groups: groups,
       thirds: thirds,
       awards: prediction_award_briefs(quiniela.award_prediction) }
@@ -94,7 +94,7 @@ module QuinielasHelper
                                    .map { |e| { emoji: e.emoji, name: e.name, description: e.description } }
     { title: "MIS LOGROS",
       username: quiniela.user.display_name,
-      userFlag: quiniela.user.favorite_team&.flag_emoji,
+      userFlag: quiniela.user.favorite_team&.flag_url,
       count: items.size,
       total: AchievementCatalog::ALL.size,
       achievements: items }
@@ -104,7 +104,7 @@ module QuinielasHelper
 
   def team_brief(team)
     return nil unless team
-    { name: team.name, flag: team.flag_emoji }
+    { name: team.name, flag: team.flag_url }
   end
 
   def prediction_award_briefs(award)
@@ -113,10 +113,10 @@ module QuinielasHelper
     briefs = PREDICTION_AWARDS.filter_map do |label, field|
       player = award.public_send(field)
       next unless player
-      { label: label, name: player.name, flag: player.team&.flag_emoji }
+      { label: label, name: player.name, flag: player.team&.flag_url }
     end
     if (team = award.fair_play_team)
-      briefs << { label: "Fair Play", name: team.name, flag: team.flag_emoji }
+      briefs << { label: "Fair Play", name: team.name, flag: team.flag_url }
     end
     briefs
   end

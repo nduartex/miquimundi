@@ -43,6 +43,8 @@ export default class extends Controller {
     }
 
     const d = this.data
+    // Favourite-team flag as a real PNG (emoji flags show as letters on Windows).
+    this._userFlag = await this.loadFlag(d.userFlag)
     const W = 1080, H = 1920
     const cv = document.createElement("canvas")
     cv.width = W; cv.height = H
@@ -63,8 +65,9 @@ export default class extends Controller {
     ctx.fillStyle = GOLD; ctx.font = `900 74px ${COND}`
     ctx.fillText(d.title || "MIS LOGROS", W / 2, 165)
     ctx.fillStyle = WHITE; ctx.font = `700 42px ${SANS}`
-    const user = [d.username, d.userFlag].filter(Boolean).join(" ")
-    ctx.fillText(user, W / 2, 230)
+    const name = d.username || ""
+    ctx.fillText(name, W / 2, 230)
+    this.drawFlag(ctx, this._userFlag, W / 2 + ctx.measureText(name).width / 2 + 14, 230, 42)
     ctx.fillStyle = DIM; ctx.font = `700 28px ${COND}`
     ctx.fillText("M U N D I A L   2 0 2 6", W / 2, 276)
 
@@ -134,6 +137,24 @@ export default class extends Controller {
       }
       ctx.fillText(out, x, y + i * lineHeight)
     })
+  }
+
+  // Load a single flag PNG (or null on failure). Same-origin → no canvas taint.
+  loadFlag(url) {
+    if (!url) return Promise.resolve(null)
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = () => resolve(null)
+      img.src = url
+    })
+  }
+
+  // Draw a flag image sized to `size`px text, vertically centred on the baseline.
+  drawFlag(ctx, img, x, y, size) {
+    if (!img) return
+    const h = size * 0.72, w = h * 1.5
+    ctx.drawImage(img, x, y - size * 0.34 - h / 2, w, h)
   }
 
   roundRect(ctx, x, y, w, h, r) {

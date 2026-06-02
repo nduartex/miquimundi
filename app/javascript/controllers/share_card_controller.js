@@ -45,6 +45,9 @@ export default class extends Controller {
     }
 
     const d = this.data
+    // Preload the self-hosted flag PNGs so they render as real flags (emoji
+    // flags show as plain letters on Windows). Same-origin → no canvas taint.
+    this._flags = await this.loadFlags(d)
     const W = 1080, H = 1920
     const cv = document.createElement("canvas")
     cv.width = W; cv.height = H
@@ -69,11 +72,7 @@ export default class extends Controller {
     // accent so the readable name stays dead-centre regardless of emoji width.
     const name = d.username || ""
     ctx.fillText(name, W / 2, 230)
-    if (d.userFlag) {
-      ctx.textAlign = "left"
-      ctx.fillText(d.userFlag, W / 2 + ctx.measureText(name).width / 2 + 14, 230)
-      ctx.textAlign = "center"
-    }
+    this.drawFlag(ctx, d.userFlag, W / 2 + ctx.measureText(name).width / 2 + 14, 230, 42)
     ctx.fillStyle = DIM; ctx.font = `700 28px ${COND}`
     ctx.fillText("M U N D I A L   2 0 2 6", W / 2, 276)
 
@@ -95,7 +94,7 @@ export default class extends Controller {
       const y = THIRD_Y + Math.floor(i / 2) * THIRD_STEP
       this.drawSegments(ctx, [
         { t: "•  ", c: GOLD },
-        { t: this.teamLabel(t), c: WHITE }
+        ...this.teamSegs(t)
       ], cx, y, COL_W, 30, SANS, "center")
     })
 
@@ -106,11 +105,11 @@ export default class extends Controller {
     const ROW_MAXW = W - 192
     ;(d.awards || []).forEach((a, i) => {
       const y = AWARD_Y + i * AWARD_STEP
-      const val = [a.name, a.flag].filter(Boolean).join(" ")
       this.drawSegments(ctx, [
         { t: a.label, c: WHITE },
         { t: " :  ", c: GOLD, bold: true },
-        { t: val, c: WHITE }
+        { t: a.name, c: WHITE },
+        ...(a.flag ? [{ flag: a.flag }] : [])
       ], W / 2, y, ROW_MAXW, 32, SANS, "center")
     })
 
@@ -126,20 +125,48 @@ export default class extends Controller {
     ctx.fillText(text.toUpperCase(), 540, y)
   }
 
-  teamLabel(t) {
-    if (!t) return "—"
-    return [t.name, t.flag].filter(Boolean).join(" ")
+  // Team name + its flag image as drawable segments (or a dash when missing).
+  teamSegs(t, color = WHITE) {
+    if (!t) return [{ t: "—", c: color }]
+    const segs = [{ t: t.name, c: color }]
+    if (t.flag) segs.push({ flag: t.flag })
+    return segs
   }
 
   groupSegments(g) {
     return [
       { t: `${g.name}  `, c: GOLD_SOFT, bold: true },
       { t: "1. ", c: GOLD },
-      { t: this.teamLabel(g.first), c: WHITE },
+      ...this.teamSegs(g.first),
       { t: "  ·  ", c: DIM },
       { t: "2. ", c: GOLD },
-      { t: this.teamLabel(g.second), c: WHITE }
+      ...this.teamSegs(g.second)
     ]
+  }
+
+  // Load every flag PNG referenced by the card into a url→Image map. Failed
+  // loads are dropped so a missing flag simply renders nothing.
+  loadFlags(d) {
+    const urls = new Set()
+    const add = (u) => u && urls.add(u)
+    add(d.userFlag)
+    ;(d.groups || []).forEach((g) => { add(g.first?.flag); add(g.second?.flag) })
+    ;(d.thirds || []).forEach((t) => add(t?.flag))
+    ;(d.awards || []).forEach((a) => add(a?.flag))
+    return Promise.all([...urls].map((url) => new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => resolve([url, img])
+      img.onerror = () => resolve([url, null])
+      img.src = url
+    }))).then((pairs) => new Map(pairs.filter(([, img]) => img)))
+  }
+
+  // Draw a flag image sized to `size`px text, vertically centred on the baseline.
+  drawFlag(ctx, url, x, y, size) {
+    const img = url && this._flags && this._flags.get(url)
+    if (!img) return
+    const h = size * 0.72, w = h * 1.5
+    ctx.drawImage(img, x, y - size * 0.34 - h / 2, w, h)
   }
 
   // Draw left-aligned coloured segments on one line, shrinking the font until the
@@ -148,20 +175,27 @@ export default class extends Controller {
   // point and the whole line is laid out symmetrically around it.
   drawSegments(ctx, segs, x, y, maxWidth, baseSize, family = SANS, align = "left") {
     const weightOf = (s) => (s.bold ? "900" : "700")
-    const measure = (size) => segs.reduce((w, s) => {
+    // A flag segment reserves a leading gap + a flag the height of the text.
+    const segWidth = (s, size) => {
+      if (s.flag) return size * 1.30
       ctx.font = `${weightOf(s)} ${size}px ${family}`
-      return w + ctx.measureText(s.t).width
-    }, 0)
+      return ctx.measureText(s.t).width
+    }
+    const measure = (size) => segs.reduce((w, s) => w + segWidth(s, size), 0)
     let size = baseSize
     while (size > 22 && measure(size) > maxWidth) size -= 2
 
     ctx.textAlign = "left"
     let cx = align === "center" ? x - measure(size) / 2 : x
     for (const s of segs) {
-      ctx.font = `${weightOf(s)} ${size}px ${family}`
-      ctx.fillStyle = s.c
-      ctx.fillText(s.t, cx, y)
-      cx += ctx.measureText(s.t).width
+      if (s.flag) {
+        this.drawFlag(ctx, s.flag, cx + size * 0.22, y, size)
+      } else {
+        ctx.font = `${weightOf(s)} ${size}px ${family}`
+        ctx.fillStyle = s.c
+        ctx.fillText(s.t, cx, y)
+      }
+      cx += segWidth(s, size)
     }
   }
 
