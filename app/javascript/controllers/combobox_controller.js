@@ -76,7 +76,9 @@ function esc(s) {
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;")
 }
 
-// Only allow http(s) flag URLs (blocks javascript:/data: URIs).
+// Allow http(s) URLs or a same-origin root-relative path like /flags/ar.png
+// (single leading slash). Blocks //host, javascript: and data: URIs.
 function safeFlag(url) {
-  return /^https?:\/\//i.test(url || "") ? url : null
+  url = url || ""
+  return /^https?:\/\//i.test(url) || /^\/[^/]/.test(url) ? url : null
 }
