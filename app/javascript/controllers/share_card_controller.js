@@ -65,8 +65,15 @@ export default class extends Controller {
     ctx.fillStyle = GOLD; ctx.font = `900 74px ${COND}`
     ctx.fillText(d.title || "MI PREDICCIÓN", W / 2, 165)
     ctx.fillStyle = WHITE; ctx.font = `700 42px ${SANS}`
-    const user = [d.username, d.userFlag].filter(Boolean).join(" ")
-    ctx.fillText(user, W / 2, 230)
+    // Center the username itself (like the title); the flag rides as a trailing
+    // accent so the readable name stays dead-centre regardless of emoji width.
+    const name = d.username || ""
+    ctx.fillText(name, W / 2, 230)
+    if (d.userFlag) {
+      ctx.textAlign = "left"
+      ctx.fillText(d.userFlag, W / 2 + ctx.measureText(name).width / 2 + 14, 230)
+      ctx.textAlign = "center"
+    }
     ctx.fillStyle = DIM; ctx.font = `700 28px ${COND}`
     ctx.fillText("M U N D I A L   2 0 2 6", W / 2, 276)
 
@@ -84,19 +91,19 @@ export default class extends Controller {
     this.sectionLabel(ctx, "Mejores terceros", 818)
     const THIRD_STEP = 56, THIRD_Y = 885
     ;(d.thirds || []).forEach((t, i) => {
-      const x = COL_X[i % 2]
+      const cx = COL_X[i % 2] + COL_W / 2
       const y = THIRD_Y + Math.floor(i / 2) * THIRD_STEP
       this.drawSegments(ctx, [
         { t: "•  ", c: GOLD },
         { t: this.teamLabel(t), c: WHITE }
-      ], x, y, COL_W, 30)
+      ], cx, y, COL_W, 30, SANS, "center")
     })
 
     // Section: awards — a clean label→value table on a single shared left edge,
     // no separator hairlines, so the rows line up quietly instead of competing.
     this.sectionLabel(ctx, "Premios", 1140)
     const AWARD_STEP = 74, AWARD_Y = 1212
-    const LABEL_X = 96, ROW_MAXW = W - 96 - LABEL_X
+    const ROW_MAXW = W - 192
     ;(d.awards || []).forEach((a, i) => {
       const y = AWARD_Y + i * AWARD_STEP
       const val = [a.name, a.flag].filter(Boolean).join(" ")
@@ -104,7 +111,7 @@ export default class extends Controller {
         { t: a.label, c: WHITE },
         { t: " :  ", c: GOLD, bold: true },
         { t: val, c: WHITE }
-      ], LABEL_X, y, ROW_MAXW, 32)
+      ], W / 2, y, ROW_MAXW, 32, SANS, "center")
     })
 
     // Footer.
@@ -137,7 +144,9 @@ export default class extends Controller {
 
   // Draw left-aligned coloured segments on one line, shrinking the font until the
   // whole line fits maxWidth (so full country names never overflow the column).
-  drawSegments(ctx, segs, x, y, maxWidth, baseSize, family = SANS) {
+  // align "left" (default): `x` is the left edge. "center": `x` is the centre
+  // point and the whole line is laid out symmetrically around it.
+  drawSegments(ctx, segs, x, y, maxWidth, baseSize, family = SANS, align = "left") {
     const weightOf = (s) => (s.bold ? "900" : "700")
     const measure = (size) => segs.reduce((w, s) => {
       ctx.font = `${weightOf(s)} ${size}px ${family}`
@@ -147,7 +156,7 @@ export default class extends Controller {
     while (size > 22 && measure(size) > maxWidth) size -= 2
 
     ctx.textAlign = "left"
-    let cx = x
+    let cx = align === "center" ? x - measure(size) / 2 : x
     for (const s of segs) {
       ctx.font = `${weightOf(s)} ${size}px ${family}`
       ctx.fillStyle = s.c
