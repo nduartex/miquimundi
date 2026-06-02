@@ -20,6 +20,12 @@ export default class extends Controller {
       ? all.filter((p) => p.position === this.positionValue)
       : all
     this.active = -1
+    // Un valor renderizado por el servidor (editando una predicción) ya cuenta
+    // como selección válida.
+    if (this.hiddenTarget.value && this.inputTarget.value) {
+      this.chosenLabel = this.inputTarget.value
+      this.lastChosenLabel = this.inputTarget.value.toLowerCase()
+    }
   }
 
   filter() {
@@ -54,6 +60,7 @@ export default class extends Controller {
     const li = event.currentTarget
     this.hiddenTarget.value = li.dataset.id
     this.inputTarget.value = li.dataset.label
+    this.chosenLabel = li.dataset.label
     this.lastChosenLabel = li.dataset.label.toLowerCase()
     this.close()
   }
@@ -73,7 +80,20 @@ export default class extends Controller {
     items[this.active]?.scrollIntoView({ block: "nearest" })
   }
 
-  blur() { setTimeout(() => this.close(), 150) }
+  // Solo vale una selección hecha desde la lista. Si al salir del campo no hay
+  // un jugador elegido (id en el hidden), borramos el texto tecleado para que
+  // nadie pueda "marcar" un nombre suelto sin seleccionarlo. Si hay selección,
+  // restauramos su etiqueta por si el usuario editó el texto sin re-elegir.
+  blur() {
+    setTimeout(() => {
+      this.close()
+      if (!this.hiddenTarget.value) {
+        this.inputTarget.value = ""
+      } else if (this.chosenLabel) {
+        this.inputTarget.value = this.chosenLabel
+      }
+    }, 150)
+  }
   close() { this.listTarget.hidden = true }
 }
 

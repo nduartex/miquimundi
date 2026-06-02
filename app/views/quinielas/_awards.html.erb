@@ -36,8 +36,9 @@
         <div class="relative" data-controller="combobox"
              <%= "data-combobox-position-value=#{a[:position]}".html_safe if a[:position] %>>
           <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, data: { combobox_target: "hidden" } %>
+          <% placeholder = a[:position] == "goalkeeper" ? "Busca un arquero por nombre o país…" : "Busca por jugador o país…" %>
           <input type="text" data-combobox-target="input" autocomplete="off"
-                 value="<%= selected&.name %>" placeholder="Escribe un jugador…"
+                 value="<%= selected&.name %>" placeholder="<%= placeholder %>"
                  <%= "disabled" if locked %>
                  data-action="input->combobox#filter focus->combobox#filter keydown->combobox#key blur->combobox#blur"
                  class="field <%= 'opacity-60 cursor-not-allowed' if locked %>">
