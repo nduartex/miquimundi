@@ -126,8 +126,19 @@ export default class extends Controller {
     const step = this.steps[this.i]
     const target = step && document.querySelector(step.el)
     if (!target) { this.finish(); return }
-    const r = target.getBoundingClientRect()
     const pad = 8
+    const margin = 12
+    // Clamp the target rect to the viewport and cap the spotlight height. A target
+    // taller than the screen (e.g. a long ranking with 27+ participants) would
+    // otherwise size the highlight to the full element — overflowing the screen and
+    // leaving the tooltip nowhere to go. Spotlight the top portion and keep room below.
+    const raw = target.getBoundingClientRect()
+    const rectTop = Math.max(raw.top, margin)
+    const rectBottom = Math.min(raw.bottom, window.innerHeight - margin, rectTop + window.innerHeight * 0.6)
+    const r = {
+      top: rectTop, left: raw.left, width: raw.width,
+      height: Math.max(0, rectBottom - rectTop), bottom: rectBottom, right: raw.right
+    }
     Object.assign(this.highlight.style, {
       top: `${r.top - pad}px`, left: `${r.left - pad}px`,
       width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px`
@@ -135,7 +146,6 @@ export default class extends Controller {
     // Tooltip: prefer below the target, else above, using its REAL height so it
     // never overlaps the highlighted element or runs off-screen.
     const gap = 14
-    const margin = 12
     const tipW = Math.min(320, window.innerWidth - 24)
     this.tooltip.style.width = `${tipW}px`
     this.tooltip.style.opacity = "1"
