@@ -1,0 +1,135 @@
+{
+  "_meta": {
+    "tournament": "Copa Mundial de la FIFA 2026",
+    "note": "Fixture oficial. Horas de grupos convertidas desde hora del Este de EE.UU. (EDT = UTC-4) a UTC sumando 4 h. 'date' es la fecha oficial del partido (para agrupar); 'kickoff_utc' es la hora de inicio en UTC y se convierte a la zona del navegador. Eliminatorias sin hora confirmada (kickoff_utc null).",
+    "timezone_field": "kickoff_utc en formato ISO 8601 UTC (sufijo Z)"
+  },
+  "matches": [
+    { "phase": "group", "group": "A", "date": "2026-06-11", "kickoff_utc": "2026-06-11T19:00:00Z", "home": { "iso2": "mx" }, "away": { "iso2": "za" }, "venue": "Estadio Ciudad de México" },
+    { "phase": "group", "group": "A", "date": "2026-06-11", "kickoff_utc": "2026-06-12T02:00:00Z", "home": { "iso2": "kr" }, "away": { "iso2": "cz" }, "venue": "Estadio Guadalajara" },
+
+    { "phase": "group", "group": "B", "date": "2026-06-12", "kickoff_utc": "2026-06-12T19:00:00Z", "home": { "iso2": "ca" }, "away": { "iso2": "ba" }, "venue": "Estadio Toronto" },
+    { "phase": "group", "group": "D", "date": "2026-06-12", "kickoff_utc": "2026-06-13T01:00:00Z", "home": { "iso2": "us" }, "away": { "iso2": "py" }, "venue": "Estadio Los Ángeles" },
+
+    { "phase": "group", "group": "D", "date": "2026-06-13", "kickoff_utc": "2026-06-13T04:00:00Z", "home": { "iso2": "au" }, "away": { "iso2": "tr" }, "venue": "Estadio BC Place Vancouver" },
+    { "phase": "group", "group": "B", "date": "2026-06-13", "kickoff_utc": "2026-06-13T19:00:00Z", "home": { "iso2": "qa" }, "away": { "iso2": "ch" }, "venue": "Estadio Bahía de San Francisco" },
+    { "phase": "group", "group": "C", "date": "2026-06-13", "kickoff_utc": "2026-06-13T22:00:00Z", "home": { "iso2": "br" }, "away": { "iso2": "ma" }, "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "group", "group": "C", "date": "2026-06-13", "kickoff_utc": "2026-06-14T01:00:00Z", "home": { "iso2": "ht" }, "away": { "iso2": "gb-sct" }, "venue": "Estadio Boston" },
+
+    { "phase": "group", "group": "E", "date": "2026-06-14", "kickoff_utc": "2026-06-14T17:00:00Z", "home": { "iso2": "de" }, "away": { "iso2": "cw" }, "venue": "Estadio Houston" },
+    { "phase": "group", "group": "F", "date": "2026-06-14", "kickoff_utc": "2026-06-14T20:00:00Z", "home": { "iso2": "nl" }, "away": { "iso2": "jp" }, "venue": "Estadio Dallas" },
+    { "phase": "group", "group": "E", "date": "2026-06-14", "kickoff_utc": "2026-06-14T23:00:00Z", "home": { "iso2": "ci" }, "away": { "iso2": "ec" }, "venue": "Estadio Filadelfia" },
+    { "phase": "group", "group": "F", "date": "2026-06-14", "kickoff_utc": "2026-06-15T02:00:00Z", "home": { "iso2": "se" }, "away": { "iso2": "tn" }, "venue": "Estadio Monterrey" },
+
+    { "phase": "group", "group": "H", "date": "2026-06-15", "kickoff_utc": "2026-06-15T16:00:00Z", "home": { "iso2": "es" }, "away": { "iso2": "cv" }, "venue": "Estadio Atlanta" },
+    { "phase": "group", "group": "G", "date": "2026-06-15", "kickoff_utc": "2026-06-15T19:00:00Z", "home": { "iso2": "be" }, "away": { "iso2": "eg" }, "venue": "Estadio Seattle" },
+    { "phase": "group", "group": "H", "date": "2026-06-15", "kickoff_utc": "2026-06-15T22:00:00Z", "home": { "iso2": "sa" }, "away": { "iso2": "uy" }, "venue": "Estadio Miami" },
+    { "phase": "group", "group": "G", "date": "2026-06-15", "kickoff_utc": "2026-06-16T01:00:00Z", "home": { "iso2": "ir" }, "away": { "iso2": "nz" }, "venue": "Estadio Los Ángeles" },
+
+    { "phase": "group", "group": "J", "date": "2026-06-16", "kickoff_utc": "2026-06-16T04:00:00Z", "home": { "iso2": "at" }, "away": { "iso2": "jo" }, "venue": "Estadio Bahía de San Francisco" },
+    { "phase": "group", "group": "I", "date": "2026-06-16", "kickoff_utc": "2026-06-16T19:00:00Z", "home": { "iso2": "fr" }, "away": { "iso2": "sn" }, "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "group", "group": "I", "date": "2026-06-16", "kickoff_utc": "2026-06-16T22:00:00Z", "home": { "iso2": "iq" }, "away": { "iso2": "no" }, "venue": "Estadio Boston" },
+    { "phase": "group", "group": "J", "date": "2026-06-16", "kickoff_utc": "2026-06-17T01:00:00Z", "home": { "iso2": "ar" }, "away": { "iso2": "dz" }, "venue": "Estadio Kansas City" },
+
+    { "phase": "group", "group": "K", "date": "2026-06-17", "kickoff_utc": "2026-06-17T17:00:00Z", "home": { "iso2": "pt" }, "away": { "iso2": "cd" }, "venue": "Estadio Houston" },
+    { "phase": "group", "group": "L", "date": "2026-06-17", "kickoff_utc": "2026-06-17T20:00:00Z", "home": { "iso2": "gb-eng" }, "away": { "iso2": "hr" }, "venue": "Estadio Dallas" },
+    { "phase": "group", "group": "L", "date": "2026-06-17", "kickoff_utc": "2026-06-17T23:00:00Z", "home": { "iso2": "gh" }, "away": { "iso2": "pa" }, "venue": "Estadio Toronto" },
+    { "phase": "group", "group": "K", "date": "2026-06-17", "kickoff_utc": "2026-06-18T02:00:00Z", "home": { "iso2": "uz" }, "away": { "iso2": "co" }, "venue": "Estadio Ciudad de México" },
+
+    { "phase": "group", "group": "A", "date": "2026-06-18", "kickoff_utc": "2026-06-18T16:00:00Z", "home": { "iso2": "cz" }, "away": { "iso2": "za" }, "venue": "Estadio Atlanta" },
+    { "phase": "group", "group": "B", "date": "2026-06-18", "kickoff_utc": "2026-06-18T19:00:00Z", "home": { "iso2": "ch" }, "away": { "iso2": "ba" }, "venue": "Estadio Los Ángeles" },
+    { "phase": "group", "group": "B", "date": "2026-06-18", "kickoff_utc": "2026-06-18T22:00:00Z", "home": { "iso2": "ca" }, "away": { "iso2": "qa" }, "venue": "Estadio BC Place Vancouver" },
+    { "phase": "group", "group": "A", "date": "2026-06-18", "kickoff_utc": "2026-06-19T01:00:00Z", "home": { "iso2": "mx" }, "away": { "iso2": "kr" }, "venue": "Estadio Guadalajara" },
+
+    { "phase": "group", "group": "D", "date": "2026-06-19", "kickoff_utc": "2026-06-19T04:00:00Z", "home": { "iso2": "tr" }, "away": { "iso2": "py" }, "venue": "Estadio Bahía de San Francisco" },
+    { "phase": "group", "group": "D", "date": "2026-06-19", "kickoff_utc": "2026-06-19T19:00:00Z", "home": { "iso2": "us" }, "away": { "iso2": "au" }, "venue": "Estadio Seattle" },
+    { "phase": "group", "group": "C", "date": "2026-06-19", "kickoff_utc": "2026-06-19T22:00:00Z", "home": { "iso2": "gb-sct" }, "away": { "iso2": "ma" }, "venue": "Estadio Boston" },
+    { "phase": "group", "group": "C", "date": "2026-06-19", "kickoff_utc": "2026-06-20T01:00:00Z", "home": { "iso2": "br" }, "away": { "iso2": "ht" }, "venue": "Estadio Filadelfia" },
+
+    { "phase": "group", "group": "F", "date": "2026-06-20", "kickoff_utc": "2026-06-20T04:00:00Z", "home": { "iso2": "tn" }, "away": { "iso2": "jp" }, "venue": "Estadio Monterrey" },
+    { "phase": "group", "group": "F", "date": "2026-06-20", "kickoff_utc": "2026-06-20T17:00:00Z", "home": { "iso2": "nl" }, "away": { "iso2": "se" }, "venue": "Estadio Houston" },
+    { "phase": "group", "group": "E", "date": "2026-06-20", "kickoff_utc": "2026-06-20T20:00:00Z", "home": { "iso2": "de" }, "away": { "iso2": "ci" }, "venue": "Estadio Toronto" },
+    { "phase": "group", "group": "E", "date": "2026-06-20", "kickoff_utc": "2026-06-21T02:00:00Z", "home": { "iso2": "ec" }, "away": { "iso2": "cw" }, "venue": "Estadio Kansas City" },
+
+    { "phase": "group", "group": "H", "date": "2026-06-21", "kickoff_utc": "2026-06-21T16:00:00Z", "home": { "iso2": "es" }, "away": { "iso2": "sa" }, "venue": "Estadio Atlanta" },
+    { "phase": "group", "group": "G", "date": "2026-06-21", "kickoff_utc": "2026-06-21T19:00:00Z", "home": { "iso2": "be" }, "away": { "iso2": "ir" }, "venue": "Estadio Los Ángeles" },
+    { "phase": "group", "group": "H", "date": "2026-06-21", "kickoff_utc": "2026-06-21T22:00:00Z", "home": { "iso2": "uy" }, "away": { "iso2": "cv" }, "venue": "Estadio Miami" },
+    { "phase": "group", "group": "G", "date": "2026-06-21", "kickoff_utc": "2026-06-22T01:00:00Z", "home": { "iso2": "nz" }, "away": { "iso2": "eg" }, "venue": "Estadio BC Place Vancouver" },
+
+    { "phase": "group", "group": "J", "date": "2026-06-22", "kickoff_utc": "2026-06-22T17:00:00Z", "home": { "iso2": "ar" }, "away": { "iso2": "at" }, "venue": "Estadio Dallas" },
+    { "phase": "group", "group": "I", "date": "2026-06-22", "kickoff_utc": "2026-06-22T21:00:00Z", "home": { "iso2": "fr" }, "away": { "iso2": "iq" }, "venue": "Estadio Filadelfia" },
+    { "phase": "group", "group": "I", "date": "2026-06-22", "kickoff_utc": "2026-06-23T00:00:00Z", "home": { "iso2": "no" }, "away": { "iso2": "sn" }, "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "group", "group": "J", "date": "2026-06-22", "kickoff_utc": "2026-06-23T03:00:00Z", "home": { "iso2": "jo" }, "away": { "iso2": "dz" }, "venue": "Estadio Bahía de San Francisco" },
+
+    { "phase": "group", "group": "K", "date": "2026-06-23", "kickoff_utc": "2026-06-23T17:00:00Z", "home": { "iso2": "pt" }, "away": { "iso2": "uz" }, "venue": "Estadio Houston" },
+    { "phase": "group", "group": "L", "date": "2026-06-23", "kickoff_utc": "2026-06-23T20:00:00Z", "home": { "iso2": "gb-eng" }, "away": { "iso2": "gh" }, "venue": "Estadio Boston" },
+    { "phase": "group", "group": "L", "date": "2026-06-23", "kickoff_utc": "2026-06-23T23:00:00Z", "home": { "iso2": "pa" }, "away": { "iso2": "hr" }, "venue": "Estadio Toronto" },
+    { "phase": "group", "group": "K", "date": "2026-06-23", "kickoff_utc": "2026-06-24T02:00:00Z", "home": { "iso2": "co" }, "away": { "iso2": "cd" }, "venue": "Estadio Guadalajara" },
+
+    { "phase": "group", "group": "B", "date": "2026-06-24", "kickoff_utc": "2026-06-24T19:00:00Z", "home": { "iso2": "ch" }, "away": { "iso2": "ca" }, "venue": "Estadio BC Place Vancouver" },
+    { "phase": "group", "group": "B", "date": "2026-06-24", "kickoff_utc": "2026-06-24T19:00:00Z", "home": { "iso2": "ba" }, "away": { "iso2": "qa" }, "venue": "Estadio Seattle" },
+    { "phase": "group", "group": "C", "date": "2026-06-24", "kickoff_utc": "2026-06-24T22:00:00Z", "home": { "iso2": "gb-sct" }, "away": { "iso2": "br" }, "venue": "Estadio Miami" },
+    { "phase": "group", "group": "C", "date": "2026-06-24", "kickoff_utc": "2026-06-24T22:00:00Z", "home": { "iso2": "ma" }, "away": { "iso2": "ht" }, "venue": "Estadio Atlanta" },
+    { "phase": "group", "group": "A", "date": "2026-06-24", "kickoff_utc": "2026-06-25T01:00:00Z", "home": { "iso2": "cz" }, "away": { "iso2": "mx" }, "venue": "Estadio Ciudad de México" },
+    { "phase": "group", "group": "A", "date": "2026-06-24", "kickoff_utc": "2026-06-25T01:00:00Z", "home": { "iso2": "za" }, "away": { "iso2": "kr" }, "venue": "Estadio Monterrey" },
+
+    { "phase": "group", "group": "E", "date": "2026-06-25", "kickoff_utc": "2026-06-25T20:00:00Z", "home": { "iso2": "cw" }, "away": { "iso2": "ci" }, "venue": "Estadio Filadelfia" },
+    { "phase": "group", "group": "E", "date": "2026-06-25", "kickoff_utc": "2026-06-25T20:00:00Z", "home": { "iso2": "ec" }, "away": { "iso2": "de" }, "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "group", "group": "F", "date": "2026-06-25", "kickoff_utc": "2026-06-25T23:00:00Z", "home": { "iso2": "jp" }, "away": { "iso2": "se" }, "venue": "Estadio Dallas" },
+    { "phase": "group", "group": "F", "date": "2026-06-25", "kickoff_utc": "2026-06-25T23:00:00Z", "home": { "iso2": "tn" }, "away": { "iso2": "nl" }, "venue": "Estadio Kansas City" },
+    { "phase": "group", "group": "D", "date": "2026-06-25", "kickoff_utc": "2026-06-26T02:00:00Z", "home": { "iso2": "tr" }, "away": { "iso2": "us" }, "venue": "Estadio Los Ángeles" },
+    { "phase": "group", "group": "D", "date": "2026-06-25", "kickoff_utc": "2026-06-26T02:00:00Z", "home": { "iso2": "py" }, "away": { "iso2": "au" }, "venue": "Estadio Bahía de San Francisco" },
+
+    { "phase": "group", "group": "I", "date": "2026-06-26", "kickoff_utc": "2026-06-26T19:00:00Z", "home": { "iso2": "no" }, "away": { "iso2": "fr" }, "venue": "Estadio Boston" },
+    { "phase": "group", "group": "I", "date": "2026-06-26", "kickoff_utc": "2026-06-26T19:00:00Z", "home": { "iso2": "sn" }, "away": { "iso2": "iq" }, "venue": "Estadio Toronto" },
+    { "phase": "group", "group": "H", "date": "2026-06-26", "kickoff_utc": "2026-06-27T00:00:00Z", "home": { "iso2": "cv" }, "away": { "iso2": "sa" }, "venue": "Estadio Houston" },
+    { "phase": "group", "group": "H", "date": "2026-06-26", "kickoff_utc": "2026-06-27T00:00:00Z", "home": { "iso2": "uy" }, "away": { "iso2": "es" }, "venue": "Estadio Guadalajara" },
+    { "phase": "group", "group": "G", "date": "2026-06-26", "kickoff_utc": "2026-06-27T03:00:00Z", "home": { "iso2": "eg" }, "away": { "iso2": "ir" }, "venue": "Estadio Seattle" },
+    { "phase": "group", "group": "G", "date": "2026-06-26", "kickoff_utc": "2026-06-27T03:00:00Z", "home": { "iso2": "nz" }, "away": { "iso2": "be" }, "venue": "Estadio BC Place Vancouver" },
+
+    { "phase": "group", "group": "L", "date": "2026-06-27", "kickoff_utc": "2026-06-27T21:00:00Z", "home": { "iso2": "pa" }, "away": { "iso2": "gb-eng" }, "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "group", "group": "L", "date": "2026-06-27", "kickoff_utc": "2026-06-27T21:00:00Z", "home": { "iso2": "hr" }, "away": { "iso2": "gh" }, "venue": "Estadio Filadelfia" },
+    { "phase": "group", "group": "K", "date": "2026-06-27", "kickoff_utc": "2026-06-27T23:30:00Z", "home": { "iso2": "co" }, "away": { "iso2": "pt" }, "venue": "Estadio Miami" },
+    { "phase": "group", "group": "K", "date": "2026-06-27", "kickoff_utc": "2026-06-27T23:30:00Z", "home": { "iso2": "cd" }, "away": { "iso2": "uz" }, "venue": "Estadio Atlanta" },
+    { "phase": "group", "group": "J", "date": "2026-06-27", "kickoff_utc": "2026-06-28T02:00:00Z", "home": { "iso2": "dz" }, "away": { "iso2": "at" }, "venue": "Estadio Kansas City" },
+    { "phase": "group", "group": "J", "date": "2026-06-27", "kickoff_utc": "2026-06-28T02:00:00Z", "home": { "iso2": "jo" }, "away": { "iso2": "ar" }, "venue": "Estadio Dallas" },
+
+    { "phase": "round_32", "match_number": 73, "date": "2026-06-28", "kickoff_utc": null, "home_label": "2º Grupo A", "away_label": "2º Grupo B", "venue": "Estadio Los Ángeles" },
+    { "phase": "round_32", "match_number": 74, "date": "2026-06-29", "kickoff_utc": null, "home_label": "1º Grupo E", "away_label": "3º Grupo A/B/C/D/F", "venue": "Estadio Boston" },
+    { "phase": "round_32", "match_number": 75, "date": "2026-06-29", "kickoff_utc": null, "home_label": "1º Grupo F", "away_label": "2º Grupo C", "venue": "Estadio Monterrey" },
+    { "phase": "round_32", "match_number": 76, "date": "2026-06-29", "kickoff_utc": null, "home_label": "1º Grupo C", "away_label": "2º Grupo F", "venue": "Estadio Houston" },
+    { "phase": "round_32", "match_number": 77, "date": "2026-06-30", "kickoff_utc": null, "home_label": "1º Grupo I", "away_label": "3º Grupo C/D/F/G/H", "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "round_32", "match_number": 78, "date": "2026-06-30", "kickoff_utc": null, "home_label": "2º Grupo E", "away_label": "2º Grupo I", "venue": "Estadio Dallas" },
+    { "phase": "round_32", "match_number": 79, "date": "2026-06-30", "kickoff_utc": null, "home_label": "1º Grupo A", "away_label": "3º Grupo C/E/F/H/I", "venue": "Estadio Ciudad de México" },
+    { "phase": "round_32", "match_number": 80, "date": "2026-07-01", "kickoff_utc": null, "home_label": "1º Grupo L", "away_label": "3º Grupo E/H/I/J/K", "venue": "Estadio Atlanta" },
+    { "phase": "round_32", "match_number": 81, "date": "2026-07-01", "kickoff_utc": null, "home_label": "1º Grupo D", "away_label": "3º Grupo B/E/F/I/J", "venue": "Estadio Bahía de San Francisco" },
+    { "phase": "round_32", "match_number": 82, "date": "2026-07-01", "kickoff_utc": null, "home_label": "1º Grupo G", "away_label": "3º Grupo A/E/H/I/J", "venue": "Estadio Seattle" },
+    { "phase": "round_32", "match_number": 83, "date": "2026-07-02", "kickoff_utc": null, "home_label": "2º Grupo K", "away_label": "2º Grupo L", "venue": "Estadio Toronto" },
+    { "phase": "round_32", "match_number": 84, "date": "2026-07-02", "kickoff_utc": null, "home_label": "1º Grupo H", "away_label": "2º Grupo J", "venue": "Estadio Los Ángeles" },
+    { "phase": "round_32", "match_number": 85, "date": "2026-07-02", "kickoff_utc": null, "home_label": "1º Grupo B", "away_label": "3º Grupo E/F/G/I/J", "venue": "Estadio BC Place Vancouver" },
+    { "phase": "round_32", "match_number": 86, "date": "2026-07-03", "kickoff_utc": null, "home_label": "1º Grupo J", "away_label": "2º Grupo H", "venue": "Estadio Miami" },
+    { "phase": "round_32", "match_number": 87, "date": "2026-07-03", "kickoff_utc": null, "home_label": "1º Grupo K", "away_label": "3º Grupo D/E/I/J/L", "venue": "Estadio Kansas City" },
+    { "phase": "round_32", "match_number": 88, "date": "2026-07-03", "kickoff_utc": null, "home_label": "2º Grupo D", "away_label": "2º Grupo G", "venue": "Estadio Dallas" },
+
+    { "phase": "round_16", "match_number": 89, "date": "2026-07-04", "kickoff_utc": null, "home_label": "Ganador P74", "away_label": "Ganador P77", "venue": "Estadio Filadelfia" },
+    { "phase": "round_16", "match_number": 90, "date": "2026-07-04", "kickoff_utc": null, "home_label": "Ganador P73", "away_label": "Ganador P75", "venue": "Estadio Houston" },
+    { "phase": "round_16", "match_number": 91, "date": "2026-07-05", "kickoff_utc": null, "home_label": "Ganador P76", "away_label": "Ganador P78", "venue": "Estadio Nueva York Nueva Jersey" },
+    { "phase": "round_16", "match_number": 92, "date": "2026-07-05", "kickoff_utc": null, "home_label": "Ganador P79", "away_label": "Ganador P80", "venue": "Estadio Ciudad de México" },
+    { "phase": "round_16", "match_number": 93, "date": "2026-07-06", "kickoff_utc": null, "home_label": "Ganador P83", "away_label": "Ganador P84", "venue": "Estadio Dallas" },
+    { "phase": "round_16", "match_number": 94, "date": "2026-07-06", "kickoff_utc": null, "home_label": "Ganador P81", "away_label": "Ganador P82", "venue": "Estadio Seattle" },
+    { "phase": "round_16", "match_number": 95, "date": "2026-07-07", "kickoff_utc": null, "home_label": "Ganador P86", "away_label": "Ganador P88", "venue": "Estadio Atlanta" },
+    { "phase": "round_16", "match_number": 96, "date": "2026-07-07", "kickoff_utc": null, "home_label": "Ganador P85", "away_label": "Ganador P87", "venue": "Estadio BC Place Vancouver" },
+
+    { "phase": "quarter", "match_number": 97, "date": "2026-07-09", "kickoff_utc": null, "home_label": "Ganador P89", "away_label": "Ganador P90", "venue": "Estadio Boston" },
+    { "phase": "quarter", "match_number": 98, "date": "2026-07-10", "kickoff_utc": null, "home_label": "Ganador P93", "away_label": "Ganador P94", "venue": "Estadio Los Ángeles" },
+    { "phase": "quarter", "match_number": 99, "date": "2026-07-11", "kickoff_utc": null, "home_label": "Ganador P91", "away_label": "Ganador P92", "venue": "Estadio Miami" },
+    { "phase": "quarter", "match_number": 100, "date": "2026-07-11", "kickoff_utc": null, "home_label": "Ganador P95", "away_label": "Ganador P96", "venue": "Estadio Kansas City" },
+
+    { "phase": "semi", "match_number": 101, "date": "2026-07-14", "kickoff_utc": null, "home_label": "Ganador P97", "away_label": "Ganador P98", "venue": "Estadio Dallas" },
+    { "phase": "semi", "match_number": 102, "date": "2026-07-15", "kickoff_utc": null, "home_label": "Ganador P99", "away_label": "Ganador P100", "venue": "Estadio Atlanta" },
+
+    { "phase": "third_place", "match_number": 103, "date": "2026-07-18", "kickoff_utc": null, "home_label": "Perdedor P101", "away_label": "Perdedor P102", "venue": "Estadio Miami" },
+
+    { "phase": "final", "match_number": 104, "date": "2026-07-19", "kickoff_utc": null, "home_label": "Ganador P101", "away_label": "Ganador P102", "venue": "Estadio Nueva York Nueva Jersey" }
+  ]
+}

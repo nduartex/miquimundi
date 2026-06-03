@@ -11,5 +11,6 @@ Rails.application.routes.draw do
     resources :predictions, only: %i[create]
   end
   resources :rankings, only: %i[index]
+  get "calendario", to: "calendar#show", as: :calendar
   get "q/:token", to: "shared_quinielas#show", as: :shared_quiniela
 end
