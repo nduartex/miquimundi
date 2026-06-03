@@ -274,3 +274,18 @@
   animation: crownFly 1.6s ease-out forwards;
 }
 @media (prefers-reduced-motion: reduce) { .crown-fly { animation: none; opacity: 0; } }
+
+/* Your own row in the live ranking — a sky ring + "Tú" pill so you can spot
+   yourself among many participants (added client-side after each broadcast). */
+.ranking-you { box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.65); }
+.you-badge {
+  flex-shrink: 0;
+  font-size: 10px; font-weight: 700; line-height: 1;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 9999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}

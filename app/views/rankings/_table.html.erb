@@ -17,7 +17,7 @@
             <span class="text-center font-display font-extrabold w-11 text-3xl text-amber-300 shrink-0"><%= medal %></span>
             <div class="flex-1 min-w-0">
               <div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest">👑 Líder</div>
-              <span class="flex items-center gap-2 text-white font-semibold text-xl truncate">
+              <span data-name class="flex items-center gap-2 text-white font-semibold text-xl truncate">
                 <% if q.user.favorite_team&.flag_url %>
                   <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
                        class="w-[26px] h-[19px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
@@ -38,7 +38,7 @@
         <div data-user-id="<%= q.user_id %>" class="flex items-center surface gap-3 p-3">
           <span class="text-center font-display font-extrabold w-9 text-lg text-white/80"><%= medal || (i + 1) %></span>
           <div class="flex-1 min-w-0">
-            <span class="flex items-center gap-2 text-white font-semibold truncate">
+            <span data-name class="flex items-center gap-2 text-white font-semibold truncate">
               <% if q.user.favorite_team&.flag_url %>
                 <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
                      class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
