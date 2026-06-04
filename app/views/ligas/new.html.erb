@@ -12,7 +12,7 @@
     </div>
     <div>
       <%= f.label :max_players, "Cupo (máximo de jugadores)", class: "block text-white/70 text-sm font-semibold mb-1" %>
-      <%= f.number_field :max_players, min: Liga::MIN_PLAYERS, max: Liga::MAX_PLAYERS,
+      <%= f.number_field :max_players, min: Liga::MIN_PLAYERS, max: Liga::MAX_PLAYERS, step: 1, required: true,
             class: "w-full rounded-lg bg-slate-900/60 ring-1 ring-white/15 px-3 py-2 text-white" %>
       <p class="text-white/40 text-xs mt-1">Entre <%= Liga::MIN_PLAYERS %> y <%= Liga::MAX_PLAYERS %>. Te incluye a ti.</p>
     </div>
