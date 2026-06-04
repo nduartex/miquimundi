@@ -75,6 +75,24 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     assert_not liga.member?(@friend)
   end
 
+  test "a non-member cannot leave (no false success)" do
+    liga = create_liga
+    sign_in(@friend) # not a member
+    assert_no_difference "LigaMembership.count" do
+      delete leave_liga_path(liga)
+    end
+    assert_redirected_to ligas_path
+    assert_equal "No perteneces a esta liga.", flash[:alert]
+  end
+
+  test "creating with an invalid cupo leaves no orphan liga" do
+    sign_in(@creator)
+    assert_no_difference [ "Liga.count", "LigaMembership.count" ] do
+      post ligas_path, params: { liga: { name: "Mala", max_players: 999 } }
+    end
+    assert_response :unprocessable_entity
+  end
+
   test "the creator cannot leave" do
     liga = create_liga
     sign_in(@creator)

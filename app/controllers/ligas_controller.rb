@@ -1,7 +1,7 @@
 class LigasController < ApplicationController
   before_action :require_login
   before_action :set_liga, only: %i[show edit update destroy leave expel]
-  before_action :require_membership, only: %i[show]
+  before_action :require_membership, only: %i[show leave]
   before_action :require_creator, only: %i[edit update destroy expel]
 
   def index
@@ -18,13 +18,14 @@ class LigasController < ApplicationController
     @liga.creator = current_user
     @liga.tournament = Tournament.current
 
-    if @liga.save
+    ActiveRecord::Base.transaction do
+      @liga.save!
       @liga.memberships.create!(user: current_user)
-      redirect_to @liga, notice: "Liga creada. Comparte el código #{@liga.invite_code} con tus amigos."
-    else
-      flash.now[:alert] = @liga.errors.full_messages.first || "No se pudo crear la liga."
-      render :new, status: :unprocessable_entity
     end
+    redirect_to @liga, notice: "Liga creada. Comparte el código #{@liga.invite_code} con tus amigos."
+  rescue ActiveRecord::RecordInvalid
+    flash.now[:alert] = @liga.errors.full_messages.first || "No se pudo crear la liga."
+    render :new, status: :unprocessable_entity
   end
 
   def edit
@@ -49,16 +50,25 @@ class LigasController < ApplicationController
   def join
     code = params[:invite_code].to_s.strip.upcase
     liga = Liga.find_by(invite_code: code)
+    return redirect_to ligas_path, alert: "Código inválido." if liga.nil?
 
-    if liga.nil?
-      redirect_to ligas_path, alert: "Código inválido."
-    elsif liga.member?(current_user)
-      redirect_to liga, notice: "Ya estás en esta liga."
-    elsif liga.full?
-      redirect_to ligas_path, alert: "La liga está completa."
-    else
-      liga.memberships.create!(user: current_user)
-      redirect_to liga, notice: "Te uniste a #{liga.name}."
+    # Serialize membership/capacity checks against concurrent joins so two
+    # people can't slip past max_players (or the same person double-submit).
+    result = liga.with_lock do
+      if liga.member?(current_user)
+        :already
+      elsif liga.full?
+        :full
+      else
+        liga.memberships.create!(user: current_user)
+        :joined
+      end
+    end
+
+    case result
+    when :already then redirect_to liga, notice: "Ya estás en esta liga."
+    when :full    then redirect_to ligas_path, alert: "La liga está completa."
+    else               redirect_to liga, notice: "Te uniste a #{liga.name}."
     end
   end
 
