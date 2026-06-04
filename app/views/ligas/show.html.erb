@@ -1,25 +1,43 @@
+<% members_count = @liga.memberships.count %>
 <div class="max-w-2xl mx-auto px-4 py-8">
   <header class="mb-6 flex items-start justify-between gap-3">
     <div class="min-w-0">
       <h1 class="font-display text-4xl font-extrabold text-white truncate">🏅 <%= @liga.name %></h1>
-      <p class="text-white/60 mt-1"><%= @liga.memberships.count %>/<%= @liga.max_players %> jugadores · ranking privado</p>
+      <p class="text-white/60 mt-1">Ranking privado · mismos puntos que el global</p>
     </div>
     <%= link_to "← Ligas", ligas_path, class: "shrink-0 text-white/60 hover:text-white text-sm font-semibold mt-2" %>
   </header>
 
-  <div class="surface p-4 mb-6 flex items-center justify-between gap-3">
-    <div>
-      <div class="text-white/50 text-xs font-bold uppercase tracking-widest">Código de invitación</div>
-      <div class="text-white font-mono text-2xl tracking-[0.3em] mt-1"><%= @liga.invite_code %></div>
+  <div class="grid grid-cols-2 gap-3 mb-6">
+    <div class="surface stat-tile p-4 text-center" style="--accent: var(--color-grass)">
+      <div class="stat-value text-emerald-300 tabular-nums"><%= members_count %></div>
+      <div class="stat-label">Jugadores</div>
     </div>
-    <span class="text-3xl">🔗</span>
+    <div class="surface stat-tile p-4 text-center" style="--accent: var(--color-gold)">
+      <div class="stat-value text-amber-300 tabular-nums"><%= @liga.max_players %></div>
+      <div class="stat-label">Cupo</div>
+    </div>
+  </div>
+
+  <div class="surface surface-neon p-4 mb-6" data-controller="clipboard">
+    <div class="flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <div class="text-[10px] uppercase tracking-widest text-white/60 font-display font-semibold">Código de invitación</div>
+        <input type="text" readonly value="<%= @liga.invite_code %>"
+               data-clipboard-target="source" onclick="this.select()"
+               class="bg-transparent border-0 p-0 w-full text-gold font-poster text-3xl tracking-[0.3em] focus:outline-none">
+      </div>
+      <button type="button" data-action="clipboard#copy" data-clipboard-target="btn"
+              class="btn-gold shrink-0 px-4 py-2">Copiar</button>
+    </div>
+    <p class="text-white/45 text-xs mt-2">Compártelo para que tus amigos se unan a la liga.</p>
   </div>
 
   <%= render "rankings/table", quinielas: @quinielas %>
 
   <% if @members_without_quiniela.any? %>
-    <div class="surface p-4 mt-4">
-      <div class="text-white/50 text-xs font-bold uppercase tracking-widest mb-2">Aún no arman su quiniela</div>
+    <div class="surface-soft p-4 mt-4">
+      <div class="text-[10px] uppercase tracking-widest text-white/60 font-display font-semibold mb-2">Aún no arman su quiniela</div>
       <div class="flex flex-wrap gap-2">
         <% @members_without_quiniela.each do |u| %>
           <span class="px-2.5 py-1 rounded-lg bg-white/5 text-white/70 text-sm"><%= u.display_name %></span>
@@ -32,32 +50,37 @@
     <section class="mt-8">
       <div class="flex items-center justify-between mb-3">
         <h2 class="font-display text-xl font-bold text-white/90">👑 Administrar</h2>
-        <%= link_to "✏️ Editar liga", edit_liga_path(@liga), class: "text-white/70 hover:text-white text-sm font-semibold" %>
+        <%= link_to "✏️ Editar", edit_liga_path(@liga), class: "btn-ghost px-4 py-2 text-sm" %>
       </div>
       <div class="space-y-2">
-        <% @liga.memberships.includes(:user).each do |m| %>
-          <div class="surface p-3 flex items-center justify-between gap-3">
-            <span class="text-white font-semibold truncate"><%= m.user.display_name %><%= " (tú)" if m.user_id == current_user.id %></span>
-            <% unless m.user_id == current_user.id %>
+        <% @liga.memberships.includes(user: :favorite_team).each do |m| %>
+          <div class="surface-soft p-3 flex items-center gap-3">
+            <% if m.user.favorite_team&.flag_url %>
+              <img src="<%= m.user.favorite_team.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+            <% end %>
+            <span class="flex-1 min-w-0 text-white font-semibold truncate"><%= m.user.display_name %></span>
+            <% if m.user_id == current_user.id %>
+              <span class="chip shrink-0">Tú</span>
+            <% else %>
               <%= button_to "Expulsar", liga_member_path(@liga, m), method: :delete,
                     form: { data: { turbo_confirm: "¿Expulsar a #{m.user.display_name}?" } },
-                    class: "shrink-0 text-rose-300 hover:text-rose-200 text-sm font-semibold" %>
+                    class: "shrink-0 text-rose-300 hover:text-rose-200 text-sm font-semibold cursor-pointer" %>
             <% end %>
           </div>
         <% end %>
       </div>
 
       <% if @liga.deletable_by?(current_user) %>
-        <%= button_to "Borrar liga", liga_path(@liga), method: :delete,
-              form: { data: { turbo_confirm: "Esto elimina la liga para siempre. ¿Continuar?" } },
-              class: "mt-4 w-full rounded-lg bg-rose-600/80 hover:bg-rose-500 px-4 py-2 font-semibold text-white cursor-pointer transition" %>
+        <%= button_to "🗑️ Borrar liga", liga_path(@liga), method: :delete,
+              form: { class: "mt-4", data: { turbo_confirm: "Esto elimina la liga para siempre. ¿Continuar?" } },
+              class: "btn-ghost w-full text-rose-300 hover:text-rose-200 border-rose-400/30" %>
       <% else %>
-        <p class="text-white/40 text-xs mt-4">Para borrar la liga, primero debe quedar vacía (todos los demás jugadores deben salir o ser expulsados).</p>
+        <p class="text-white/40 text-xs mt-4 leading-relaxed">Para borrar la liga, primero debe quedar vacía: todos los demás jugadores deben salir o ser expulsados.</p>
       <% end %>
     </section>
   <% else %>
     <%= button_to "Salir de la liga", leave_liga_path(@liga), method: :delete,
-          form: { data: { turbo_confirm: "¿Salir de #{@liga.name}?" } },
-          class: "mt-8 w-full rounded-lg bg-white/10 hover:bg-white/15 px-4 py-2 font-semibold text-white/80 cursor-pointer transition" %>
+          form: { class: "mt-8", data: { turbo_confirm: "¿Salir de #{@liga.name}?" } },
+          class: "btn-ghost w-full" %>
   <% end %>
 </div>

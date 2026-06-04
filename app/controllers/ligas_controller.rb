@@ -5,7 +5,7 @@ class LigasController < ApplicationController
   before_action :require_creator, only: %i[edit update destroy expel]
 
   def index
-    @ligas = current_user.ligas.includes(:creator).order(created_at: :desc)
+    @ligas = current_user.ligas.includes(:creator, :memberships).order(created_at: :desc)
     @liga = Liga.new
   end
 

@@ -5,17 +5,20 @@
   </header>
 
   <div class="grid gap-4 sm:grid-cols-2 mb-8">
-    <%= link_to new_liga_path, class: "surface p-5 flex items-center gap-3 hover:bg-white/10 transition" do %>
-      <span class="text-3xl">➕</span>
-      <span class="font-display font-bold text-white text-lg">Crear liga</span>
+    <%= link_to new_liga_path, class: "surface surface-neon p-5 flex items-center gap-3 hover:bg-white/5 transition" do %>
+      <span class="text-3xl shrink-0">➕</span>
+      <div class="min-w-0">
+        <div class="font-display font-extrabold text-white text-lg leading-tight">Crear liga</div>
+        <div class="text-white/50 text-xs">Tú eres el creador</div>
+      </div>
     <% end %>
 
     <%= form_with url: join_ligas_path, method: :post, class: "surface p-5 flex flex-col gap-2" do |f| %>
-      <label class="text-white/70 text-sm font-semibold">Unirme con código</label>
+      <%= f.label :invite_code, "Unirme con código", class: "block text-white/70 text-xs uppercase tracking-wide" %>
       <div class="flex gap-2">
         <%= f.text_field :invite_code, placeholder: "ABC234", maxlength: 6, autocomplete: "off",
-              class: "flex-1 min-w-0 rounded-lg bg-slate-900/60 ring-1 ring-white/15 px-3 py-2 text-white uppercase tracking-widest font-mono" %>
-        <%= f.submit "Unirme", class: "shrink-0 rounded-lg bg-emerald-500 hover:bg-emerald-400 px-4 py-2 font-semibold text-white cursor-pointer transition" %>
+              class: "field uppercase tracking-[0.3em] font-display font-bold flex-1 min-w-0" %>
+        <%= f.submit "Unirme", class: "btn-sky shrink-0 px-4 py-3" %>
       </div>
     <% end %>
   </div>
@@ -30,14 +33,16 @@
   <% else %>
     <div class="space-y-3">
       <% @ligas.each do |liga| %>
-        <%= link_to liga, class: "surface p-4 flex items-center justify-between gap-3 hover:bg-white/10 transition" do %>
-          <div class="min-w-0">
-            <div class="text-white font-semibold truncate"><%= liga.name %></div>
-            <div class="text-white/50 text-sm"><%= liga.memberships.count %>/<%= liga.max_players %> jugadores</div>
+        <%= link_to liga, class: "surface p-4 flex items-center gap-3 hover:bg-white/5 transition" do %>
+          <span class="text-2xl shrink-0">🏅</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-white font-display font-bold text-lg truncate leading-tight"><%= liga.name %></div>
+            <div class="text-white/50 text-sm mt-0.5">👥 <%= liga.memberships.size %>/<%= liga.max_players %> jugadores</div>
           </div>
           <% if liga.creator?(current_user) %>
-            <span class="shrink-0 text-amber-300 text-xs font-bold uppercase tracking-widest">👑 Tú</span>
+            <span class="chip shrink-0">👑 Tú</span>
           <% end %>
+          <span class="text-white/30 text-2xl shrink-0 leading-none">›</span>
         <% end %>
       <% end %>
     </div>

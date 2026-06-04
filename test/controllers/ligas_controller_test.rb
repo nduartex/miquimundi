@@ -120,6 +120,26 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to ligas_path
   end
 
+  test "index, new and edit render successfully" do
+    liga = create_liga
+    sign_in(@creator)
+    get ligas_path
+    assert_response :success
+    get new_liga_path
+    assert_response :success
+    get edit_liga_path(liga)
+    assert_response :success
+  end
+
+  test "show displays the invite code for copying" do
+    liga = create_liga
+    sign_in(@creator)
+    get liga_path(liga)
+    assert_response :success
+    assert_match liga.invite_code, response.body
+    assert_match "data-controller=\"clipboard\"", response.body
+  end
+
   test "the creator can edit name and cupo" do
     liga = create_liga(max_players: 10)
     sign_in(@creator)
