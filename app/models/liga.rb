@@ -15,6 +15,7 @@ class Liga < ApplicationRecord
   validates :max_players, presence: true,
             numericality: { only_integer: true, greater_than_or_equal_to: MIN_PLAYERS, less_than_or_equal_to: MAX_PLAYERS }
   validates :invite_code, presence: true, uniqueness: true
+  validate :cupo_not_below_current_members
 
   before_validation :assign_invite_code, on: :create
 
@@ -37,6 +38,16 @@ class Liga < ApplicationRecord
   end
 
   private
+
+  # The cupo can be lowered, but never below the players already in the liga.
+  def cupo_not_below_current_members
+    return if max_players.blank? || new_record?
+
+    current = memberships.count
+    if current > max_players
+      errors.add(:max_players, "no puede ser menor que los #{current} jugadores actuales")
+    end
+  end
 
   def assign_invite_code
     return if invite_code.present?

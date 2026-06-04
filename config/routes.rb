@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     resources :predictions, only: %i[create]
   end
   resources :rankings, only: %i[index]
-  resources :ligas, only: %i[index new create show destroy] do
+  resources :ligas, only: %i[index new create show edit update destroy] do
     collection { post :join }
     member { delete :leave }
   end

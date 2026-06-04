@@ -1,8 +1,8 @@
 class LigasController < ApplicationController
   before_action :require_login
-  before_action :set_liga, only: %i[show destroy leave expel]
+  before_action :set_liga, only: %i[show edit update destroy leave expel]
   before_action :require_membership, only: %i[show]
-  before_action :require_creator, only: %i[destroy expel]
+  before_action :require_creator, only: %i[edit update destroy expel]
 
   def index
     @ligas = current_user.ligas.includes(:creator).order(created_at: :desc)
@@ -24,6 +24,18 @@ class LigasController < ApplicationController
     else
       flash.now[:alert] = @liga.errors.full_messages.first || "No se pudo crear la liga."
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+  end
+
+  def update
+    if @liga.update(liga_params)
+      redirect_to @liga, notice: "Liga actualizada."
+    else
+      flash.now[:alert] = @liga.errors.full_messages.first || "No se pudo actualizar la liga."
+      render :edit, status: :unprocessable_entity
     end
   end
 

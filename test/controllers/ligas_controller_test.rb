@@ -120,6 +120,44 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to ligas_path
   end
 
+  test "the creator can edit name and cupo" do
+    liga = create_liga(max_players: 10)
+    sign_in(@creator)
+    patch liga_path(liga), params: { liga: { name: "Nuevo nombre", max_players: 6 } }
+    assert_redirected_to liga_path(liga)
+    liga.reload
+    assert_equal "Nuevo nombre", liga.name
+    assert_equal 6, liga.max_players
+  end
+
+  test "a non-creator cannot edit the liga" do
+    liga = create_liga
+    liga.memberships.create!(user: @friend)
+    sign_in(@friend)
+    get edit_liga_path(liga)
+    assert_redirected_to liga_path(liga)
+    patch liga_path(liga), params: { liga: { name: "Hackeada" } }
+    assert_redirected_to liga_path(liga)
+    assert_equal "Los amigos", liga.reload.name
+  end
+
+  test "cupo cannot be lowered below the current member count" do
+    liga = create_liga(max_players: 10)
+    liga.memberships.create!(user: @friend) # now 2 members
+    sign_in(@creator)
+    patch liga_path(liga), params: { liga: { max_players: 1 } }
+    assert_response :unprocessable_entity
+    assert_equal 10, liga.reload.max_players
+  end
+
+  test "cupo edit still respects the 2-50 hard limit" do
+    liga = create_liga
+    sign_in(@creator)
+    patch liga_path(liga), params: { liga: { max_players: 51 } }
+    assert_response :unprocessable_entity
+    assert_equal 10, liga.reload.max_players
+  end
+
   test "show is only visible to members" do
     liga = create_liga
     sign_in(@friend) # not a member
