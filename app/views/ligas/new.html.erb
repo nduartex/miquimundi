@@ -1,0 +1,24 @@
+<div class="max-w-md mx-auto px-4 py-8">
+  <header class="mb-6">
+    <h1 class="font-display text-3xl font-extrabold text-white">➕ Crear liga</h1>
+    <p class="text-white/60 mt-1">Ponle nombre y define cuántos pueden entrar.</p>
+  </header>
+
+  <%= form_with model: @liga, class: "surface p-6 space-y-5" do |f| %>
+    <div>
+      <%= f.label :name, "Nombre de la liga", class: "block text-white/70 text-sm font-semibold mb-1" %>
+      <%= f.text_field :name, maxlength: 40, autocomplete: "off",
+            class: "w-full rounded-lg bg-slate-900/60 ring-1 ring-white/15 px-3 py-2 text-white" %>
+    </div>
+    <div>
+      <%= f.label :max_players, "Cupo (máximo de jugadores)", class: "block text-white/70 text-sm font-semibold mb-1" %>
+      <%= f.number_field :max_players, min: Liga::MIN_PLAYERS, max: Liga::MAX_PLAYERS,
+            class: "w-full rounded-lg bg-slate-900/60 ring-1 ring-white/15 px-3 py-2 text-white" %>
+      <p class="text-white/40 text-xs mt-1">Entre <%= Liga::MIN_PLAYERS %> y <%= Liga::MAX_PLAYERS %>. Te incluye a ti.</p>
+    </div>
+    <div class="flex gap-2 justify-end">
+      <%= link_to "Cancelar", ligas_path, class: "px-4 py-2 rounded-lg text-white/70 hover:text-white font-semibold transition" %>
+      <%= f.submit "Crear liga", class: "rounded-lg bg-emerald-500 hover:bg-emerald-400 px-5 py-2 font-semibold text-white cursor-pointer transition" %>
+    </div>
+  <% end %>
+</div>

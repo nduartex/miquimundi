@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_02_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_04_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_02_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tournament_id"], name: "index_groups_on_tournament_id"
+  end
+
+  create_table "liga_memberships", force: :cascade do |t|
+    t.bigint "liga_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["liga_id", "user_id"], name: "index_liga_memberships_on_liga_id_and_user_id", unique: true
+    t.index ["liga_id"], name: "index_liga_memberships_on_liga_id"
+    t.index ["user_id"], name: "index_liga_memberships_on_user_id"
+  end
+
+  create_table "ligas", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "invite_code", null: false
+    t.integer "max_players", null: false
+    t.bigint "creator_id", null: false
+    t.bigint "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_ligas_on_creator_id"
+    t.index ["invite_code"], name: "index_ligas_on_invite_code", unique: true
+    t.index ["tournament_id"], name: "index_ligas_on_tournament_id"
   end
 
   create_table "match_predictions", force: :cascade do |t|
@@ -351,6 +374,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_02_120000) do
   add_foreign_key "group_results", "teams", column: "first_team_id"
   add_foreign_key "group_results", "teams", column: "second_team_id"
   add_foreign_key "groups", "tournaments"
+  add_foreign_key "liga_memberships", "ligas"
+  add_foreign_key "liga_memberships", "users"
+  add_foreign_key "ligas", "tournaments"
+  add_foreign_key "ligas", "users", column: "creator_id"
   add_foreign_key "match_predictions", "matches"
   add_foreign_key "match_predictions", "quinielas"
   add_foreign_key "match_predictions", "teams", column: "penalty_qualifier_id"

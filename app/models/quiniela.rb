@@ -8,6 +8,16 @@ class Quiniela < ApplicationRecord
 
   has_secure_token :share_token
 
+  # Ranking order used by both the global ranking and the private ligas. Pass
+  # `user_ids:` to restrict the ranking to a liga's members; omit it for the
+  # global ranking.
+  scope :ranked, ->(tournament, user_ids: nil) {
+    rel = where(tournament_id: tournament.id)
+            .includes(:achievements, user: :favorite_team)
+            .order(total_points: :desc, exact_hits: :desc, match_hits: :desc)
+    user_ids ? rel.where(user_id: user_ids) : rel
+  }
+
   def submitted?
     submitted_at.present?
   end

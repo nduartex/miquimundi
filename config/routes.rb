@@ -11,6 +11,11 @@ Rails.application.routes.draw do
     resources :predictions, only: %i[create]
   end
   resources :rankings, only: %i[index]
+  resources :ligas, only: %i[index new create show destroy] do
+    collection { post :join }
+    member { delete :leave }
+  end
+  delete "ligas/:id/members/:membership_id", to: "ligas#expel", as: :liga_member
   get "calendario", to: "calendar#show", as: :calendar
   get "q/:token", to: "shared_quinielas#show", as: :shared_quiniela
 end

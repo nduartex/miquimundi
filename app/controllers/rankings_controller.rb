@@ -6,8 +6,6 @@ class RankingsController < ApplicationController
   end
 
   def self.ranked(tournament)
-    Quiniela.where(tournament_id: tournament.id)
-            .includes(:achievements, user: :favorite_team)
-            .order(total_points: :desc, exact_hits: :desc, match_hits: :desc)
+    Quiniela.ranked(tournament)
   end
 end

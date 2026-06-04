@@ -1,0 +1,60 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <header class="mb-6 flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h1 class="font-display text-4xl font-extrabold text-white truncate">🏅 <%= @liga.name %></h1>
+      <p class="text-white/60 mt-1"><%= @liga.memberships.count %>/<%= @liga.max_players %> jugadores · ranking privado</p>
+    </div>
+    <%= link_to "← Ligas", ligas_path, class: "shrink-0 text-white/60 hover:text-white text-sm font-semibold mt-2" %>
+  </header>
+
+  <div class="surface p-4 mb-6 flex items-center justify-between gap-3">
+    <div>
+      <div class="text-white/50 text-xs font-bold uppercase tracking-widest">Código de invitación</div>
+      <div class="text-white font-mono text-2xl tracking-[0.3em] mt-1"><%= @liga.invite_code %></div>
+    </div>
+    <span class="text-3xl">🔗</span>
+  </div>
+
+  <%= render "rankings/table", quinielas: @quinielas %>
+
+  <% if @members_without_quiniela.any? %>
+    <div class="surface p-4 mt-4">
+      <div class="text-white/50 text-xs font-bold uppercase tracking-widest mb-2">Aún no arman su quiniela</div>
+      <div class="flex flex-wrap gap-2">
+        <% @members_without_quiniela.each do |u| %>
+          <span class="px-2.5 py-1 rounded-lg bg-white/5 text-white/70 text-sm"><%= u.display_name %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @liga.creator?(current_user) %>
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-bold text-white/90 mb-3">👑 Administrar</h2>
+      <div class="space-y-2">
+        <% @liga.memberships.includes(:user).each do |m| %>
+          <div class="surface p-3 flex items-center justify-between gap-3">
+            <span class="text-white font-semibold truncate"><%= m.user.display_name %><%= " (tú)" if m.user_id == current_user.id %></span>
+            <% unless m.user_id == current_user.id %>
+              <%= button_to "Expulsar", liga_member_path(@liga, m), method: :delete,
+                    form: { data: { turbo_confirm: "¿Expulsar a #{m.user.display_name}?" } },
+                    class: "shrink-0 text-rose-300 hover:text-rose-200 text-sm font-semibold" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @liga.deletable_by?(current_user) %>
+        <%= button_to "Borrar liga", liga_path(@liga), method: :delete,
+              form: { data: { turbo_confirm: "Esto elimina la liga para siempre. ¿Continuar?" } },
+              class: "mt-4 w-full rounded-lg bg-rose-600/80 hover:bg-rose-500 px-4 py-2 font-semibold text-white cursor-pointer transition" %>
+      <% else %>
+        <p class="text-white/40 text-xs mt-4">Para borrar la liga, primero debe quedar vacía (todos los demás jugadores deben salir o ser expulsados).</p>
+      <% end %>
+    </section>
+  <% else %>
+    <%= button_to "Salir de la liga", leave_liga_path(@liga), method: :delete,
+          form: { data: { turbo_confirm: "¿Salir de #{@liga.name}?" } },
+          class: "mt-8 w-full rounded-lg bg-white/10 hover:bg-white/15 px-4 py-2 font-semibold text-white/80 cursor-pointer transition" %>
+  <% end %>
+</div>
