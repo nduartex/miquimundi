@@ -33,7 +33,11 @@
     <p class="text-white/45 text-xs mt-2">Compártelo para que tus amigos se unan a la liga.</p>
   </div>
 
-  <%= render "rankings/table", quinielas: @quinielas %>
+  <div data-controller="leaderboard" data-leaderboard-me-value="<%= current_user.id %>">
+    <div id="ranking">
+      <%= render "rankings/table", quinielas: @quinielas %>
+    </div>
+  </div>
 
   <% if @members_without_quiniela.any? %>
     <div class="surface-soft p-4 mt-4">

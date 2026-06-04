@@ -220,6 +220,9 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Fran", response.body
     assert_no_match "Out", response.body # outsider not in this liga
+    # The leaderboard controller highlights the signed-in user's own row.
+    assert_match "data-controller=\"leaderboard\"", response.body
+    assert_match "data-leaderboard-me-value=\"#{@creator.id}\"", response.body
   end
 
   test "requires login" do
