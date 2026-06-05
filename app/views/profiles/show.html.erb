@@ -1,0 +1,88 @@
+<% content_for :title, "Mi perfil — MiquiMundi" %>
+
+<div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+  <header class="flex items-center gap-3">
+    <div class="w-12 h-12 rounded-xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center text-2xl">👤</div>
+    <div>
+      <h1 class="text-white text-2xl font-display font-extrabold leading-tight"><%= @user.display_name %></h1>
+      <p class="text-white/50 text-sm">@<%= @user.username %></p>
+    </div>
+  </header>
+
+  <%# --- PIN --------------------------------------------------------------- %>
+  <section class="surface p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-white font-bold">🔐 PIN de acceso</span>
+      <% if @user.has_pin? %>
+        <span class="text-emerald-300/80 text-xs">configurado</span>
+      <% else %>
+        <span class="text-amber-300/90 text-xs">aún no configurado</span>
+      <% end %>
+    </div>
+
+    <% if @user.has_pin? %>
+      <p class="text-white/50 text-sm mb-4">Cambia tu PIN. Necesitas tu PIN actual para confirmarlo.</p>
+      <%= form_with url: pin_path, method: :patch, class: "space-y-3" do %>
+        <div>
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="current_pin">PIN actual</label>
+          <%= password_field_tag :current_pin, nil, id: "current_pin", required: true,
+                inputmode: "numeric", pattern: "\\d{8}", minlength: 8, maxlength: 8,
+                autocomplete: "off", class: "field tracking-[0.4em]" %>
+        </div>
+        <div>
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="pin">Nuevo PIN</label>
+          <%= password_field_tag :pin, nil, id: "pin", required: true,
+                inputmode: "numeric", pattern: "\\d{8}", minlength: 8, maxlength: 8,
+                autocomplete: "off", placeholder: "8 dígitos", class: "field tracking-[0.4em]" %>
+        </div>
+        <div>
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="pin_confirmation">Repetir nuevo PIN</label>
+          <%= password_field_tag :pin_confirmation, nil, id: "pin_confirmation", required: true,
+                inputmode: "numeric", pattern: "\\d{8}", minlength: 8, maxlength: 8,
+                autocomplete: "off", class: "field tracking-[0.4em]" %>
+        </div>
+        <%= submit_tag "Cambiar PIN", class: "btn-primary w-full py-3" %>
+      <% end %>
+    <% else %>
+      <p class="text-white/50 text-sm mb-4">Crea un PIN de 8 dígitos para entrar con tu usuario sin depender del enlace.</p>
+      <%= form_with url: pin_path, method: :post, class: "space-y-3" do %>
+        <div>
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="pin">PIN</label>
+          <%= password_field_tag :pin, nil, id: "pin", required: true,
+                inputmode: "numeric", pattern: "\\d{8}", minlength: 8, maxlength: 8,
+                autocomplete: "off", placeholder: "8 dígitos", class: "field tracking-[0.4em]" %>
+        </div>
+        <div>
+          <label class="block text-white/70 text-xs uppercase tracking-wide mb-1" for="pin_confirmation">Repetir PIN</label>
+          <%= password_field_tag :pin_confirmation, nil, id: "pin_confirmation", required: true,
+                inputmode: "numeric", pattern: "\\d{8}", minlength: 8, maxlength: 8,
+                autocomplete: "off", class: "field tracking-[0.4em]" %>
+        </div>
+        <%= submit_tag "Crear PIN", class: "btn-primary w-full py-3" %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <%# --- Access link ------------------------------------------------------- %>
+  <section class="surface p-5" data-controller="clipboard">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
+      <span class="text-white/50 text-xs">guárdalo para volver a entrar si se cierra la sesión</span>
+    </div>
+    <div class="flex gap-2">
+      <input type="text" readonly value="<%= restore_url(token: @user.access_token) %>"
+             data-clipboard-target="source" onclick="this.select()"
+             class="field text-sm">
+      <button type="button" data-action="clipboard#copy" data-clipboard-target="btn"
+              class="px-4 rounded-xl bg-amber-400 text-slate-900 font-bold shrink-0 cursor-pointer">Copiar</button>
+    </div>
+  </section>
+
+  <%# --- Favorite team ----------------------------------------------------- %>
+  <% if @user.favorite_team %>
+    <section class="surface p-5">
+      <span class="text-white font-bold">⭐ Tu selección favorita</span>
+      <p class="text-white/70 mt-1"><%= @user.favorite_team.name %></p>
+    </section>
+  <% end %>
+</div>

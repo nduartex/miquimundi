@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_04_190000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_05_000006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -352,6 +352,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_04_190000) do
     t.bigint "favorite_team_id"
     t.string "username", null: false
     t.string "access_token", null: false
+    t.string "pin_digest"
     t.index ["access_token"], name: "index_users_on_access_token", unique: true
     t.index ["favorite_team_id"], name: "index_users_on_favorite_team_id"
     t.index ["username"], name: "index_users_on_username", unique: true

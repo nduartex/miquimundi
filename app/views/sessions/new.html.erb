@@ -61,6 +61,7 @@
             data: { turbo_submits_with: "Creando…" },
             class: "btn-primary w-full text-lg py-3.5" %>
     <% end %>
-    <p class="text-white/40 text-xs text-center mt-6">Sin contraseña. Tras crear tu usuario te daremos un <strong class="text-white/60">enlace de acceso</strong> para volver a entrar. ¿Ya tienes uno? Úsalo para reingresar.</p>
+    <p class="text-white/40 text-xs text-center mt-6">Tras crear tu usuario te daremos un <strong class="text-white/60">enlace de acceso</strong> para volver a entrar. También podrás crear un <strong class="text-white/60">PIN</strong> desde tu perfil.</p>
+    <p class="text-white/50 text-sm text-center mt-3">¿Ya tienes cuenta? <%= link_to "Entrar con PIN", new_pin_session_path, class: "text-amber-300 font-semibold hover:underline" %></p>
   </div>
 </div>

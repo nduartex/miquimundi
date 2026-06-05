@@ -6,6 +6,14 @@ Rails.application.routes.draw do
   root "sessions#new"
   resource :session, only: %i[new create destroy]
   get "u/:token", to: "sessions#restore", as: :restore
+
+  # Alternative login: username + 8-digit PIN (the access link stays available too).
+  get  "entrar", to: "pin_sessions#new",    as: :new_pin_session
+  post "entrar", to: "pin_sessions#create", as: :pin_session
+  # Profile area: access link, favorite team and PIN management live here.
+  resource :profile, only: %i[show], path: "perfil"
+  resource :pin, only: %i[create update]
+
   resource :onboarding, only: %i[update]
   resource :quiniela, only: %i[show] do
     resources :predictions, only: %i[create]

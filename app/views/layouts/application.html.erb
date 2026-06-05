@@ -33,9 +33,15 @@
           <%= link_to "Ranking", rankings_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(rankings_path)}" %>
           <%= link_to "Ligas", ligas_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(ligas_path)}" %>
           <%= link_to "Calendario", calendar_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(calendar_path)}" %>
+          <%= link_to "Perfil", profile_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(profile_path)}" %>
           <%= button_to "Salir", session_path, method: :delete, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/60 hover:text-white text-sm font-semibold transition" %>
         </div>
       </nav>
+
+      <%# Non-blocking nudge for users who haven't set a PIN yet. %>
+      <% unless current_user.has_pin? %>
+        <%= render "shared/pin_reminder" %>
+      <% end %>
     <% end %>
 
     <% if flash.any? %>
