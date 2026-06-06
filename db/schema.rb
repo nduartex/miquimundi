@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_05_000006) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_05_030729) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -97,6 +97,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_05_000006) do
     t.bigint "tournament_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "has_prize", default: false, null: false
+    t.integer "prize_pot"
     t.index ["creator_id"], name: "index_ligas_on_creator_id"
     t.index ["invite_code"], name: "index_ligas_on_invite_code", unique: true
     t.index ["tournament_id"], name: "index_ligas_on_tournament_id"

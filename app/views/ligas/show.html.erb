@@ -2,7 +2,7 @@
 <div class="max-w-2xl mx-auto px-4 py-8">
   <header class="mb-6 flex items-start justify-between gap-3">
     <div class="min-w-0">
-      <h1 class="font-display text-4xl font-extrabold text-white truncate">🏅 <%= @liga.name %></h1>
+      <h1 class="font-display text-4xl font-extrabold text-white flex items-center gap-2 min-w-0"><%= icon "medal", class: "size-8 shrink-0 text-amber-300" %><span class="truncate"><%= @liga.name %></span></h1>
       <p class="text-white/60 mt-1">Ranking privado · mismos puntos que el global</p>
     </div>
     <%= link_to "← Ligas", ligas_path, class: "shrink-0 text-white/60 hover:text-white text-sm font-semibold mt-2" %>
@@ -33,6 +33,47 @@
     <p class="text-white/45 text-xs mt-2">Compártelo para que tus amigos se unan a la liga.</p>
   </div>
 
+  <% if @liga.has_prize? %>
+    <% cuota = @liga.prize_share(members_count) %>
+    <% exact = @liga.prize_share_exact?(members_count) %>
+    <div class="surface p-4 mb-6">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "coins", class: "size-5 text-amber-300" %> Premio</span>
+        <span class="text-white/40 text-xs">lo coordinan entre ustedes</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="surface-soft p-3 text-center">
+          <div class="text-amber-300 font-display text-2xl font-extrabold tabular-nums"><%= number_with_delimiter(@liga.prize_pot) %></div>
+          <div class="stat-label">Pozo total</div>
+        </div>
+        <div class="surface-soft p-3 text-center">
+          <div class="text-emerald-300 font-display text-2xl font-extrabold tabular-nums"><%= number_with_delimiter(cuota) %></div>
+          <div class="stat-label">Cuota por jugador<%= " (aprox.)" unless exact %></div>
+        </div>
+      </div>
+
+      <% unless exact %>
+        <p class="text-white/45 text-xs mb-3">El pozo no se divide exacto entre <%= members_count %> jugadores: la cuota es aproximada, ajusten el resto entre ustedes.</p>
+      <% end %>
+
+      <% if @tournament.finished? %>
+        <% if @prize_winner %>
+          <div class="surface-soft p-3 border-l-4 border-amber-400">
+            <p class="text-white/85 text-sm inline-flex items-center gap-1.5"><%= icon "trophy", class: "size-4 text-amber-300" %> Ganador: <strong class="text-white"><%= @prize_winner.user.display_name %></strong></p>
+            <p class="text-white/70 text-sm mt-1">Cada jugador le transfiere <strong class="text-emerald-300"><%= number_with_delimiter(cuota) %></strong> al ganador.</p>
+          </div>
+        <% elsif @prize_tie %>
+          <p class="text-amber-200/90 text-sm inline-flex items-center gap-1.5"><%= icon "handshake", class: "size-4" %> Empate en el 1° puesto: coordínenlo entre ustedes.</p>
+        <% else %>
+          <p class="text-white/50 text-sm">El Mundial terminó, pero nadie armó su quiniela en esta liga.</p>
+        <% end %>
+      <% else %>
+        <p class="text-white/50 text-sm">⏳ Provisional: el ganador será el 1° del ranking al terminar el Mundial. Ahí se define a quién le transfiere cada uno.</p>
+      <% end %>
+    </div>
+  <% end %>
+
   <div data-controller="leaderboard" data-leaderboard-me-value="<%= current_user.id %>">
     <div id="ranking">
       <%= render "rankings/table", quinielas: @quinielas %>
@@ -53,8 +94,8 @@
   <% if @liga.creator?(current_user) %>
     <section class="mt-8">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-display text-xl font-bold text-white/90">👑 Administrar</h2>
-        <%= link_to "✏️ Editar", edit_liga_path(@liga), class: "btn-ghost px-4 py-2 text-sm" %>
+        <h2 class="font-display text-xl font-bold text-white/90 flex items-center gap-2"><%= icon "crown", class: "size-5 text-amber-300" %> Administrar</h2>
+        <%= link_to edit_liga_path(@liga), class: "btn-ghost px-4 py-2 text-sm" do %><%= icon "square-pen", class: "size-4" %> Editar<% end %>
       </div>
       <div class="space-y-2">
         <% @liga.memberships.includes(user: :favorite_team).each do |m| %>
@@ -75,9 +116,9 @@
       </div>
 
       <% if @liga.deletable_by?(current_user) %>
-        <%= button_to "🗑️ Borrar liga", liga_path(@liga), method: :delete,
+        <%= button_to liga_path(@liga), method: :delete,
               form: { class: "mt-4", data: { turbo_confirm: "Esto elimina la liga para siempre. ¿Continuar?" } },
-              class: "btn-ghost w-full text-rose-300 hover:text-rose-200 border-rose-400/30" %>
+              class: "btn-ghost w-full text-rose-300 hover:text-rose-200 border-rose-400/30" do %><%= icon "trash-2", class: "size-4" %> Borrar liga<% end %>
       <% else %>
         <p class="text-white/40 text-xs mt-4 leading-relaxed">Para borrar la liga, primero debe quedar vacía: todos los demás jugadores deben salir o ser expulsados.</p>
       <% end %>

@@ -64,7 +64,7 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     get quiniela_path
     assert_response :success
     assert_no_match "Eliminatorias bloqueadas", response.body  # knockout open now
-    assert_match "🔒 Cerrado", response.body                    # started match shows locked
+    assert_match "Cerrado", response.body                       # started match shows locked
   end
 
   test "show requires login" do

@@ -2,7 +2,7 @@
 
 <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
   <header class="flex items-center gap-3">
-    <div class="w-12 h-12 rounded-xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center text-2xl">👤</div>
+    <div class="w-12 h-12 rounded-xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center text-white/80"><%= icon "user", class: "size-6" %></div>
     <div>
       <h1 class="text-white text-2xl font-display font-extrabold leading-tight"><%= @user.display_name %></h1>
       <p class="text-white/50 text-sm">@<%= @user.username %></p>
@@ -12,7 +12,7 @@
   <%# --- PIN --------------------------------------------------------------- %>
   <section class="surface p-5">
     <div class="flex items-center gap-2 mb-3">
-      <span class="text-white font-bold">🔐 PIN de acceso</span>
+      <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "lock-keyhole", class: "size-5" %> PIN de acceso</span>
       <% if @user.has_pin? %>
         <span class="text-emerald-300/80 text-xs">configurado</span>
       <% else %>
@@ -66,7 +66,7 @@
   <%# --- Access link ------------------------------------------------------- %>
   <section class="surface p-5" data-controller="clipboard">
     <div class="flex items-center gap-2 mb-2">
-      <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
+      <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "key", class: "size-5" %> Tu enlace de acceso</span>
       <span class="text-white/50 text-xs">guárdalo para volver a entrar si se cierra la sesión</span>
     </div>
     <div class="flex gap-2">
@@ -81,7 +81,7 @@
   <%# --- Favorite team ----------------------------------------------------- %>
   <% if @user.favorite_team %>
     <section class="surface p-5">
-      <span class="text-white font-bold">⭐ Tu selección favorita</span>
+      <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "star", class: "size-5 text-amber-300" %> Tu selección favorita</span>
       <p class="text-white/70 mt-1"><%= @user.favorite_team.name %></p>
     </section>
   <% end %>

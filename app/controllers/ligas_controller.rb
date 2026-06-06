@@ -44,6 +44,7 @@ class LigasController < ApplicationController
     @tournament = @liga.tournament
     @quinielas = Quiniela.ranked(@tournament, user_ids: @liga.member_ids)
     @members_without_quiniela = @liga.members.where.not(id: @quinielas.map(&:user_id))
+    assign_prize_outcome
   end
 
   # POST /ligas/join — join by invite code.
@@ -117,6 +118,39 @@ class LigasController < ApplicationController
   end
 
   def liga_params
-    params.require(:liga).permit(:name, :max_players)
+    permitted = %i[name max_players]
+    # Prize rules can't change once the tournament is over (the game is decided).
+    permitted += %i[has_prize prize_pot] if prize_editable?
+    params.require(:liga).permit(*permitted)
+  end
+
+  # The prize can be set/changed while the tournament hasn't finished. On create
+  # there is no @liga yet, so fall back to the current tournament.
+  def prize_editable?
+    tournament = @liga&.tournament || Tournament.current
+    !tournament&.finished?
+  end
+  helper_method :prize_editable?
+
+  # Once the tournament is finished, the liga leader is the prize winner — unless
+  # the very top is an exact tie (same points and tiebreakers), which the app
+  # can't resolve, so the participants settle it themselves.
+  def assign_prize_outcome
+    @prize_winner = nil
+    @prize_tie = false
+    return unless @liga.has_prize? && @tournament.finished?
+
+    leader = @quinielas.first
+    return if leader.nil?
+
+    runner_up = @quinielas.second
+    @prize_tie = runner_up.present? && tied_for_first?(leader, runner_up)
+    @prize_winner = leader unless @prize_tie
+  end
+
+  def tied_for_first?(a, b)
+    a.total_points == b.total_points &&
+      a.exact_hits == b.exact_hits &&
+      a.match_hits == b.match_hits
   end
 end

@@ -17,10 +17,33 @@ class Liga < ApplicationRecord
   validates :invite_code, presence: true, uniqueness: true
   validate :cupo_not_below_current_members
 
+  # Total prize pot, only meaningful when the liga has a prize. It is a plain
+  # number (no currency): participants settle the money among themselves; the
+  # app only computes the per-player share.
+  # Upper bound keeps the value inside the 4-byte integer column: without it a
+  # huge pot passes the Ruby-side numericality check and only blows up at save
+  # time (ActiveModel::RangeError → unhandled 500). One billion is plenty.
+  validates :prize_pot, presence: true,
+            numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1_000_000_000 },
+            if: :has_prize?
+  before_validation :clear_prize_when_disabled
   before_validation :assign_invite_code, on: :create
 
   def full?
     memberships.count >= max_players
+  end
+
+  # The share each non-winner transfers to the winner: the pot split evenly
+  # across all players, rounded to a whole number. Returns nil without a prize.
+  def prize_share(players_count)
+    return nil unless has_prize? && prize_pot && players_count.to_i.positive?
+    (prize_pot.to_f / players_count).round
+  end
+
+  # Whether the pot divides evenly among the players (no rounding leftover).
+  def prize_share_exact?(players_count)
+    return false unless has_prize? && prize_pot && players_count.to_i.positive?
+    (prize_pot % players_count).zero?
   end
 
   def member?(user)
@@ -47,6 +70,11 @@ class Liga < ApplicationRecord
     if current > max_players
       errors.add(:max_players, "no puede ser menor que los #{current} jugadores actuales")
     end
+  end
+
+  # A liga without a prize never keeps a stale pot around.
+  def clear_prize_when_disabled
+    self.prize_pot = nil unless has_prize?
   end
 
   def assign_invite_code

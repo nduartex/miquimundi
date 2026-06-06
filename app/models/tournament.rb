@@ -23,4 +23,10 @@ class Tournament < ApplicationRecord
     return false if groups.empty?
     GroupResult.where(group_id: groups.select(:id)).count >= groups.count
   end
+
+  # The tournament is over once the final has an official result. Used to switch
+  # liga prizes from "provisional" to "final" (winner = 1st in the ranking).
+  def finished?
+    matches.find_by(phase: "final")&.finished? || false
+  end
 end

@@ -34,7 +34,7 @@
               <% end %>
               <span class="flex-1 text-white font-semibold truncate"><%= team.name %></span>
               <% if locked %>
-                <span class="text-white/30 text-lg select-none" aria-hidden="true">🔒</span>
+                <span class="text-white/30 select-none inline-flex" aria-hidden="true"><%= icon "lock", class: "size-4" %></span>
               <% else %>
                 <span data-grip
                       class="touch-none cursor-grab active:cursor-grabbing text-white/30 hover:text-white/70 text-xl leading-none select-none shrink-0 px-2 -mr-1"

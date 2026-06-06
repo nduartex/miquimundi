@@ -6,7 +6,7 @@
        { el: '#ranking', title: 'Los registrados', body: 'Cada fila es un jugador: su posición, aciertos exactos (✓), partidos acertados (⚽), puntaje y diferencia respecto al líder.' }
      ].to_json %>">
   <header id="ranking-header" class="mb-6">
-    <h1 class="font-display text-4xl font-extrabold text-white">🏆 Ranking Global</h1>
+    <h1 class="font-display text-4xl font-extrabold text-white flex items-center gap-2"><%= icon "trophy", class: "size-8 text-amber-300" %> Ranking Global</h1>
     <p class="text-white/60 mt-1">Posiciones en vivo de todos los participantes.</p>
   </header>
   <div data-controller="leaderboard" data-leaderboard-me-value="<%= current_user&.id %>">

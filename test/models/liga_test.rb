@@ -65,4 +65,51 @@ class LigaTest < ActiveSupport::TestCase
       liga.destroy
     end
   end
+
+  # Prize -----------------------------------------------------------------
+
+  test "a liga without a prize is valid and has no pot" do
+    liga = build_liga(has_prize: false, prize_pot: nil)
+    assert liga.valid?
+    assert_nil liga.prize_share(5)
+  end
+
+  test "con premio requires a positive integer pot" do
+    assert_not build_liga(has_prize: true, prize_pot: nil).valid?
+    assert_not build_liga(has_prize: true, prize_pot: 0).valid?
+    assert_not build_liga(has_prize: true, prize_pot: -10).valid?
+    assert build_liga(has_prize: true, prize_pot: 500_000).valid?
+  end
+
+  test "con premio rejects a pot that would overflow the integer column" do
+    # Must fail as a validation error (422), not raise ActiveModel::RangeError at save (500).
+    liga = build_liga(has_prize: true, prize_pot: 9_999_999_999)
+    assert_not liga.valid?
+    assert_nothing_raised { liga.save }
+  end
+
+  test "disabling the prize clears any pot before validation" do
+    liga = build_liga(has_prize: false, prize_pot: 500_000)
+    assert liga.valid?
+    assert_nil liga.prize_pot
+  end
+
+  test "prize_share splits the pot evenly, rounded" do
+    liga = build_liga(has_prize: true, prize_pot: 500_000)
+    assert_equal 100_000, liga.prize_share(5)
+    assert_equal 50_000, liga.prize_share(10)
+  end
+
+  test "prize_share rounds when the split is not exact and flags it" do
+    liga = build_liga(has_prize: true, prize_pot: 100)
+    assert_equal 33, liga.prize_share(3) # 33.33 -> 33
+    assert_not liga.prize_share_exact?(3)
+    assert liga.prize_share_exact?(4)
+  end
+
+  test "prize helpers are nil/false without a prize" do
+    liga = build_liga(has_prize: false)
+    assert_nil liga.prize_share(4)
+    assert_not liga.prize_share_exact?(4)
+  end
 end

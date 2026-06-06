@@ -1,7 +1,7 @@
 <% leader = quinielas.first&.total_points || 0 %>
 <% if quinielas.empty? %>
   <div class="surface p-10 text-center">
-    <div class="text-5xl mb-3">📋</div>
+    <div class="mb-3 flex justify-center"><%= icon "clipboard-list", class: "size-12 text-white/70" %></div>
     <p class="text-white/80 font-semibold">Aún no hay participantes.</p>
     <p class="text-white/50 text-sm mt-1">Sé el primero en armar tu quiniela.</p>
   </div>
@@ -9,14 +9,14 @@
   <div class="space-y-3">
     <% quinielas.each_with_index do |q, i| %>
       <% lead = i.zero? %>
-      <% medal = ["🥇", "🥈", "🥉"][i] %>
+      <% medal_color = [ "text-amber-300", "text-slate-300", "text-amber-600" ][i] %>
       <% if lead %>
         <%# Leader: single row on desktop (sm+), stacked on mobile so the name never gets cut. %>
         <div data-user-id="<%= q.user_id %>" class="surface p-5 ring-2 ring-amber-300 bg-gradient-to-r from-amber-400/15 to-transparent shadow-amber-300/10 flex flex-col sm:flex-row sm:items-center sm:gap-4">
           <div class="flex items-center gap-4 min-w-0 sm:flex-1">
-            <span class="text-center font-display font-extrabold w-11 text-3xl text-amber-300 shrink-0"><%= medal %></span>
+            <span class="flex justify-center w-11 shrink-0 <%= medal_color %>" role="img" aria-label="Puesto 1"><%= icon "medal", class: "size-9" %></span>
             <div class="flex-1 min-w-0">
-              <div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest">👑 Líder</div>
+              <div class="text-amber-300/90 text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-1"><%= icon "crown", class: "size-3.5" %> Líder</div>
               <span data-name class="flex items-center gap-2 text-white font-semibold text-xl truncate">
                 <% if q.user.favorite_team&.flag_url %>
                   <img src="<%= q.user.favorite_team.flag_url %>" alt="<%= q.user.favorite_team.name %>" title="<%= q.user.favorite_team.name %>"
@@ -28,15 +28,19 @@
             </div>
           </div>
           <div class="flex items-center justify-end gap-4 mt-3 sm:mt-0 shrink-0">
-            <span class="text-emerald-300 font-semibold tabular-nums text-base" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
-            <span class="text-rose-300 font-semibold tabular-nums text-base" title="Partidos acertados"><%= q.match_hits %>⚽</span>
+            <span class="text-emerald-300 font-semibold tabular-nums text-base inline-flex items-center gap-1" title="Aciertos exactos"><%= q.exact_hits %><%= icon "check", class: "size-4" %></span>
+            <span class="text-rose-300 font-semibold tabular-nums text-base inline-flex items-center gap-1" title="Partidos acertados"><%= q.match_hits %><%= icon "goal", class: "size-4" %></span>
             <span class="text-amber-300 font-display font-extrabold tabular-nums text-3xl text-right sm:w-16"><%= q.total_points %></span>
             <span class="hidden sm:inline text-white/45 text-xs w-12 text-right tabular-nums">—</span>
           </div>
         </div>
       <% else %>
         <div data-user-id="<%= q.user_id %>" class="flex items-center surface gap-3 p-3">
-          <span class="text-center font-display font-extrabold w-9 text-lg text-white/80"><%= medal || (i + 1) %></span>
+          <% if medal_color %>
+            <span class="flex justify-center w-9 shrink-0 <%= medal_color %>" role="img" aria-label="Puesto <%= i + 1 %>"><%= icon "medal", class: "size-6" %></span>
+          <% else %>
+            <span class="text-center font-display font-extrabold w-9 text-lg text-white/80"><%= i + 1 %></span>
+          <% end %>
           <div class="flex-1 min-w-0">
             <span data-name class="flex items-center gap-2 text-white font-semibold truncate">
               <% if q.user.favorite_team&.flag_url %>
@@ -47,8 +51,8 @@
               <% q.achievements.each do |a| %><span class="shrink-0" title="<%= AchievementCatalog.find(a.key)&.name %>"><%= AchievementCatalog.find(a.key)&.emoji %></span><% end %>
             </span>
           </div>
-          <span class="text-emerald-300 font-semibold tabular-nums text-sm" title="Aciertos exactos"><%= q.exact_hits %>✓</span>
-          <span class="text-rose-300 font-semibold tabular-nums text-sm" title="Partidos acertados"><%= q.match_hits %>⚽</span>
+          <span class="text-emerald-300 font-semibold tabular-nums text-sm inline-flex items-center gap-1" title="Aciertos exactos"><%= q.exact_hits %><%= icon "check", class: "size-3.5" %></span>
+          <span class="text-rose-300 font-semibold tabular-nums text-sm inline-flex items-center gap-1" title="Partidos acertados"><%= q.match_hits %><%= icon "goal", class: "size-3.5" %></span>
           <span class="text-amber-300 font-display font-extrabold text-right tabular-nums text-xl w-14"><%= q.total_points %></span>
           <span class="text-white/45 text-xs w-12 text-right tabular-nums">-<%= leader - q.total_points %></span>
         </div>

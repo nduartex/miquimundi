@@ -225,6 +225,86 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     assert_match "data-leaderboard-me-value=\"#{@creator.id}\"", response.body
   end
 
+  # Prize -----------------------------------------------------------------
+
+  def finish_tournament!
+    @tournament.matches.create!(phase: "final", status: "finished", home_goals: 2, away_goals: 1)
+  end
+
+  test "creating a liga con premio stores the pot" do
+    sign_in(@creator)
+    post ligas_path, params: { liga: { name: "Con premio", max_players: 8, has_prize: "1", prize_pot: "500000" } }
+    liga = Liga.last
+    assert liga.has_prize?
+    assert_equal 500_000, liga.prize_pot
+  end
+
+  test "creating con premio with an invalid pot is rejected" do
+    sign_in(@creator)
+    assert_no_difference "Liga.count" do
+      post ligas_path, params: { liga: { name: "Mal premio", max_players: 8, has_prize: "1", prize_pot: "0" } }
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "creating sin premio ignores any pot sent" do
+    sign_in(@creator)
+    post ligas_path, params: { liga: { name: "Sin premio", max_players: 8, has_prize: "0", prize_pot: "500000" } }
+    liga = Liga.last
+    assert_not liga.has_prize?
+    assert_nil liga.prize_pot
+  end
+
+  test "the creator can edit the prize" do
+    liga = create_liga(name: "Editable")
+    sign_in(@creator)
+    patch liga_path(liga), params: { liga: { name: "Editable", max_players: 10, has_prize: "1", prize_pot: "300000" } }
+    assert liga.reload.has_prize?
+    assert_equal 300_000, liga.prize_pot
+  end
+
+  test "prize changes are blocked once the tournament finished (other fields still edit)" do
+    liga = Liga.create!(name: "Premiada", max_players: 10, creator: @creator, tournament: @tournament,
+                        has_prize: true, prize_pot: 500_000)
+    liga.memberships.create!(user: @creator)
+    finish_tournament!
+    sign_in(@creator)
+
+    patch liga_path(liga), params: { liga: { name: "Nuevo nombre", max_players: 10, has_prize: "0", prize_pot: "1" } }
+    liga.reload
+    assert liga.has_prize?, "the prize must not change after the tournament finished"
+    assert_equal 500_000, liga.prize_pot
+    assert_equal "Nuevo nombre", liga.name, "non-prize fields stay editable"
+  end
+
+  test "the prize section is provisional while the tournament is not finished" do
+    liga = Liga.create!(name: "Pozo", max_players: 10, creator: @creator, tournament: @tournament,
+                        has_prize: true, prize_pot: 500_000)
+    liga.memberships.create!(user: @creator)
+    sign_in(@creator)
+    get liga_path(liga)
+    assert_response :success
+    assert_match(/Premio/, response.body)
+    assert_match(/Pozo total/, response.body)
+    assert_match(/Provisional/, response.body)
+  end
+
+  test "the prize section names the winner and the transfer once finished" do
+    Quiniela.create!(user: @creator, tournament: @tournament, total_points: 50)
+    Quiniela.create!(user: @friend, tournament: @tournament, total_points: 20)
+    liga = Liga.create!(name: "Pozo", max_players: 10, creator: @creator, tournament: @tournament,
+                        has_prize: true, prize_pot: 500_000)
+    liga.memberships.create!(user: @creator)
+    liga.memberships.create!(user: @friend)
+    finish_tournament!
+    sign_in(@creator)
+    get liga_path(liga)
+    assert_response :success
+    assert_match(/Ganador/, response.body)
+    assert_match "Cris", response.body          # creator leads with 50 pts
+    assert_match(/transfiere/, response.body)
+  end
+
   test "requires login" do
     get ligas_path
     assert_redirected_to new_session_path

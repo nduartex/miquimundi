@@ -30,7 +30,7 @@
            role="dialog" aria-modal="true" aria-labelledby="puntos-title">
         <div class="surface surface-neon max-w-lg w-full p-6 text-left max-h-[85vh] overflow-y-auto hero-in">
           <div class="flex items-center justify-between mb-4">
-            <h2 id="puntos-title" class="font-display font-extrabold text-2xl text-gold uppercase tracking-wide">🧮 Cómo se cuentan los puntos</h2>
+            <h2 id="puntos-title" class="font-display font-extrabold text-2xl text-gold uppercase tracking-wide flex items-center gap-2"><%= icon "calculator", class: "size-6" %> Cómo se cuentan los puntos</h2>
             <button type="button" data-action="modal#close" aria-label="Cerrar"
                     class="text-white/55 hover:text-white text-3xl leading-none cursor-pointer shrink-0">&times;</button>
           </div>
@@ -63,8 +63,8 @@
             <section>
               <h3 class="font-display font-bold text-white uppercase tracking-wide text-xs mb-1">④ Partidos (grupos y eliminatorias)</h3>
               <ul class="space-y-1 text-white/75">
-                <li><span class="text-emerald-300 font-bold">+5</span> marcador <strong class="text-white">exacto</strong> (cuenta como exacto ✓ y acierto ⚽).</li>
-                <li><span class="text-emerald-300 font-bold">+2</span> si acertás solo el <strong class="text-white">ganador</strong> (no el marcador) — cuenta como acierto ⚽.</li>
+                <li><span class="text-emerald-300 font-bold">+5</span> marcador <strong class="text-white">exacto</strong> (cuenta como exacto <%= icon "check", class: "size-4 inline align-text-bottom text-emerald-300" %> y acierto <%= icon "goal", class: "size-4 inline align-text-bottom text-rose-300" %>).</li>
+                <li><span class="text-emerald-300 font-bold">+2</span> si acertás solo el <strong class="text-white">ganador</strong> (no el marcador) — cuenta como acierto <%= icon "goal", class: "size-4 inline align-text-bottom text-rose-300" %>.</li>
                 <li><span class="text-emerald-300 font-bold">+3</span> si acertás quién <strong class="text-white">avanza por penales</strong>.</li>
               </ul>
               <p class="mt-2 text-white/60 text-xs">Los puntos del partido se multiplican según la ronda:</p>
@@ -86,7 +86,7 @@
 
   <div id="access-link" class="surface p-4 mb-6 <%= 'ring-2 ring-amber-300' if params[:welcome] %>" data-controller="clipboard">
     <div class="flex items-center gap-2 mb-2">
-      <span class="text-white font-bold">🔑 Tu enlace de acceso</span>
+      <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "key", class: "size-5" %> Tu enlace de acceso</span>
       <span class="text-white/50 text-xs">guárdalo para volver a entrar si se cierra la sesión</span>
     </div>
     <div class="flex gap-2">
@@ -97,7 +97,7 @@
               class="px-4 rounded-xl bg-amber-400 text-slate-900 font-bold shrink-0 cursor-pointer">Copiar</button>
     </div>
     <% if params[:welcome] %>
-      <p class="text-amber-200/90 text-xs mt-2">⚠️ Este enlace es tu única forma de reingresar. Si lo pierdes, pierdes el acceso a tu quiniela.</p>
+      <p class="text-amber-200/90 text-xs mt-2 flex items-start gap-1.5"><%= icon "triangle-alert", class: "size-4 shrink-0 mt-0.5" %><span>Este enlace es tu única forma de reingresar. Si lo pierdes, pierdes el acceso a tu quiniela.</span></p>
     <% end %>
   </div>
 
@@ -106,13 +106,13 @@
       <script type="application/json" data-share-card-target="data"><%== prediction_card_data(@quiniela).to_json %></script>
 
       <div class="flex items-center gap-2 mb-4">
-        <span class="text-white font-bold">📣 Comparte tu predicción</span>
+        <span class="text-white font-bold inline-flex items-center gap-1.5"><%= icon "megaphone", class: "size-5" %> Comparte tu predicción</span>
         <span class="text-white/50 text-xs">elige según dónde estés</span>
       </div>
 
       <!-- Móvil: imagen para historias de IG / WhatsApp -->
       <div class="mb-4">
-        <p class="text-white/85 text-sm font-semibold mb-2">📲 En el celular — para tus historias</p>
+        <p class="text-white/85 text-sm font-semibold mb-2 inline-flex items-center gap-1.5"><%= icon "smartphone", class: "size-4" %> En el celular — para tus historias</p>
         <% if @quiniela.first_part_complete? %>
           <button type="button" data-action="share-card#share" class="btn-primary w-full">
             Compartir como imagen
@@ -122,7 +122,7 @@
                  class="mx-auto w-full max-w-[260px] rounded-2xl border border-emerald-200/20 shadow-lg"
                  alt="Mi predicción del Mundial">
             <a data-share-card-target="download" download="mi-prediccion-mundial.png"
-               class="btn-ghost w-full mt-3">⬇️ Descargar</a>
+               class="btn-ghost w-full mt-3"><%= icon "download", class: "size-5" %> Descargar</a>
             <p class="text-xs text-white/50 mt-2">Guárdala y subila a tu historia de IG o WhatsApp</p>
           </div>
         <% else %>
@@ -140,7 +140,7 @@
 
       <!-- Escritorio / web: enlace público de solo lectura -->
       <div>
-        <p class="text-white/85 text-sm font-semibold mb-2">🔗 En la computadora — enlace para abrir en el navegador</p>
+        <p class="text-white/85 text-sm font-semibold mb-2 inline-flex items-center gap-1.5"><%= icon "link", class: "size-4" %> En la computadora — enlace para abrir en el navegador</p>
         <div class="flex gap-2">
           <input type="text" readonly value="<%= shared_quiniela_url(token: @quiniela.share_token) %>"
                  data-clipboard-target="source" onclick="this.select()"
@@ -154,8 +154,9 @@
   <% end %>
 
   <% if @groups_locked %>
-    <div class="surface bg-rose-500/15 border-rose-300/30 p-3 mb-6 text-center text-rose-100 text-sm font-semibold">
-      🔒 Tu quiniela de grupos quedó cerrada — el Mundial ya comenzó. Ya no se puede modificar.
+    <div class="surface bg-rose-500/15 border-rose-300/30 p-3 mb-6 text-rose-100 text-sm font-semibold flex items-center justify-center gap-2">
+      <%= icon "lock", class: "size-4 shrink-0" %>
+      <span>Tu quiniela de grupos quedó cerrada — el Mundial ya comenzó. Ya no se puede modificar.</span>
     </div>
   <% end %>
 
@@ -165,13 +166,13 @@
          { name: "Grupos",   num: "①", accent: "var(--color-grass)" },
          { name: "Terceros", num: "②", accent: "var(--color-sky)" },
          { name: "Premios",  num: "③", accent: "var(--color-gold)" },
-         { name: (@knockout_open ? "Eliminatorias" : "Eliminatorias 🔒"), num: "④", accent: "var(--color-rose)" }
+         { name: "Eliminatorias", locked: !@knockout_open, num: "④", accent: "var(--color-rose)" }
        ] %>
     <% steps.each_with_index do |s, i| %>
       <button type="button" data-action="wizard#go" data-wizard-step-param="<%= i %>"
               data-wizard-target="tab" style="--accent: <%= s[:accent] %>" class="wz-tab">
         <span class="text-lg font-display"><%= s[:num] %></span>
-        <span class="text-xs sm:text-sm text-center leading-tight"><%= s[:name] %></span>
+        <span class="text-xs sm:text-sm text-center leading-tight inline-flex items-center gap-1"><%= s[:name] %><% if s[:locked] %><%= icon "lock", class: "size-3" %><% end %></span>
       </button>
     <% end %>
   </nav>
@@ -204,9 +205,9 @@
       <button type="button" data-action="wizard#next" data-wizard-target="forward" class="btn-sky flex-1 whitespace-nowrap">
         Siguiente →
       </button>
-      <%= submit_tag "🏆 Guardar",
+      <%= button_tag type: "submit",
             data: { wizard_target: "submit", gate_target: "submit" },
-            class: "btn-gold flex-1 whitespace-nowrap" %>
+            class: "btn-gold flex-1 whitespace-nowrap" do %><%= icon "trophy", class: "size-5" %> Guardar<% end %>
     </div>
   <% end %>
 
@@ -215,7 +216,7 @@
          class="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-pitch-900/80 backdrop-blur-sm"
          role="dialog" aria-modal="true" aria-labelledby="fase1-title">
       <div class="surface surface-neon max-w-md w-full p-7 text-center hero-in">
-        <div class="text-6xl mb-3">🎉</div>
+        <div class="mb-3 flex justify-center text-amber-300"><%= icon "party-popper", class: "size-14" %></div>
         <h2 id="fase1-title" class="font-poster text-3xl text-gold mb-2">¡FELICIDADES!</h2>
         <p class="text-white/85 leading-relaxed mb-1">Completaste la primera fase de tu quiniela.</p>
         <p class="text-white/70 leading-relaxed mb-6">Revisa <strong class="text-sky">Eliminatorias</strong> para ver cuándo se abre la segunda fase.</p>

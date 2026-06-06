@@ -1,7 +1,7 @@
 <% earned = quiniela.achievements.index_by(&:key) %>
 <div class="surface p-5 mb-6" data-controller="achievements-share">
   <script type="application/json" data-achievements-share-target="data"><%== achievements_card_data(quiniela).to_json %></script>
-  <h3 class="font-display font-extrabold text-xl text-white uppercase tracking-wide mb-4">🏅 Mis logros</h3>
+  <h3 class="font-display font-extrabold text-xl text-white uppercase tracking-wide mb-4 flex items-center gap-2"><%= icon "medal", class: "size-6 text-amber-300" %> Mis logros</h3>
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
     <% AchievementCatalog::ALL.each do |a| %>
       <% got = earned.key?(a.key) %>
@@ -18,14 +18,14 @@
 
   <% if earned.any? %>
     <button type="button" data-action="achievements-share#share" class="btn-primary w-full mt-4">
-      📲 Compartir mis logros
+      <%= icon "share-2", class: "size-5" %> Compartir mis logros
     </button>
     <div data-achievements-share-target="preview" class="hidden mt-3 text-center">
       <img data-achievements-share-target="image"
            class="mx-auto w-full max-w-[260px] rounded-2xl border border-emerald-200/20 shadow-lg"
            alt="Mis logros del Mundial">
       <a data-achievements-share-target="download" download="mis-logros-mundial.png"
-         class="btn-ghost w-full mt-3">⬇️ Descargar</a>
+         class="btn-ghost w-full mt-3"><%= icon "download", class: "size-5" %> Descargar</a>
       <p class="text-xs text-white/50 mt-2">Guárdala y subila a tu historia de IG o WhatsApp</p>
     </div>
   <% else %>

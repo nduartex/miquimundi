@@ -51,7 +51,7 @@
           <div data-controller="flash" role="<%= alert ? 'alert' : 'status' %>" aria-live="polite"
                class="toast-in pointer-events-auto w-full max-w-md flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl text-white font-semibold backdrop-blur ring-1 border-l-4
                       <%= alert ? 'bg-rose-900/90 ring-rose-300/30 border-rose-400' : 'bg-emerald-900/90 ring-emerald-300/30 border-emerald-400' %>">
-            <span class="text-xl shrink-0"><%= alert ? "🟥" : "⚽" %></span>
+            <span class="shrink-0 inline-flex"><%= alert ? icon("triangle-alert", class: "size-5") : icon("circle-check", class: "size-5") %></span>
             <span class="flex-1 leading-snug"><%= msg %></span>
             <button type="button" data-action="flash#dismiss" aria-label="Cerrar"
                     class="text-white/70 hover:text-white text-2xl leading-none cursor-pointer shrink-0">&times;</button>

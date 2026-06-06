@@ -1,6 +1,6 @@
 <% unless open %>
   <div class="surface p-8 text-center">
-    <div class="text-5xl mb-3">🔒</div>
+    <div class="mb-3 flex justify-center"><%= icon "lock", class: "size-12 text-white/70" %></div>
     <h3 class="font-display text-2xl font-bold text-white mb-2">Eliminatorias bloqueadas</h3>
     <p class="text-white/70 max-w-md mx-auto">Se desbloquea cuando termine la <strong class="text-white">fase de grupos</strong>. Ahí se generan los partidos reales de dieciseisavos y podrás predecir los marcadores contra los equipos clasificados.</p>
     <p class="text-white/40 text-sm mt-4">Por ahora completa tus grupos, los 8 mejores terceros y tus premios. 💪</p>
@@ -33,7 +33,7 @@
               <div class="flex items-center justify-between mb-3">
                 <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
                 <div class="flex items-center gap-2">
-                  <% if dis %><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-white/15 text-white/80">🔒 Cerrado</span><% end %>
+                  <% if dis %><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-white/15 text-white/80 inline-flex items-center gap-1"><%= icon "lock", class: "size-3" %> Cerrado</span><% end %>
                   <% if mult > 1.0 %><span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span><% end %>
                 </div>
               </div>

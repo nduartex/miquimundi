@@ -10,6 +10,36 @@
           class: "field" %>
     <p class="text-white/40 text-xs mt-1">Entre <%= Liga::MIN_PLAYERS %> y <%= Liga::MAX_PLAYERS %>. Te incluye a ti.</p>
   </div>
+
+  <% if prize_editable? %>
+    <div data-controller="prize" class="border-t border-white/10 pt-5">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <%= f.check_box :has_prize,
+              { data: { prize_target: "toggle", action: "change->prize#update" },
+                class: "h-5 w-5 rounded accent-amber-400 cursor-pointer" } %>
+        <span class="text-white/85 font-semibold inline-flex items-center gap-1.5"><%= icon "coins", class: "size-4 text-amber-300" %> Liga con premio</span>
+      </label>
+      <div data-prize-target="fields" hidden class="mt-3">
+        <%= f.label :prize_pot, "Pozo total", class: "block text-white/70 text-xs uppercase tracking-wide mb-1" %>
+        <%= f.number_field :prize_pot, min: 1, step: 1, inputmode: "numeric",
+              placeholder: "ej: 500000", class: "field" %>
+        <p class="text-white/40 text-xs mt-1">
+          Solo un número (sin moneda). El premio lo coordinan entre ustedes:
+          el sistema solo calcula cuánto le transfiere cada jugador al ganador
+          (1° del ranking al terminar el Mundial).
+        </p>
+      </div>
+    </div>
+  <% else %>
+    <div class="border-t border-white/10 pt-5">
+      <span class="block text-white/70 text-xs uppercase tracking-wide mb-1">Premio</span>
+      <p class="text-white/70 text-sm">
+        <%= liga.has_prize? ? "Con premio · pozo #{number_with_delimiter(liga.prize_pot)}" : "Sin premio" %>
+      </p>
+      <p class="text-white/40 text-xs mt-1">El Mundial terminó: el premio ya no se puede modificar.</p>
+    </div>
+  <% end %>
+
   <div class="flex gap-2 justify-end pt-1">
     <%= link_to "Cancelar", cancel_path, class: "btn-ghost" %>
     <%= f.submit submit_label, class: "btn-primary" %>

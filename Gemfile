@@ -18,6 +18,8 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
+# Inline SVG icons (Lucide) without a JS build step [https://github.com/Rails-Designer/rails_icons]
+gem "rails_icons"
 # Spanish (and other locales) translations for Rails validation messages [https://github.com/svenfuchs/rails-i18n]
 gem "rails-i18n"
 
