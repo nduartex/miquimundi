@@ -6,6 +6,6 @@ class CreateAchievements < ActiveRecord::Migration[8.0]
       t.datetime :earned_at, null: false
       t.timestamps
     end
-    add_index :achievements, [:quiniela_id, :key], unique: true
+    add_index :achievements, [ :quiniela_id, :key ], unique: true
   end
 end

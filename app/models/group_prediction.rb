@@ -10,12 +10,12 @@ class GroupPrediction < ApplicationRecord
 
   # Scoring only uses the two qualifiers; 3rd/4th feed the predicted bracket.
   def predicted_team_ids
-    [first_team_id, second_team_id].compact
+    [ first_team_id, second_team_id ].compact
   end
 
   # Full predicted standing 1st..4th (ids), in order.
   def ranked_team_ids
-    [first_team_id, second_team_id, third_team_id, fourth_team_id].compact
+    [ first_team_id, second_team_id, third_team_id, fourth_team_id ].compact
   end
 
   private

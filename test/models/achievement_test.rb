@@ -10,7 +10,7 @@ class AchievementTest < ActiveSupport::TestCase
 
   test "a quiniela has many achievements" do
     @quiniela.achievements.create!(key: "profeta", earned_at: Time.current)
-    assert_equal ["profeta"], @quiniela.reload.achievements.map(&:key)
+    assert_equal [ "profeta" ], @quiniela.reload.achievements.map(&:key)
   end
 
   test "the same achievement key cannot be earned twice by a quiniela" do

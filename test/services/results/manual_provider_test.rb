@@ -13,8 +13,8 @@ class Results::ManualProviderTest < ActiveSupport::TestCase
 
   test "applies group results and match scores from a hash" do
     data = {
-      "group_results" => [{ "group" => "A", "first" => "T1", "second" => "T2" }],
-      "matches" => [{ "bracket_slot" => "R16-1", "home_goals" => 2, "away_goals" => 1 }]
+      "group_results" => [ { "group" => "A", "first" => "T1", "second" => "T2" } ],
+      "matches" => [ { "bracket_slot" => "R16-1", "home_goals" => 2, "away_goals" => 1 } ]
     }
     Results::ManualProvider.new(@tournament, data).apply!
 

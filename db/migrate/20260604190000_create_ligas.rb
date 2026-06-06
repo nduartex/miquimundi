@@ -15,6 +15,6 @@ class CreateLigas < ActiveRecord::Migration[8.0]
       t.references :user, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :liga_memberships, [:liga_id, :user_id], unique: true
+    add_index :liga_memberships, [ :liga_id, :user_id ], unique: true
   end
 end

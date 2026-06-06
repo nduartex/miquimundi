@@ -18,7 +18,7 @@ module AchievementCatalog
     Entry.new(key: "goat", name: "The GOAT", emoji: "🐐", exclusive: true,
               description: "Lidera el ranking con el mayor puntaje.",
               note: "Solo lo tiene una persona a la vez y cambia de dueño según se mueva el ranking.",
-              rule: ->(c) { c.current_rank == 1 && c.quiniela.total_points.positive? }),
+              rule: ->(c) { c.current_rank == 1 && c.quiniela.total_points.positive? })
   ].freeze
 
   # Big achievements trigger the louder ("epic") celebration.

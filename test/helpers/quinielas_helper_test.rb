@@ -60,7 +60,7 @@ class QuinielasHelperTest < ActionView::TestCase
     assert_equal @user.display_name, data[:username]
     assert_equal AchievementCatalog::ALL.size, data[:total]
     assert_equal 1, data[:count]
-    assert_equal ["Profeta"], data[:achievements].map { |a| a[:name] }
+    assert_equal [ "Profeta" ], data[:achievements].map { |a| a[:name] }
     assert data[:achievements].first[:emoji].present?
     assert data[:achievements].first[:description].present?
   end

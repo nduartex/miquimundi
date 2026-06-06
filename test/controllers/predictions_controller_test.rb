@@ -43,7 +43,7 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
   test "a complete first part stores the full 1-4 group ranking" do
     post quiniela_predictions_path, params: complete_first_part_params
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
-    assert_equal [@teams[0].id, @teams[1].id, @teams[2].id, @teams[3].id], gp.ranked_team_ids
+    assert_equal [ @teams[0].id, @teams[1].id, @teams[2].id, @teams[3].id ], gp.ranked_team_ids
   end
 
   test "best-third group picks are capped at 8" do

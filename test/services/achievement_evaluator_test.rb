@@ -11,7 +11,7 @@ class AchievementEvaluatorTest < ActiveSupport::TestCase
   test "awards Profeta at 5 exact hits and returns it once" do
     @quiniela.update!(exact_hits: 5)
     newly = AchievementEvaluator.new(@quiniela, current_rank: 1).call
-    assert_equal ["profeta"], newly.map(&:key)
+    assert_equal [ "profeta" ], newly.map(&:key)
     assert @quiniela.achievements.exists?(key: "profeta")
 
     again = AchievementEvaluator.new(@quiniela, current_rank: 1).call

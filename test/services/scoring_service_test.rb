@@ -155,8 +155,8 @@ class ScoringServiceTest < ActiveSupport::TestCase
     @t3.update!(code: "T3")
     GroupPrediction.create!(quiniela: @quiniela, group: @group,
                             first_team: @t1, second_team: @t2, third_team: @t3)
-    @quiniela.update!(best_third_groups: ["A"])
-    TournamentResult.create!(tournament: @tournament, qualified_third_codes: ["T3"])
+    @quiniela.update!(best_third_groups: [ "A" ])
+    TournamentResult.create!(tournament: @tournament, qualified_third_codes: [ "T3" ])
     ScoringService.new(@quiniela).call
     # group exact-order 8 + best third 3
     assert_equal 11, @quiniela.reload.total_points
@@ -166,8 +166,8 @@ class ScoringServiceTest < ActiveSupport::TestCase
     @t3.update!(code: "T3")
     GroupPrediction.create!(quiniela: @quiniela, group: @group,
                             first_team: @t1, second_team: @t2, third_team: @t3)
-    @quiniela.update!(best_third_groups: ["A"])
-    TournamentResult.create!(tournament: @tournament, qualified_third_codes: ["OTHER"])
+    @quiniela.update!(best_third_groups: [ "A" ])
+    TournamentResult.create!(tournament: @tournament, qualified_third_codes: [ "OTHER" ])
     ScoringService.new(@quiniela).call
     assert_equal 8, @quiniela.reload.total_points # only the group points
   end

@@ -48,10 +48,10 @@ module QuinielasHelper
 
   # Player-award fields in display order (Fair Play is a team, handled apart).
   PREDICTION_AWARDS = [
-    ["Balón de Oro",  :balon_oro_player],
-    ["Bota de Oro",   :bota_oro_player],
-    ["Guante de Oro", :guante_oro_player],
-    ["Mejor joven",   :young_player]
+    [ "Balón de Oro",  :balon_oro_player ],
+    [ "Bota de Oro",   :bota_oro_player ],
+    [ "Guante de Oro", :guante_oro_player ],
+    [ "Mejor joven",   :young_player ]
   ].freeze
 
   # Data for the phase-1 "Mi predicción" share card, embedded as JSON and drawn

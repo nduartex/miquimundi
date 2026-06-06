@@ -10,7 +10,7 @@ class AchievementEvaluator
   end
 
   def call
-    worst = [@quiniela.worst_rank || @current_rank, @current_rank].max
+    worst = [ @quiniela.worst_rank || @current_rank, @current_rank ].max
     @quiniela.update!(worst_rank: worst) if worst != @quiniela.worst_rank
 
     context = Context.new(quiniela: @quiniela, rank_climb: worst - @current_rank,

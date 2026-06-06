@@ -23,7 +23,7 @@ class Team < ApplicationRecord
 
   # Name first, flag on the right (emoji fallback for non-select contexts).
   def label
-    [name, flag_emoji].compact.join("  ")
+    [ name, flag_emoji ].compact.join("  ")
   end
 
   # Real flag image URL, or nil when the code is unknown. Served from our own
