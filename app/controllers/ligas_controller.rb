@@ -21,6 +21,8 @@ class LigasController < ApplicationController
     ActiveRecord::Base.transaction do
       @liga.save!
       @liga.memberships.create!(user: current_user)
+      # Solo "created": la membresía del creador está implícita, no se loguea aparte.
+      record_activity(@liga, :created)
     end
     redirect_to @liga, notice: "Liga creada. Comparte el código #{@liga.invite_code} con tus amigos."
   rescue ActiveRecord::RecordInvalid
@@ -33,6 +35,7 @@ class LigasController < ApplicationController
 
   def update
     if @liga.update(liga_params)
+      record_update_activities
       redirect_to @liga, notice: "Liga actualizada."
     else
       flash.now[:alert] = @liga.errors.full_messages.first || "No se pudo actualizar la liga."
@@ -45,6 +48,10 @@ class LigasController < ApplicationController
     @quinielas = Quiniela.ranked(@tournament, user_ids: @liga.member_ids)
     @members_without_quiniela = @liga.members.where.not(id: @quinielas.map(&:user_id))
     assign_prize_outcome
+    # Un registro extra delata el truncado sin pagar un COUNT aparte.
+    activities = @liga.activities.recent.limit(LigaActivity::FEED_LIMIT + 1).to_a
+    @activities_truncated = activities.size > LigaActivity::FEED_LIMIT
+    @activities = activities.first(LigaActivity::FEED_LIMIT)
   end
 
   # POST /ligas/join — join by invite code.
@@ -62,6 +69,7 @@ class LigasController < ApplicationController
         :full
       else
         liga.memberships.create!(user: current_user)
+        record_activity(liga, :joined)
         :joined
       end
     end
@@ -87,7 +95,10 @@ class LigasController < ApplicationController
     if @liga.creator?(current_user)
       redirect_to @liga, alert: "El creador no puede abandonar su liga."
     else
-      @liga.memberships.where(user_id: current_user.id).destroy_all
+      ActiveRecord::Base.transaction do
+        @liga.memberships.where(user_id: current_user.id).destroy_all
+        record_activity(@liga, :left)
+      end
       redirect_to ligas_path, notice: "Saliste de #{@liga.name}."
     end
   end
@@ -98,7 +109,11 @@ class LigasController < ApplicationController
     if membership.user_id == current_user.id
       redirect_to @liga, alert: "No puedes expulsarte a ti mismo."
     else
-      membership.destroy
+      target = membership.user
+      ActiveRecord::Base.transaction do
+        membership.destroy
+        record_activity(@liga, :expelled, target_user_id: target.id, target_name: target.display_name)
+      end
       redirect_to @liga, notice: "Jugador expulsado."
     end
   end
@@ -152,5 +167,37 @@ class LigasController < ApplicationController
     a.total_points == b.total_points &&
       a.exact_hits == b.exact_hits &&
       a.match_hits == b.match_hits
+  end
+
+  # Anota una entrada en el log de actividad de la liga. El nombre del actor se
+  # snapshotea para que el feed se renderice sin joins y no cambie con renames.
+  def record_activity(liga, action, **metadata)
+    liga.activities.create!(
+      user: current_user,
+      action: action.to_s,
+      metadata: metadata.merge(actor_name: current_user.display_name)
+    )
+  end
+
+  # Una actividad por cambio lógico de un update exitoso. Activar/desactivar el
+  # premio también mueve prize_pot (nil ↔ valor), así que esos dos casos
+  # subsumen el cambio de pozo: solo se loguea prize_pot_changed cuando el
+  # premio ya estaba activo y sigue activo.
+  def record_update_activities
+    if (change = @liga.saved_changes["name"])
+      record_activity(@liga, :renamed, from: change[0], to: change[1])
+    end
+    if (change = @liga.saved_changes["max_players"])
+      record_activity(@liga, :cupo_changed, from: change[0], to: change[1])
+    end
+    if (change = @liga.saved_changes["has_prize"])
+      if change[1]
+        record_activity(@liga, :prize_enabled, pot: @liga.prize_pot)
+      else
+        record_activity(@liga, :prize_disabled)
+      end
+    elsif @liga.has_prize? && (change = @liga.saved_changes["prize_pot"])
+      record_activity(@liga, :prize_pot_changed, from: change[0], to: change[1])
+    end
   end
 end

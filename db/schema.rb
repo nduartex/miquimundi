@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_05_030729) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_06_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_05_030729) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tournament_id"], name: "index_groups_on_tournament_id"
+  end
+
+  create_table "liga_activities", force: :cascade do |t|
+    t.bigint "liga_id", null: false
+    t.bigint "user_id"
+    t.string "action", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["liga_id", "created_at"], name: "index_liga_activities_on_liga_id_and_created_at"
+    t.index ["user_id"], name: "index_liga_activities_on_user_id"
   end
 
   create_table "liga_memberships", force: :cascade do |t|
@@ -377,6 +388,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_05_030729) do
   add_foreign_key "group_results", "teams", column: "first_team_id"
   add_foreign_key "group_results", "teams", column: "second_team_id"
   add_foreign_key "groups", "tournaments"
+  add_foreign_key "liga_activities", "ligas"
+  add_foreign_key "liga_activities", "users"
   add_foreign_key "liga_memberships", "ligas"
   add_foreign_key "liga_memberships", "users"
   add_foreign_key "ligas", "tournaments"

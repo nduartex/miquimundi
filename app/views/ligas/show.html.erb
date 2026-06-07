@@ -128,4 +128,6 @@
           form: { class: "mt-8", data: { turbo_confirm: "¿Salir de #{@liga.name}?" } },
           class: "btn-ghost w-full" %>
   <% end %>
+
+  <%= render "activity_log", activities: @activities, truncated: @activities_truncated %>
 </div>

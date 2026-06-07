@@ -1,0 +1,19 @@
+<% if activities.any? %>
+  <section class="surface-soft p-4 mt-4">
+    <div class="text-[10px] uppercase tracking-widest text-white/60 font-display font-semibold mb-3 flex items-center gap-1.5">
+      <%= icon "clipboard-list", class: "size-3.5" %> Actividad
+    </div>
+    <ul class="space-y-2.5">
+      <% activities.each do |activity| %>
+        <li class="flex items-start gap-2.5 text-sm">
+          <%= icon liga_activity_icon(activity), class: "size-4 mt-0.5 shrink-0 text-white/40" %>
+          <span class="flex-1 min-w-0 text-white/75"><%= liga_activity_text(activity) %></span>
+          <span class="shrink-0 text-white/35 text-xs">hace <%= time_ago_in_words(activity.created_at) %></span>
+        </li>
+      <% end %>
+    </ul>
+    <% if truncated %>
+      <p class="text-white/35 text-xs mt-3">Mostrando los últimos <%= LigaActivity::FEED_LIMIT %> movimientos.</p>
+    <% end %>
+  </section>
+<% end %>

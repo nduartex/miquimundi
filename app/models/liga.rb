@@ -10,6 +10,8 @@ class Liga < ApplicationRecord
   belongs_to :tournament
   has_many :memberships, class_name: "LigaMembership", dependent: :destroy
   has_many :members, through: :memberships, source: :user
+  # Pure data rows with no callbacks/dependents → delete_all skips instantiation.
+  has_many :activities, class_name: "LigaActivity", dependent: :delete_all
 
   validates :name, presence: true, length: { in: 3..40 }
   validates :max_players, presence: true,

@@ -309,4 +309,128 @@ class LigasControllerTest < ActionDispatch::IntegrationTest
     get ligas_path
     assert_redirected_to new_session_path
   end
+
+  # Activity log -----------------------------------------------------------
+
+  test "creating a liga logs a single created activity with the actor's name" do
+    sign_in(@creator)
+    assert_difference "LigaActivity.count", 1 do
+      post ligas_path, params: { liga: { name: "Mi liga", max_players: 8 } }
+    end
+    activity = Liga.last.activities.sole
+    assert_equal "created", activity.action
+    assert_equal "Cris", activity.metadata["actor_name"]
+    assert_equal @creator, activity.user
+  end
+
+  test "joining logs a joined activity" do
+    liga = create_liga
+    sign_in(@friend)
+    post join_ligas_path, params: { invite_code: liga.invite_code }
+    activity = liga.activities.recent.first
+    assert_equal "joined", activity.action
+    assert_equal "Fran", activity.metadata["actor_name"]
+  end
+
+  test "leaving logs a left activity" do
+    liga = create_liga
+    liga.memberships.create!(user: @friend)
+    sign_in(@friend)
+    delete leave_liga_path(liga)
+    activity = liga.activities.recent.first
+    assert_equal "left", activity.action
+    assert_equal "Fran", activity.metadata["actor_name"]
+  end
+
+  test "expelling logs who expelled whom" do
+    liga = create_liga
+    membership = liga.memberships.create!(user: @friend)
+    sign_in(@creator)
+    delete liga_member_path(liga, membership)
+    activity = liga.activities.recent.first
+    assert_equal "expelled", activity.action
+    assert_equal "Cris", activity.metadata["actor_name"]
+    assert_equal "Fran", activity.metadata["target_name"]
+    assert_equal @friend.id, activity.metadata["target_user_id"]
+  end
+
+  test "renaming and changing the cupo log one activity each" do
+    liga = create_liga(max_players: 10)
+    sign_in(@creator)
+    assert_difference "LigaActivity.count", 2 do
+      patch liga_path(liga), params: { liga: { name: "Nuevo nombre", max_players: 6 } }
+    end
+    actions = liga.activities.pluck(:action).sort
+    assert_equal %w[ cupo_changed renamed ], actions
+    renamed = liga.activities.find_by(action: "renamed")
+    assert_equal "Los amigos", renamed.metadata["from"]
+    assert_equal "Nuevo nombre", renamed.metadata["to"]
+    cupo = liga.activities.find_by(action: "cupo_changed")
+    assert_equal 10, cupo.metadata["from"]
+    assert_equal 6, cupo.metadata["to"]
+  end
+
+  test "enabling the prize logs prize_enabled with the pot" do
+    liga = create_liga
+    sign_in(@creator)
+    assert_difference "LigaActivity.count", 1 do
+      patch liga_path(liga), params: { liga: { has_prize: "1", prize_pot: "500000" } }
+    end
+    activity = liga.activities.sole
+    assert_equal "prize_enabled", activity.action
+    assert_equal 500_000, activity.metadata["pot"]
+  end
+
+  test "disabling the prize logs only prize_disabled (no pot change entry)" do
+    liga = create_liga
+    liga.update!(has_prize: true, prize_pot: 500_000)
+    sign_in(@creator)
+    assert_difference "LigaActivity.count", 1 do
+      patch liga_path(liga), params: { liga: { has_prize: "0" } }
+    end
+    assert_equal "prize_disabled", liga.activities.sole.action
+  end
+
+  test "changing the pot while the prize stays on logs prize_pot_changed" do
+    liga = create_liga
+    liga.update!(has_prize: true, prize_pot: 500_000)
+    sign_in(@creator)
+    assert_difference "LigaActivity.count", 1 do
+      patch liga_path(liga), params: { liga: { has_prize: "1", prize_pot: "300000" } }
+    end
+    activity = liga.activities.sole
+    assert_equal "prize_pot_changed", activity.action
+    assert_equal 500_000, activity.metadata["from"]
+    assert_equal 300_000, activity.metadata["to"]
+  end
+
+  test "a no-op update and a failed update log nothing" do
+    liga = create_liga(max_players: 10)
+    sign_in(@creator)
+    assert_no_difference "LigaActivity.count" do
+      patch liga_path(liga), params: { liga: { name: "Los amigos", max_players: 10 } }  # no-op
+      patch liga_path(liga), params: { liga: { name: "X" } }                            # invalid (too short)
+    end
+  end
+
+  test "show renders the activity feed for members" do
+    liga = create_liga
+    liga.activities.create!(action: "joined", user: @friend, metadata: { actor_name: "Fran" })
+    sign_in(@creator)
+    get liga_path(liga)
+    assert_response :success
+    assert_match "Actividad", response.body
+    assert_match "Fran se unió a la liga", response.body
+  end
+
+  test "the feed shows at most FEED_LIMIT entries and flags the truncation" do
+    liga = create_liga
+    (LigaActivity::FEED_LIMIT + 1).times do
+      liga.activities.create!(action: "joined", metadata: { actor_name: "Fran" })
+    end
+    sign_in(@creator)
+    get liga_path(liga)
+    assert_response :success
+    assert_match "Mostrando los últimos #{LigaActivity::FEED_LIMIT} movimientos", response.body
+  end
 end
