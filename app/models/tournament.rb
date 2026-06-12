@@ -9,8 +9,10 @@ class Tournament < ApplicationRecord
     order(year: :desc).first
   end
 
+  # Date-based lock disabled: group-stage predictions no longer freeze when the
+  # World Cup starts. Editing stays open regardless of locked_at.
   def locked?
-    locked_at.present? && locked_at <= Time.current
+    false
   end
 
   def quinielas_relation

@@ -77,21 +77,26 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 8, q.reload.best_third_groups.size # prior valid state intact (rolled back)
   end
 
-  test "group predictions are frozen and not overwritten once the tournament starts" do
+  test "group predictions stay editable even after the tournament starts (date lock disabled)" do
     post quiniela_predictions_path, params: complete_first_part_params
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
     assert_equal @teams[0].id, gp.first_team_id
 
-    @tournament.update!(locked_at: 1.day.ago) # World Cup has started
-    post quiniela_predictions_path, params: {
-      group_predictions: { @group.id.to_s => { first_team_id: @teams[2].id, second_team_id: @teams[3].id } }
-    }
-    assert_equal @teams[0].id, gp.reload.first_team_id # original kept, not overwritten
+    @tournament.update!(locked_at: 1.day.ago) # World Cup has started, but the date lock is disabled
+    # Re-submit a complete first part with group A's top two swapped.
+    edited = complete_first_part_params
+    edited[:group_predictions][@group.id.to_s].merge!(
+      first_team_id: @teams[2].id, second_team_id: @teams[3].id,
+      third_team_id: @teams[0].id, fourth_team_id: @teams[1].id
+    )
+    post quiniela_predictions_path, params: edited
+    assert_equal @teams[2].id, gp.reload.first_team_id # editable: new value saved
   end
 
-  test "after kickoff the gate does not block a knockout-only save" do
-    @tournament.update!(locked_at: 1.day.ago) # World Cup started: first part frozen
-    post quiniela_predictions_path, params: {} # nothing to save, but must not be gate-blocked
+  test "once the first part is complete, a knockout-only save is not gate-blocked after kickoff" do
+    post quiniela_predictions_path, params: complete_first_part_params # first part completed
+    @tournament.update!(locked_at: 1.day.ago) # World Cup started (date lock disabled, but irrelevant now)
+    post quiniela_predictions_path, params: {} # knockout-only save: nothing to add, must not be gate-blocked
     assert @user.quinielas.find_by(tournament: @tournament).submitted?
   end
 
