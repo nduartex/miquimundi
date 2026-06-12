@@ -68,6 +68,35 @@ class QuinielaTest < ActiveSupport::TestCase
     assert(@quiniela.first_part_missing.any? { |m| m.include?("premios") })
   end
 
+  test "late? only when the first part was completed after kickoff" do
+    @tournament.update!(locked_at: 1.hour.ago)
+    assert_not @quiniela.late? # never completed
+
+    @quiniela.update!(first_part_completed_at: 2.hours.ago)
+    assert_not @quiniela.late? # completed before kickoff
+
+    @quiniela.update!(first_part_completed_at: 30.minutes.ago)
+    assert @quiniela.late? # completed during the late window
+  end
+
+  test "first part is editable before kickoff" do
+    @tournament.update!(locked_at: 1.day.from_now)
+    assert @quiniela.first_part_editable?
+  end
+
+  test "first part stays editable in the late window only for never-completed quinielas" do
+    @tournament.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    assert @quiniela.first_part_editable?
+
+    @quiniela.update!(first_part_completed_at: 30.minutes.ago)
+    assert_not @quiniela.first_part_editable?
+  end
+
+  test "first part is not editable once the late deadline passes" do
+    @tournament.update!(locked_at: 1.day.ago, late_deadline_at: 1.hour.ago)
+    assert_not @quiniela.first_part_editable?
+  end
+
   test "current_rank is 1 for the top scorer and increases below" do
     @quiniela.update!(total_points: 100)
     other = User.create!(username: "second").quinielas.create!(tournament: @tournament, total_points: 40)

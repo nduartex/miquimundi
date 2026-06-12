@@ -3,6 +3,9 @@ require "test_helper"
 class QuinielasControllerTest < ActionDispatch::IntegrationTest
   def setup
     SeedLoader.call
+    # The seeded kickoff (2026-06-11) is in the past once the real World Cup
+    # starts; pin a future lock so these tests keep their pre-kickoff meaning.
+    Tournament.current.update!(locked_at: 1.week.from_now, late_deadline_at: 2.weeks.from_now)
     @user = User.create!(username: "tester")
     get restore_path(token: @user.access_token)
   end
@@ -65,6 +68,26 @@ class QuinielasControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_no_match "Eliminatorias bloqueadas", response.body  # knockout open now
     assert_match "Cerrado", response.body                       # started match shows locked
+  end
+
+  test "late window: a never-saved user sees the amber banner and editable groups" do
+    Tournament.current.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    get quiniela_path
+    assert_response :success
+    assert_match "aún puedes llenar tu quiniela", response.body
+    assert_match "valdrán 75%", response.body
+    assert_match 'data-controller="group-order"', response.body # drag&drop still enabled
+  end
+
+  test "late window: a user who completed pre-kickoff keeps the closed banner" do
+    q = @user.quinielas.find_or_create_by!(tournament: Tournament.current)
+    complete_first_part!(q)
+    q.update!(first_part_completed_at: 2.days.ago, submitted_at: 2.days.ago)
+    Tournament.current.update!(locked_at: 1.day.ago, late_deadline_at: 1.day.from_now)
+    get quiniela_path
+    assert_response :success
+    assert_match "quedó cerrada", response.body
+    assert_no_match(/aún puedes llenar tu quiniela/, response.body)
   end
 
   test "show requires login" do

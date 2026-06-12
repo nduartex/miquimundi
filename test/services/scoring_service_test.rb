@@ -151,6 +151,26 @@ class ScoringServiceTest < ActiveSupport::TestCase
     assert_equal 8, gp.reload.points_earned
   end
 
+  test "a late quiniela gets 75% of its phase-1 points, knockouts untouched" do
+    @tournament.update!(locked_at: 2.hours.ago)
+    @quiniela.update!(first_part_completed_at: 1.hour.ago) # completed after kickoff
+    GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2) # 8 pts
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1) # 5 pts
+    ScoringService.new(@quiniela).call
+    assert_equal 11, @quiniela.reload.total_points # floor(8 * 0.75) = 6, + 5 knockout
+  end
+
+  test "an on-time quiniela keeps full phase-1 points after kickoff" do
+    @tournament.update!(locked_at: 2.hours.ago)
+    @quiniela.update!(first_part_completed_at: 3.hours.ago) # completed before kickoff
+    GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2)
+    m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
+    MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)
+    ScoringService.new(@quiniela).call
+    assert_equal 13, @quiniela.reload.total_points
+  end
+
   test "correct best-third nomination scores 3" do
     @t3.update!(code: "T3")
     GroupPrediction.create!(quiniela: @quiniela, group: @group,

@@ -5,6 +5,9 @@ tournament:
   name: Copa Mundial de la FIFA 2026
   year: 2026
   starts_at: '2026-06-11T18:00:00Z'
+  # Ventana tardía: quienes nunca completaron la Fase 1 pueden llenarla (con
+  # castigo de puntos) hasta el inicio de la jornada 3 de grupos.
+  late_deadline_at: '2026-06-21T16:00:00Z'
 groups:
   A:
   - name: México

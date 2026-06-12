@@ -1,4 +1,9 @@
 es:
+  date:
+    month_names: [~, enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre]
+  time:
+    formats:
+      late_deadline: "%-d de %B a las %H:%M"
   phase:
     round_32: "Dieciseisavos"
     round_16: "Octavos"

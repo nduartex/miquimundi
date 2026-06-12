@@ -4,6 +4,9 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
   def setup
     SeedLoader.call
     @tournament = Tournament.current
+    # The seeded kickoff (2026-06-11) is in the past once the real World Cup
+    # starts; pin a future lock so these tests keep their pre-kickoff meaning.
+    @tournament.update!(locked_at: 1.week.from_now, late_deadline_at: 2.weeks.from_now)
     @group = @tournament.groups.find_by(name: "A")
     @teams = @group.teams.to_a
     @user = User.create!(username: "tester")
@@ -82,15 +85,47 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
     assert_equal @teams[0].id, gp.first_team_id
 
-    @tournament.update!(locked_at: 1.day.ago) # World Cup has started
+    # World Cup started and the late window is open — but this user already
+    # completed pre-kickoff, so nothing reopens for them.
+    @tournament.update!(locked_at: 1.day.ago, late_deadline_at: 1.day.from_now)
     post quiniela_predictions_path, params: {
       group_predictions: { @group.id.to_s => { first_team_id: @teams[2].id, second_team_id: @teams[3].id } }
     }
     assert_equal @teams[0].id, gp.reload.first_team_id # original kept, not overwritten
   end
 
+  test "a user who never saved can complete the first part during the late window" do
+    @tournament.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert q.submitted?
+    assert_not_nil q.first_part_completed_at
+    assert q.late?
+    assert_equal @teams[0].id, q.group_predictions.find_by(group: @group).first_team_id
+  end
+
+  test "a late save self-locks: a second save cannot change the picks" do
+    @tournament.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    post quiniela_predictions_path, params: complete_first_part_params
+    gp = @user.quinielas.find_by(tournament: @tournament).group_predictions.find_by(group: @group)
+
+    params = complete_first_part_params
+    params[:group_predictions][@group.id.to_s][:first_team_id] = @teams[2].id
+    post quiniela_predictions_path, params: params
+    assert_equal @teams[0].id, gp.reload.first_team_id # frozen after the one late save
+  end
+
+  test "after the late deadline a never-saved user cannot save the first part" do
+    @tournament.update!(locked_at: 1.day.ago, late_deadline_at: 1.hour.ago)
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert_equal 0, q.group_predictions.count
+    assert_nil q.first_part_completed_at
+  end
+
   test "after kickoff the gate does not block a knockout-only save" do
-    @tournament.update!(locked_at: 1.day.ago) # World Cup started: first part frozen
+    # Late window closed too: the first part is frozen for everyone.
+    @tournament.update!(locked_at: 1.day.ago, late_deadline_at: 2.hours.ago)
     post quiniela_predictions_path, params: {} # nothing to save, but must not be gate-blocked
     assert @user.quinielas.find_by(tournament: @tournament).submitted?
   end

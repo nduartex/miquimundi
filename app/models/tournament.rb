@@ -13,6 +13,13 @@ class Tournament < ApplicationRecord
     locked_at.present? && locked_at <= Time.current
   end
 
+  # Late window: after kickoff, users who never completed their first part can
+  # still fill it (with a scoring penalty) until late_deadline_at — the start
+  # of group matchday 3, when every team has played at most 2 matches.
+  def late_window_open?
+    locked? && late_deadline_at.present? && late_deadline_at > Time.current
+  end
+
   def quinielas_relation
     Quiniela.where(tournament_id: id)
   end

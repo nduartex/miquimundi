@@ -16,7 +16,11 @@ class SeedLoader
     tournament = Tournament.find_or_create_by!(year: data["tournament"]["year"]) do |t|
       t.name = data["tournament"]["name"]
     end
-    tournament.update!(name: data["tournament"]["name"], locked_at: data["tournament"]["starts_at"])
+    tournament.update!(
+      name: data["tournament"]["name"],
+      locked_at: data["tournament"]["starts_at"],
+      late_deadline_at: data["tournament"]["late_deadline_at"]
+    )
 
     upsert_rosters(tournament, data)
 

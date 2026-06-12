@@ -6,11 +6,15 @@ class PredictionsController < ApplicationController
     @quiniela = current_user.quiniela_for(@tournament)
     @quiniela.save! if @quiniela.new_record?
 
+    # Editable pre-kickoff, or during the late window for users who never
+    # completed the first part (their save self-locks via first_part_completed_at).
+    @first_part_editable = @quiniela.first_part_editable?
+
     missing = nil
     saved = false
     just_completed = false
     ActiveRecord::Base.transaction do
-      unless @tournament.locked? # group-stage predictions freeze when the World Cup starts
+      if @first_part_editable
         save_group_predictions
         save_best_thirds
         save_award_prediction
@@ -18,16 +22,16 @@ class PredictionsController < ApplicationController
       save_match_predictions # has its own knockout-open + per-match kickoff guards
 
       # The first part can only be saved when all three phases are complete. The
-      # check is skipped once the tournament is locked (first part already frozen;
-      # saves then only carry knockout predictions).
-      if !@tournament.locked? && !@quiniela.reload.first_part_complete?
+      # check is skipped once the first part is frozen for this user (saves then
+      # only carry knockout predictions).
+      if @first_part_editable && !@quiniela.reload.first_part_complete?
         missing = @quiniela.first_part_missing
         raise ActiveRecord::Rollback
       end
 
       # Mark the milestone the first time the first part is completed, so we only
       # celebrate it once.
-      if !@tournament.locked? && @quiniela.first_part_completed_at.nil?
+      if @first_part_editable && @quiniela.first_part_completed_at.nil?
         @quiniela.first_part_completed_at = Time.current
         just_completed = true
       end
@@ -75,14 +79,14 @@ class PredictionsController < ApplicationController
   end
 
   # Exactly the group letters the user nominated as qualifying best thirds.
-  # Pre-lock, an absent param means every checkbox was unchecked, so clear the
-  # selection (no stale value survives a "deselect all"). The param is only
-  # legitimately absent post-lock, where the first part is already frozen.
+  # While editable, an absent param means every checkbox was unchecked, so clear
+  # the selection (no stale value survives a "deselect all"). The param is only
+  # legitimately absent once the first part is frozen for this user.
   def save_best_thirds
     if params.key?(:best_third_groups)
       letters = Array(params[:best_third_groups]).reject(&:blank?).first(8)
       @quiniela.update!(best_third_groups: letters)
-    elsif !@tournament.locked?
+    elsif @first_part_editable
       @quiniela.update!(best_third_groups: [])
     end
   end

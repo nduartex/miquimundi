@@ -5,6 +5,9 @@ class ScoringService
   CORRECT_WINNER = 2
   CORRECT_PENALTY = 3
   BEST_THIRD = 3
+  # Phase-1 penalty for quinielas completed after kickoff (late window): their
+  # groups + thirds + awards subtotal is worth 75%.
+  LATE_MULTIPLIER = 0.75
   AWARDS = {
     balon_oro_player_id: 10, bota_oro_player_id: 10, guante_oro_player_id: 8,
     young_player_id: 6, fair_play_team_id: 5
@@ -15,14 +18,14 @@ class ScoringService
   end
 
   def call
-    total = 0
     @exact_hits = 0
     @match_hits = 0
 
-    total += score_groups
-    total += score_thirds
-    total += score_matches
-    total += score_awards
+    # The late penalty applies to the phase-1 subtotal only (one application
+    # point); per-record points_earned stay raw. Knockouts are never penalized.
+    phase1 = score_groups + score_thirds + score_awards
+    phase1 = (phase1 * LATE_MULTIPLIER).floor if @quiniela.late?
+    total = phase1 + score_matches
 
     @quiniela.update!(total_points: total, exact_hits: @exact_hits, match_hits: @match_hits)
   end

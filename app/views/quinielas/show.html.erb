@@ -153,7 +153,12 @@
     </div>
   <% end %>
 
-  <% if @groups_locked %>
+  <% if @late_window %>
+    <div class="surface bg-amber-400/15 border-amber-300/30 p-3 mb-6 text-amber-100 text-sm font-semibold flex items-center justify-center gap-2">
+      <%= icon "clock", class: "size-4 shrink-0" %>
+      <span>El Mundial ya comenzó, pero aún puedes llenar tu quiniela hasta el <%= l @tournament.late_deadline_at.in_time_zone, format: :late_deadline %>. Tus puntos de grupos, terceros y premios valdrán 75%, y tienes un solo guardado.</span>
+    </div>
+  <% elsif @groups_locked %>
     <div class="surface bg-rose-500/15 border-rose-300/30 p-3 mb-6 text-rose-100 text-sm font-semibold flex items-center justify-center gap-2">
       <%= icon "lock", class: "size-4 shrink-0" %>
       <span>Tu quiniela de grupos quedó cerrada — el Mundial ya comenzó. Ya no se puede modificar.</span>
