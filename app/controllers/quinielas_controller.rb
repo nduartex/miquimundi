@@ -13,6 +13,6 @@ class QuinielasController < ApplicationController
     # Per-user: the first part stays open during the late window for users who
     # never completed it (they save once, with a scoring penalty).
     @groups_locked = !@quiniela.first_part_editable?
-    @late_window = @tournament.locked? && !@groups_locked
+    @late_window = @quiniela.in_late_window?
   end
 end

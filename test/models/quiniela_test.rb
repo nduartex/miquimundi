@@ -68,15 +68,24 @@ class QuinielaTest < ActiveSupport::TestCase
     assert(@quiniela.first_part_missing.any? { |m| m.include?("premios") })
   end
 
-  test "late? only when the first part was completed after kickoff" do
-    @tournament.update!(locked_at: 1.hour.ago)
-    assert_not @quiniela.late? # never completed
+  test "late is a stamped flag: changing tournament dates cannot reclassify it" do
+    assert_not @quiniela.late? # default
 
-    @quiniela.update!(first_part_completed_at: 2.hours.ago)
-    assert_not @quiniela.late? # completed before kickoff
+    @quiniela.update!(late: true)
+    @tournament.update!(locked_at: 1.day.from_now) # dates moved afterwards
+    assert @quiniela.reload.late? # the stamp survives
+  end
+
+  test "in_late_window? only while open and only for never-completed users" do
+    @tournament.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    assert @quiniela.in_late_window?
 
     @quiniela.update!(first_part_completed_at: 30.minutes.ago)
-    assert @quiniela.late? # completed during the late window
+    assert_not @quiniela.in_late_window? # already saved (self-locked)
+
+    @quiniela.update!(first_part_completed_at: nil)
+    @tournament.update!(late_deadline_at: 1.minute.ago)
+    assert_not @quiniela.in_late_window? # window closed
   end
 
   test "first part is editable before kickoff" do

@@ -152,8 +152,7 @@ class ScoringServiceTest < ActiveSupport::TestCase
   end
 
   test "a late quiniela gets 75% of its phase-1 points, knockouts untouched" do
-    @tournament.update!(locked_at: 2.hours.ago)
-    @quiniela.update!(first_part_completed_at: 1.hour.ago) # completed after kickoff
+    @quiniela.update!(late: true)
     GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2) # 8 pts
     m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
     MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1) # 5 pts
@@ -162,8 +161,7 @@ class ScoringServiceTest < ActiveSupport::TestCase
   end
 
   test "an on-time quiniela keeps full phase-1 points after kickoff" do
-    @tournament.update!(locked_at: 2.hours.ago)
-    @quiniela.update!(first_part_completed_at: 3.hours.ago) # completed before kickoff
+    @tournament.update!(locked_at: 2.hours.ago) # kickoff passed, late flag never stamped
     GroupPrediction.create!(quiniela: @quiniela, group: @group, first_team: @t1, second_team: @t2)
     m = build_match(phase: "round_16", home: @t1, away: @t2, hg: 2, ag: 1)
     MatchPrediction.create!(quiniela: @quiniela, match: m, pred_home: 2, pred_away: 1)

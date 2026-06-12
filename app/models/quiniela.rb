@@ -13,29 +13,33 @@ class Quiniela < ApplicationRecord
   # global ranking.
   scope :ranked, ->(tournament, user_ids: nil) {
     rel = where(tournament_id: tournament.id)
-            .includes(:achievements, :tournament, user: :favorite_team)
+            .includes(:achievements, user: :favorite_team)
             .order(total_points: :desc, exact_hits: :desc, match_hits: :desc)
     user_ids ? rel.where(user_id: user_ids) : rel
   }
+
+  # `late` (column) means the first part was completed during the late window:
+  # phase-1 points get ScoringService::LATE_MULTIPLIER and the ranking shows a
+  # badge. It is stamped once at save time — never derived from timestamps — so
+  # later changes to the tournament dates can't reclassify anyone.
 
   def submitted?
     submitted_at.present?
   end
 
-  # Completed the first part after kickoff (late window). Phase-1 points get
-  # ScoringService::LATE_MULTIPLIER applied, and the ranking shows a badge.
-  # submitted_at can't be the marker: it moves on every save (knockouts too).
-  def late?
-    first_part_completed_at.present? &&
-      tournament.locked_at.present? &&
-      first_part_completed_at > tournament.locked_at
-  end
-
   # The first part (Grupos + Terceros + Premios) is editable before kickoff,
   # or during the late window for users who never completed it. A late save
   # sets first_part_completed_at, so it self-locks after one submission.
-  def first_part_editable?
-    !tournament.locked? || (tournament.late_window_open? && first_part_completed_at.nil?)
+  # `locked:` lets the caller pin one lock check for the whole request, so the
+  # decision to allow the save and the `late` stamp can never disagree.
+  def first_part_editable?(locked: tournament.locked?)
+    !locked || (tournament.late_window_open? && first_part_completed_at.nil?)
+  end
+
+  # This user may still fill their first part after kickoff (drives the amber
+  # banner). Distinct from `late`: this is "can still save", late is "did".
+  def in_late_window?
+    tournament.late_window_open? && first_part_completed_at.nil?
   end
 
   def predicted_final?

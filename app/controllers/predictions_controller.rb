@@ -8,7 +8,20 @@ class PredictionsController < ApplicationController
 
     # Editable pre-kickoff, or during the late window for users who never
     # completed the first part (their save self-locks via first_part_completed_at).
-    @first_part_editable = @quiniela.first_part_editable?
+    # The lock state is read once and reused for the `late` stamp below, so a
+    # save authorized pre-kickoff can never be flagged late even if kickoff
+    # happens mid-request.
+    locked = @tournament.locked?
+    @first_part_editable = @quiniela.first_part_editable?(locked: locked)
+
+    # A form submitted after the window closed (or after a late user's single
+    # save) must fail loudly: silently dropping the picks while flashing
+    # "guardada" would leave an empty quiniela the user believes is in.
+    if !@first_part_editable && first_part_params?
+      redirect_to quiniela_path,
+                  alert: "Tu quiniela de grupos ya está cerrada: este guardado no se aplicó."
+      return
+    end
 
     missing = nil
     saved = false
@@ -33,6 +46,7 @@ class PredictionsController < ApplicationController
       # celebrate it once.
       if @first_part_editable && @quiniela.first_part_completed_at.nil?
         @quiniela.first_part_completed_at = Time.current
+        @quiniela.late = locked # completed during the late window
         just_completed = true
       end
 
@@ -65,6 +79,13 @@ class PredictionsController < ApplicationController
 
   private
 
+  # Did this request try to modify the first part (Grupos/Terceros/Premios)?
+  def first_part_params?
+    params[:group_predictions].present? ||
+      params[:best_third_groups].present? ||
+      params[:award_prediction].present?
+  end
+
   def save_group_predictions
     (params[:group_predictions] || {}).each do |group_id, attrs|
       next if attrs[:first_team_id].blank?
@@ -79,14 +100,13 @@ class PredictionsController < ApplicationController
   end
 
   # Exactly the group letters the user nominated as qualifying best thirds.
-  # While editable, an absent param means every checkbox was unchecked, so clear
-  # the selection (no stale value survives a "deselect all"). The param is only
-  # legitimately absent once the first part is frozen for this user.
+  # An absent param means every checkbox was unchecked, so clear the selection
+  # (no stale value survives a "deselect all"). Only called while editable.
   def save_best_thirds
     if params.key?(:best_third_groups)
       letters = Array(params[:best_third_groups]).reject(&:blank?).first(8)
       @quiniela.update!(best_third_groups: letters)
-    elsif @first_part_editable
+    else
       @quiniela.update!(best_third_groups: [])
     end
   end

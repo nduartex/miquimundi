@@ -39,6 +39,7 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     quiniela = @user.quinielas.find_by(tournament: @tournament)
     assert_not_nil quiniela
     assert quiniela.submitted?
+    assert_not quiniela.late? # completed pre-kickoff
     gp = quiniela.group_predictions.find_by(group: @group)
     assert_equal @teams[0].id, gp.first_team_id
   end
@@ -92,6 +93,7 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
       group_predictions: { @group.id.to_s => { first_team_id: @teams[2].id, second_team_id: @teams[3].id } }
     }
     assert_equal @teams[0].id, gp.reload.first_team_id # original kept, not overwritten
+    assert_match(/ya está cerrada/, flash[:alert])     # rejected loudly, no fake success
   end
 
   test "a user who never saved can complete the first part during the late window" do
@@ -113,6 +115,18 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     params[:group_predictions][@group.id.to_s][:first_team_id] = @teams[2].id
     post quiniela_predictions_path, params: params
     assert_equal @teams[0].id, gp.reload.first_team_id # frozen after the one late save
+    assert_match(/ya está cerrada/, flash[:alert])
+  end
+
+  test "a late-window save stamps the late flag" do
+    @tournament.update!(locked_at: 1.hour.ago, late_deadline_at: 1.day.from_now)
+    post quiniela_predictions_path, params: complete_first_part_params
+    q = @user.quinielas.find_by(tournament: @tournament)
+    assert q.late?
+
+    # The stamp is permanent: moving the kickoff later cannot un-flag it.
+    @tournament.update!(locked_at: 1.day.from_now)
+    assert q.reload.late?
   end
 
   test "after the late deadline a never-saved user cannot save the first part" do
@@ -121,6 +135,8 @@ class PredictionsControllerTest < ActionDispatch::IntegrationTest
     q = @user.quinielas.find_by(tournament: @tournament)
     assert_equal 0, q.group_predictions.count
     assert_nil q.first_part_completed_at
+    assert_not q.submitted?                        # no fake "saved" state
+    assert_match(/ya está cerrada/, flash[:alert]) # the user is told, loudly
   end
 
   test "after kickoff the gate does not block a knockout-only save" do

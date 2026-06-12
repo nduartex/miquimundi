@@ -3,7 +3,12 @@ class RecalculateScoresJob < ApplicationJob
 
   def perform(tournament_id)
     tournament = Tournament.find(tournament_id)
-    tournament.quinielas_relation.find_each { |q| ScoringService.new(q).call }
+    tournament.quinielas_relation.find_each do |q|
+      # Prime the association: ScoringService reads quiniela.tournament, which
+      # would otherwise be one extra SELECT per quiniela.
+      q.association(:tournament).target = tournament
+      ScoringService.new(q).call
+    end
     RankingsController.ranked(tournament).each_with_index do |quiniela, i|
       AchievementEvaluator.new(quiniela, current_rank: i + 1).call
     end
