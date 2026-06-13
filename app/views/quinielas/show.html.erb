@@ -11,6 +11,7 @@
        { el: '#wizard-steps', title: 'Arma tu quiniela', body: 'Paso 1 Grupos → Paso 2 los 8 mejores terceros → Paso 3 Premios. Las Eliminatorias se abren al terminar la fase de grupos. Guarda para registrar tu jugada.' },
        { el: '#nav-ligas', title: 'Ligas', body: 'Compite en privado: crea una liga o únete con un código para enfrentarte solo a tu grupo de amigos y ver su ranking aparte.' },
        { el: '#nav-calendario', title: 'Calendario', body: 'Consulta todos los partidos del Mundial con sus fechas y horarios para no perderte ninguna jornada.' },
+       { el: '#nav-discord', title: 'Discord', body: 'Únete a nuestra comunidad en Discord: ahí puedes reportar problemas, pedir soporte y comentar los partidos con los demás quinielistas.' },
        { el: '#access-link', title: '🔑 ¡GUARDA tu enlace!', body: 'Este es tu ÚNICO acceso. Cópialo y guárdalo en un lugar seguro: si se cierra la sesión, solo entras con este enlace. Si lo pierdes, pierdes tu quiniela (tu usuario por sí solo no sirve para reingresar).' }
      ].to_json %>">
 
@@ -100,6 +101,8 @@
       <p class="text-amber-200/90 text-xs mt-2 flex items-start gap-1.5"><%= icon "triangle-alert", class: "size-4 shrink-0 mt-0.5" %><span>Este enlace es tu única forma de reingresar. Si lo pierdes, pierdes el acceso a tu quiniela.</span></p>
     <% end %>
   </div>
+
+  <%= render "shared/discord_banner" %>
 
   <% if @quiniela.submitted? %>
     <div class="surface p-4 mb-6" data-controller="share-card clipboard">

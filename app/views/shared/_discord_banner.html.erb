@@ -1,0 +1,14 @@
+<%# CTA to the community Discord. Whole card is the link. %>
+<%= link_to discord_invite_url, target: "_blank", rel: "noopener noreferrer",
+      class: "surface block p-4 mb-6 bg-indigo-500/15 border-indigo-300/30 hover:bg-indigo-500/25 transition group" do %>
+  <div class="flex items-center gap-3">
+    <span class="shrink-0 w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center">
+      <%= icon "discord", from: "custom", class: "size-6" %>
+    </span>
+    <div class="flex-1 min-w-0">
+      <div class="text-white font-bold leading-tight">Únete a nuestro Discord</div>
+      <p class="text-white/60 text-sm leading-snug">Comenta los partidos y vacila el ranking con la comunidad.</p>
+    </div>
+    <span class="shrink-0 text-indigo-200/80 group-hover:text-white font-bold transition" aria-hidden="true">→</span>
+  </div>
+<% end %>
