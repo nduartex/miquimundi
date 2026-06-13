@@ -1,7 +1,7 @@
 namespace :espn do
   desc "Mapeo inicial: crea los partidos de grupos, asigna espn_ids y hace backfill de goles/standings (todo el torneo)"
   task map: :environment do
-    tournament = Tournament.order(:year).last
+    tournament = Tournament.current
     abort "No hay torneo" unless tournament
 
     service = Espn::SyncService.new(tournament)
@@ -21,7 +21,7 @@ namespace :espn do
   desc "Una corrida del sync (ventana de hoy), como lo haría el job recurrente"
   task sync: :environment do
     EspnSyncJob.perform_now(force: true)
-    tournament = Tournament.order(:year).last
+    tournament = Tournament.current
     live = tournament.matches.where(status: "live").count
     finished = tournament.matches.where(status: "finished").count
     puts "Sync OK · en vivo: #{live} · terminados: #{finished} · goles: #{Goal.count}"

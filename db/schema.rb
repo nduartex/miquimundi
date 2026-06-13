@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_13_005916) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_013316) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -187,6 +187,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_005916) do
     t.index ["espn_id"], name: "index_matches_on_espn_id", unique: true
     t.index ["home_team_id"], name: "index_matches_on_home_team_id"
     t.index ["penalty_winner_id"], name: "index_matches_on_penalty_winner_id"
+    t.index ["tournament_id", "home_team_id", "away_team_id"], name: "index_group_matches_on_pairing", unique: true, where: "((phase)::text = 'group'::text)"
     t.index ["tournament_id"], name: "index_matches_on_tournament_id"
   end
 

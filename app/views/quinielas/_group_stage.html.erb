@@ -1,17 +1,21 @@
 <% # Per-rank accent: 1º-2º grass (clasifican), 3º gold (candidato), 4º muted.
-   row_accents = ["var(--color-grass)", "var(--color-grass)", "var(--color-gold)", "#9fb3a6"] %>
+   row_accents = ["var(--color-grass)", "var(--color-grass)", "var(--color-gold)", "#9fb3a6"]
+   # live_modal: the "ver en vivo" badge + modal. Defaults to locked (own saved
+   # quiniela) but shared/read-only pages pass false — there the modal would
+   # show the VISITOR's prediction inside someone else's quiniela.
+   live_modal = local_assigns.fetch(:live_modal, locked) %>
 <p class="text-white/70 mb-4">
   <% if locked %>Tu orden de grupos quedó <strong class="text-white">cerrado</strong>. El 1º y 2º clasifican; el 3º es candidato a mejor tercero.
   <% else %>Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrando desde <span class="text-white">⠿</span> (funciona también en el celular). El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.<% end %>
 </p>
-<div class="grid sm:grid-cols-2 gap-4" <%= 'data-controller="modal"'.html_safe if locked %>>
+<div class="grid sm:grid-cols-2 gap-4" <%= 'data-controller="modal"'.html_safe if live_modal %>>
   <% groups.each do |group| %>
     <% gp = quiniela.group_predictions.find_by(group_id: group.id) %>
     <% ranked_ids = gp&.ranked_team_ids || [] %>
     <% ordered = (ranked_ids.map { |id| group.teams.detect { |t| t.id == id } }.compact + (group.teams.to_a - group.teams.select { |t| ranked_ids.include?(t.id) })).first(4) %>
     <div class="surface surface-neon p-5">
       <h3 class="mb-3 flex items-center gap-2">
-        <% if locked %>
+        <% if live_modal %>
           <%# Saved quiniela: the group badge opens the live-standings modal so
               people can compare reality against their prediction. %>
           <%= link_to group_live_path(group),
@@ -61,7 +65,7 @@
     </div>
   <% end %>
 
-  <% if locked %>
+  <% if live_modal %>
     <%# Shared live-group modal: each badge click loads its group into the frame. %>
     <div data-modal-target="panel" data-action="click->modal#backdrop"
          class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-8">

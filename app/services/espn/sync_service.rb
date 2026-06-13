@@ -26,19 +26,27 @@ module Espn
       events = Array(@client.scoreboard(dates: dates)["events"])
       newly_finished = []
       live = []
+      score_changed = []
 
       events.each do |event|
-        match, became_finished = sync_event(event)
+        match, became_finished, changed = sync_event(event)
         next unless match
         newly_finished << match if became_finished
         live << match if match.status == "live"
+        score_changed << match if changed
       end
 
-      (live + newly_finished + finished_missing_goals).uniq.each { |m| sync_goals(m) }
+      # Summaries are only worth fetching when the score moved (goals can't
+      # change otherwise); the backfill covers matches synced while down.
+      (score_changed + newly_finished + finished_missing_goals).uniq.each { |m| sync_goals(m) }
       sync_standings if standings == :force || newly_finished.any?
 
       results_changed = finalize_groups
       recalc! if results_changed || newly_finished.any?(&:knockout?)
+
+      if @unmatched.any?
+        Rails.logger.warn("[espn] equipos sin mapear: #{@unmatched.to_a.join(", ")}")
+      end
 
       { events: events.size, live: live.size, finished: newly_finished.size,
         recalculated: results_changed || newly_finished.any?(&:knockout?) }
@@ -94,8 +102,11 @@ module Espn
       attrs[:status] = status if status
 
       state = (comp["status"] || event["status"]).to_h.dig("type", "state")
-      if state != "pre"
-        by_team = { home_team&.id => home_c, away_team&.id => away_c }
+      # Both competitors must resolve before touching scores: with an
+      # unresolved side the lookup hash collapses on a nil key and one
+      # competitor's score could land on both columns.
+      if state != "pre" && home_team && away_team
+        by_team = { home_team.id => home_c, away_team.id => away_c }
         our_home = by_team[match.home_team_id]
         our_away = by_team[match.away_team_id]
         if our_home && our_away
@@ -109,7 +120,8 @@ module Espn
       end
 
       match.update!(attrs)
-      [match, !was_finished && match.status == "finished"]
+      changed_score = match.saved_changes.key?("home_goals") || match.saved_changes.key?("away_goals")
+      [match, !was_finished && match.status == "finished", changed_score]
     end
 
     def map_status(status)
@@ -117,7 +129,10 @@ module Espn
       case type["state"]
       when "pre" then "scheduled"
       when "in" then "live"
-      when "post" then type["completed"] ? "finished" : nil # postponed/abandoned: keep as-is
+      when "post"
+        # post + !completed = abandoned/suspended. Without this a match that
+        # was live would stay "live" forever and block its group's result.
+        type["completed"] ? "finished" : "scheduled"
       end
     end
 
@@ -128,7 +143,9 @@ module Espn
       return nil unless home_team && away_team
 
       if home_team.group_id == away_team.group_id
-        @tournament.matches.find_or_create_by!(
+        # create_or_find_by! leans on the unique index (tournament, home, away)
+        # so overlapping syncs can't insert the same fixture twice.
+        @tournament.matches.create_or_find_by!(
           phase: "group", home_team: home_team, away_team: away_team
         ) { |m| m.status = "scheduled" }
       else
@@ -141,11 +158,20 @@ module Espn
 
     # ---- goals ---------------------------------------------------------------
 
+    COMPARABLE_GOAL_FIELDS = %i[team_id player_name minute own_goal penalty sort_order].freeze
+
     def sync_goals(match)
       return if match.espn_id.blank?
       key_events = Array(@client.summary(match.espn_id)["keyEvents"])
       rows = key_events.select { |e| e["scoringPlay"] && !e["shootout"] }
                        .each_with_index.filter_map { |ev, i| goal_row(match, ev, i) }
+
+      # Skip the rewrite when nothing changed — the common case on live
+      # cycles; avoids row churn and keeps goals.updated_at meaningful.
+      incoming = rows.map { |r| [r[:team].id, r[:player_name], r[:minute], r[:own_goal], r[:penalty], r[:sort_order]] }
+      existing = match.goals.in_order.pluck(*COMPARABLE_GOAL_FIELDS)
+      return if incoming == existing
+
       Match.transaction do
         match.goals.destroy_all
         rows.each { |row| match.goals.create!(row) }
@@ -182,9 +208,13 @@ module Espn
     end
 
     # Finished matches whose goal rows don't add up (e.g. synced while the
-    # process was down). 0-0 games add up trivially, so no refetch loop.
+    # process was down). 0-0 games add up trivially, so no refetch loop, and
+    # the recency cutoff stops a permanently unattributable ESPN goal (no
+    # athlete/team in the keyEvent) from triggering a refetch every minute
+    # for the rest of the tournament.
     def finished_missing_goals
       @tournament.matches.where(status: "finished").where.not(espn_id: nil)
+                 .where(kickoff_at: 3.days.ago..)
                  .left_joins(:goals).group(:id)
                  .having("COUNT(goals.id) <> matches.home_goals + matches.away_goals")
     end
@@ -198,7 +228,10 @@ module Espn
         matches = group_matches(group)
         next unless matches.size == 6 && matches.all?(&:finished?)
         top2 = group.group_standings.ranked.first(2)
-        next unless top2.size == 2 && top2.all? { |s| s.rank.present? }
+        # played == 3 proves the standings already include the last matchday;
+        # without it a lagging/failed standings fetch would lock in qualifiers
+        # from stale ranks (GroupResult is permanent once created).
+        next unless top2.size == 2 && top2.all? { |s| s.rank.present? && s.played == 3 }
         GroupResult.create!(group: group, first_team_id: top2[0].team_id, second_team_id: top2[1].team_id)
         changed = true
       end
@@ -209,19 +242,30 @@ module Espn
 
     # FIFA ranks best thirds by points, then goal difference, then goals
     # scored. (Deeper tiebreakers — fair play, drawing of lots — are out of our
-    # reach; ESPN's per-group rank doesn't order thirds across groups.)
+    # reach; ESPN's per-group rank doesn't order thirds across groups.) The
+    # list stays recomputable until the first knockout kicks off, so a late
+    # standings correction — or FIFA resolving a tie we can't model — can
+    # still fix it; after kickoff it's frozen because points were paid.
     def resolve_thirds
       return false unless @tournament.groups.includes(:group_result).all?(&:group_result)
       result = TournamentResult.find_or_initialize_by(tournament: @tournament)
-      return false if result.qualified_third_codes.present?
+      return false if result.qualified_third_codes.present? && knockouts_started?
 
       thirds = GroupStanding.where(group: @tournament.groups, rank: 3).includes(:team)
                             .sort_by { |s| [-s.points, -s.goal_difference, -s.goals_for] }
                             .first(8)
       return false unless thirds.size == 8
 
-      result.update!(qualified_third_codes: thirds.map { |s| s.team.code })
+      codes = thirds.map { |s| s.team.code }
+      return false if result.qualified_third_codes == codes
+
+      result.update!(qualified_third_codes: codes)
       true
+    end
+
+    def knockouts_started?
+      @tournament.matches.knockout.where.not(kickoff_at: nil)
+                 .where(kickoff_at: ..Time.current).exists?
     end
 
     def group_matches(group)

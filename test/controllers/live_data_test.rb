@@ -51,6 +51,15 @@ class LiveDataTest < ActionDispatch::IntegrationTest
     assert_no_match "Tu pronóstico", response.body
   end
 
+  test "shared quiniela page never shows the live modal (it would leak the visitor's prediction)" do
+    owner = User.create!(username: "duenia_fc")
+    quiniela = Quiniela.create!(user: owner, tournament: @tournament)
+    get shared_quiniela_path(token: quiniela.share_token)
+    assert_response :success
+    assert_no_match "ver en vivo", response.body
+    assert_no_match "group-live", response.body
+  end
+
   test "group live frame compares against the signed-in user's prediction" do
     user = User.create!(username: "nelson_fc")
     quiniela = Quiniela.create!(user: user, tournament: @tournament)

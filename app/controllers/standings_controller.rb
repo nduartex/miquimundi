@@ -3,8 +3,7 @@ class StandingsController < ApplicationController
   # ESPN's official rank, so tiebreakers are already applied).
   def index
     tournament = Tournament.current
-    @groups = tournament.groups.order(:name)
-                        .includes(group_standings: :team, teams: [])
+    @groups = tournament ? tournament.groups.order(:name).includes(group_standings: :team, teams: []) : []
     @updated_at = GroupStanding.maximum(:updated_at)
   end
 end

@@ -64,15 +64,15 @@ class CalendarController < ApplicationController
     end
   end
 
-  # Group matches are joined by home team + kickoff proximity (the fixture file
-  # and ESPN agree on the official schedule; ±24h absorbs any drift). Knockouts
-  # are joined by their official match number.
+  # Each group pair plays exactly once, so the team pair is a deterministic
+  # join key — checked in both orientations in case ESPN and the fixture file
+  # disagree on who is "home". Knockouts join by their official match number.
   def find_record(entry, teams, group_records, knockout_records)
     if entry["phase"] == "group"
       home = teams[entry.dig("home", "iso2")]
-      return nil unless home && entry["kickoff_utc"].present?
-      kickoff = Time.zone.parse(entry["kickoff_utc"])
-      (group_records[home.id] || []).find { |m| m.kickoff_at && (m.kickoff_at - kickoff).abs < 24.hours }
+      away = teams[entry.dig("away", "iso2")]
+      return nil unless home && away
+      group_records[[home.id, away.id]] || group_records[[away.id, home.id]]
     else
       knockout_records[entry["match_number"]]
     end
@@ -81,7 +81,8 @@ class CalendarController < ApplicationController
   def match_lookups
     matches = Tournament.current&.matches
                         &.includes(:home_team, :away_team, goals: :team)&.to_a || []
-    grouped = matches.select { |m| m.phase == "group" }.group_by(&:home_team_id)
+    grouped = matches.select { |m| m.phase == "group" }
+                     .index_by { |m| [m.home_team_id, m.away_team_id] }
     knockouts = matches.reject { |m| m.phase == "group" }.index_by(&:match_number)
     [grouped, knockouts]
   end

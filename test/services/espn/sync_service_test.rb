@@ -54,13 +54,13 @@ module Espn
         "participants" => [{ "athlete" => { "displayName" => player } }] }
     end
 
-    def standings_for(group_name, rows)
+    def standings_for(group_name, rows, played: 1)
       entries = rows.map do |team, rank, points, gd, gf|
         { "team" => { "id" => team.reload.espn_id || "espn-#{team.id}", "abbreviation" => team.code },
           "stats" => [
             { "name" => "rank", "value" => rank }, { "name" => "points", "value" => points },
             { "name" => "pointDifferential", "value" => gd }, { "name" => "pointsFor", "value" => gf },
-            { "name" => "gamesPlayed", "value" => 1 }, { "name" => "wins", "value" => 0 },
+            { "name" => "gamesPlayed", "value" => played }, { "name" => "wins", "value" => 0 },
             { "name" => "ties", "value" => 0 }, { "name" => "losses", "value" => 0 },
             { "name" => "pointsAgainst", "value" => 0 }
           ] }
@@ -130,13 +130,50 @@ module Espn
       end
       @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)] }
       @client.summary_payloads["100"] = { "keyEvents" => [goal_event(team: @t1, player: "Juan", minute: "9'")] }
-      @client.standings_payload = { "children" => [standings_for("A", [[@t1, 1, 9, 5, 5], [@t2, 2, 4, 1, 2], [@t3, 3, 2, -2, 1], [@t4, 4, 1, -4, 0]])] }
+      @client.standings_payload = { "children" => [standings_for("A", [[@t1, 1, 9, 5, 5], [@t2, 2, 4, 1, 2], [@t3, 3, 2, -2, 1], [@t4, 4, 1, -4, 0]], played: 3)] }
 
       assert_enqueued_with(job: RecalculateScoresJob, args: [@tournament.id]) do
         @service.sync!
       end
       result = @group.reload.group_result
       assert_equal [@t1.id, @t2.id], [result.first_team_id, result.second_team_id]
+    end
+
+    test "stale standings (played < 3) block GroupResult creation even with all matches FT" do
+      pairs = [[@t1, @t3], [@t1, @t4], [@t2, @t3], [@t2, @t4], [@t3, @t4]]
+      pairs.each_with_index do |(h, a), i|
+        Match.create!(tournament: @tournament, phase: "group", home_team: h, away_team: a,
+                      status: "finished", home_goals: 0, away_goals: 0, espn_id: "done-#{i}",
+                      kickoff_at: 2.days.ago)
+      end
+      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)] }
+      # Standings lagging: ranks exist but only reflect 2 matchdays.
+      @client.standings_payload = { "children" => [standings_for("A", [[@t2, 1, 6, 3, 3], [@t1, 2, 4, 1, 2], [@t3, 3, 2, -2, 1], [@t4, 4, 1, -2, 0]], played: 2)] }
+
+      assert_no_enqueued_jobs only: RecalculateScoresJob do
+        @service.sync!
+      end
+      assert_nil @group.reload.group_result, "stale ranks must not lock in qualifiers"
+    end
+
+    test "abandoned match (post, not completed) goes back to scheduled instead of sticking live" do
+      Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                    status: "live", espn_id: "100", home_goals: 1, away_goals: 0, kickoff_at: 1.hour.ago)
+      payload = event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)
+      payload["competitions"][0]["status"]["type"]["completed"] = false
+      @client.scoreboard_payload = { "events" => [payload] }
+      @service.sync!
+      assert_equal "scheduled", Match.find_by(espn_id: "100").status
+    end
+
+    test "sync_goals is a no-op when the fetched goals match what is stored" do
+      [@t1, @t2].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                            status: "live", espn_id: "100", kickoff_at: 1.hour.ago)
+      goal = match.goals.create!(team: @t1, player_name: "Juan Pérez", minute: "9'", sort_order: 0)
+      @client.summary_payloads["100"] = { "keyEvents" => [goal_event(team: @t1, player: "Juan Pérez", minute: "9'")] }
+      @service.send(:sync_goals, match)
+      assert_equal goal.id, match.goals.in_order.first.id, "identical goals must not be rewritten"
     end
 
     test "knockout FT maps by teams, records shootout winner and recalculates" do
