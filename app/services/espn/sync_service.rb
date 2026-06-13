@@ -39,7 +39,12 @@ module Espn
       # Summaries are only worth fetching when the score moved (goals can't
       # change otherwise); the backfill covers matches synced while down.
       (score_changed + newly_finished + finished_missing_goals).uniq.each { |m| sync_goals(m) }
-      sync_standings if standings == :force || newly_finished.any?
+      # Level-triggered, not edge-triggered: ESPN's /standings lags its scoreboard
+      # at full time, so refreshing once when a match flips to finished can write a
+      # stale table that then never updates. Keep refreshing while a finished match
+      # isn't yet reflected in its group's standings (standings_stale?) so it
+      # reconciles on a later cycle, and so a transient fetch error self-heals.
+      refresh_standings if standings == :force || newly_finished.any? || standings_stale?
 
       results_changed = finalize_groups
       recalc! if results_changed || newly_finished.any?(&:knockout?)
@@ -50,6 +55,26 @@ module Espn
 
       { events: events.size, live: live.size, finished: newly_finished.size,
         recalculated: results_changed || newly_finished.any?(&:knockout?) }
+    end
+
+    # A bad /standings response must not abort the rest of sync! nor strand the
+    # table: the level-trigger re-attempts it on the next cycle.
+    def refresh_standings
+      sync_standings
+    rescue Espn::Client::Error => e
+      Rails.logger.warn("[espn] no se pudieron refrescar las posiciones, reintenta el próximo ciclo: #{e.message}")
+    end
+
+    # True when some group's official standings haven't caught up to our finished
+    # matches yet. Per group the played count should equal 2 × finished matches;
+    # if any group is short, ESPN's table is lagging and we refetch.
+    def standings_stale?
+      finished_per_group = @tournament.matches.where(phase: "group", status: "finished")
+                                      .joins("INNER JOIN teams home_teams ON home_teams.id = matches.home_team_id")
+                                      .group("home_teams.group_id").count
+      return false if finished_per_group.empty?
+      played_per_group = GroupStanding.where(group: @tournament.groups).group(:group_id).sum(:played)
+      finished_per_group.any? { |group_id, n| played_per_group[group_id].to_i < 2 * n }
     end
 
     def sync_standings

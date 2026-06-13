@@ -9,8 +9,10 @@ class GroupsController < ApplicationController
                     .where(home_teams: { group_id: @group.id })
                     .includes(:home_team, :away_team, goals: :team)
                     .order(:kickoff_at)
-    # Project in-progress matches onto the table, same as /posiciones.
-    @standings = GroupStandingsProjection.call(@group, live_matches: @matches.select(&:live_now?))
+    # Project in-progress matches onto the table, same as /posiciones — plus any
+    # just-finished one ESPN's /standings hasn't counted yet (bridged inside the
+    # projection until the official table catches up).
+    @standings = GroupStandingsProjection.call(@group, live_matches: @matches.select { |m| m.live_now? || m.finished? })
     @prediction = current_user&.quiniela_for(@group.tournament)&.group_predictions
                               &.find_by(group_id: @group.id)
     render layout: false

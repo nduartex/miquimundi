@@ -5,10 +5,10 @@ class StandingsController < ApplicationController
   def index
     tournament = Tournament.current
     groups = tournament ? tournament.groups.order(:name).includes(group_standings: :team, teams: []).to_a : []
-    live = live_matches(tournament)
+    overlay = overlay_matches(tournament)
 
     @rows_by_group = groups.index_with do |group|
-      GroupStandingsProjection.call(group, live_matches: live.fetch(group.id, []))
+      GroupStandingsProjection.call(group, live_matches: overlay.fetch(group.id, []))
     end
     @groups = groups
     # Banner + auto-refresh only when a row is actually projected live — not at
@@ -20,9 +20,14 @@ class StandingsController < ApplicationController
 
   private
 
-  def live_matches(tournament)
+  # Live matches, plus finished ones so the projection can bridge the window
+  # where ESPN's /standings still lags a just-ended match. Finished matches the
+  # official table already counts are dropped inside the projection (no double
+  # count), so steady state is unchanged.
+  def overlay_matches(tournament)
     return {} unless tournament
-    tournament.matches.live_now.includes(:home_team, :goals)
+    tournament.matches.where(phase: "group", status: %w[live finished])
+              .includes(:home_team, :goals)
               .group_by { |m| m.home_team&.group_id }
   end
 end

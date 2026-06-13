@@ -87,4 +87,37 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     rows = GroupStandingsProjection.call(@group, live_matches: [ foreign, no_score ])
     assert rows.none?(&:live?), "no projectable live match for this group"
   end
+
+  def finished_match(home, away, hg, ag)
+    Match.create!(tournament: @tournament, phase: "group", home_team: home, away_team: away,
+                  status: "finished", home_goals: hg, away_goals: ag, kickoff_at: 1.hour.ago)
+  end
+
+  test "bridges a just-finished match the official table has not counted yet" do
+    # ESPN's /standings still lags FT: everyone shows 0 played.
+    [ @t1, @t2, @t3, @t4 ].each_with_index { |t, i| standing(t, rank: i + 1, played: 0) }
+    ft = finished_match(@t1, @t2, 2, 0)
+
+    rows = GroupStandingsProjection.call(@group, live_matches: [ ft ])
+    leader = rows.first
+    assert_equal @t1.code, leader.team.code
+    assert_equal 3, leader.points
+    assert_equal 1, leader.played
+    assert leader.live?, "the provisional row stays flagged so the table keeps auto-refreshing"
+  end
+
+  test "does not double-count a finished match the official table already reflects" do
+    # Official table already counts the match (t1 played 1, 3 pts).
+    standing(@t1, rank: 1, played: 1, points: 3, gf: 2, ga: 0)
+    standing(@t2, rank: 2, played: 1, points: 0, gf: 0, ga: 2)
+    standing(@t3, rank: 3, played: 0)
+    standing(@t4, rank: 4, played: 0)
+    ft = finished_match(@t1, @t2, 2, 0)
+
+    rows = GroupStandingsProjection.call(@group, live_matches: [ ft ])
+    leader = rows.find { |r| r.team == @t1 }
+    assert_equal 3, leader.points, "must not add the result a second time"
+    assert_equal 1, leader.played
+    assert rows.none?(&:live?), "nothing provisional once the official table reflects it"
+  end
 end

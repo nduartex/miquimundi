@@ -6,17 +6,22 @@ module Espn
 
     # Duck-typed Espn::Client: tests feed it parsed payloads, no HTTP involved.
     class FakeClient
-      attr_accessor :scoreboard_payload, :summary_payloads, :standings_payload
+      attr_accessor :scoreboard_payload, :summary_payloads, :standings_payload, :fail_standings
 
       def initialize
         @scoreboard_payload = { "events" => [] }
         @summary_payloads = {}
         @standings_payload = { "children" => [] }
+        @fail_standings = false
       end
 
       def scoreboard(dates:) = @scoreboard_payload
       def summary(event_id) = @summary_payloads.fetch(event_id, { "keyEvents" => [] })
-      def standings(season: 2026) = @standings_payload
+
+      def standings(season: 2026)
+        raise Espn::Client::Error, "boom" if @fail_standings
+        @standings_payload
+      end
     end
 
     def setup
@@ -266,6 +271,36 @@ module Espn
       assert_equal 8, codes.size
       assert_includes codes, @t3.code
       assert_not_includes codes, GroupStanding.order(:points).first.team.code
+    end
+
+    test "standings keep refreshing after FT until ESPN's lagging table catches up" do
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0) ] }
+      @client.summary_payloads["100"] = { "keyEvents" => [ goal_event(team: @t1, player: "Juan", minute: "9'") ] }
+      # First sync: scoreboard says FT but ESPN's /standings still shows the
+      # pre-match table (everyone on 0, not yet played).
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t1, 1, 0, 0, 0 ], [ @t2, 2, 0, 0, 0 ], [ @t3, 3, 0, 0, 0 ], [ @t4, 4, 0, 0, 0 ] ], played: 0) ] }
+      @service.sync!
+      assert_equal 0, GroupStanding.find_by(group: @group, team: @t1).points, "first sync writes the lagging table verbatim"
+
+      # Second sync: the match is already finished (newly_finished is empty), but
+      # ESPN's /standings has caught up. The table must still reconcile.
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t1, 1, 3, 1, 1 ], [ @t2, 2, 0, -1, 0 ], [ @t3, 3, 0, 0, 0 ], [ @t4, 4, 0, 0, 0 ] ], played: 1) ] }
+      SyncService.new(@tournament, client: @client).sync!
+      assert_equal 3, GroupStanding.find_by(group: @group, team: @t1).points, "level-triggered refresh reconciles the table after FT"
+    end
+
+    test "a standings fetch error at FT is retried next cycle instead of stranding the table" do
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0) ] }
+      @client.summary_payloads["100"] = { "keyEvents" => [ goal_event(team: @t1, player: "Juan", minute: "9'") ] }
+      @client.fail_standings = true
+      assert_nothing_raised { @service.sync! }
+      assert_equal "finished", Match.find_by(espn_id: "100").status
+      assert_equal 0, GroupStanding.count, "standings fetch failed, but the rest of sync! still completed"
+
+      @client.fail_standings = false
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t1, 1, 3, 1, 1 ], [ @t2, 2, 0, -1, 0 ], [ @t3, 3, 0, 0, 0 ], [ @t4, 4, 0, 0, 0 ] ], played: 1) ] }
+      SyncService.new(@tournament, client: @client).sync!
+      assert_equal 3, GroupStanding.find_by(group: @group, team: @t1).points, "the recovered fetch reconciles despite newly_finished being empty"
     end
   end
 end
