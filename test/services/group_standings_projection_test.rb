@@ -28,7 +28,7 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     standing(@t4, rank: 4, played: 1, points: 0)
 
     rows = GroupStandingsProjection.call(@group, live_matches: [])
-    assert_equal [@t2, @t1, @t3, @t4].map(&:code), rows.map { |r| r.team.code }
+    assert_equal [ @t2, @t1, @t3, @t4 ].map(&:code), rows.map { |r| r.team.code }
     assert rows.none?(&:live?)
   end
 
@@ -40,7 +40,7 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     standing(@t4, rank: 4, played: 0)
     match = live_match(@t1, @t2, 2, 0) # t1 winning live
 
-    rows = GroupStandingsProjection.call(@group, live_matches: [match])
+    rows = GroupStandingsProjection.call(@group, live_matches: [ match ])
     leader = rows.first
     assert_equal @t1.code, leader.team.code
     assert_equal 3, leader.points
@@ -55,21 +55,21 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
   end
 
   test "projection uses the reconciled score, not a lagging scoreboard" do
-    [@t1, @t2, @t3, @t4].each_with_index { |t, i| standing(t, rank: i + 1) }
+    [ @t1, @t2, @t3, @t4 ].each_with_index { |t, i| standing(t, rank: i + 1) }
     # Scoreboard lags at 2-0 but the goals table already has 3 for t1.
     match = live_match(@t1, @t2, 2, 0)
     3.times { |i| match.goals.create!(team: @t1, player_name: "G#{i}", minute: "#{i}'", sort_order: i) }
 
-    leader = GroupStandingsProjection.call(@group, live_matches: [match]).first
+    leader = GroupStandingsProjection.call(@group, live_matches: [ match ]).first
     assert_equal @t1.code, leader.team.code
     assert_equal 3, leader.goals_for, "must reflect the 3 goals listed, not the stale scoreboard 2"
   end
 
   test "live draw awards a point to both sides" do
-    [@t1, @t2, @t3, @t4].each_with_index { |t, i| standing(t, rank: i + 1) }
+    [ @t1, @t2, @t3, @t4 ].each_with_index { |t, i| standing(t, rank: i + 1) }
     match = live_match(@t1, @t2, 1, 1)
 
-    rows = GroupStandingsProjection.call(@group, live_matches: [match])
+    rows = GroupStandingsProjection.call(@group, live_matches: [ match ])
     assert_equal 1, rows.find { |r| r.team == @t1 }.points
     assert_equal 1, rows.find { |r| r.team == @t2 }.points
   end
@@ -84,7 +84,7 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     no_score = Match.create!(tournament: @tournament, phase: "group", home_team: @t1,
                              away_team: @t2, status: "live", kickoff_at: 1.hour.ago)
 
-    rows = GroupStandingsProjection.call(@group, live_matches: [foreign, no_score])
+    rows = GroupStandingsProjection.call(@group, live_matches: [ foreign, no_score ])
     assert rows.none?(&:live?), "no projectable live match for this group"
   end
 end
