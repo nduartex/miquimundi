@@ -159,6 +159,9 @@ module Espn
     # ---- goals ---------------------------------------------------------------
 
     COMPARABLE_GOAL_FIELDS = %i[team_id player_name minute own_goal penalty sort_order].freeze
+    # Identity of a goal for "is this new?" — without sort_order, which ESPN can
+    # reshuffle without a goal actually being scored.
+    NOTIFY_GOAL_FIELDS = %i[team_id player_name minute own_goal penalty].freeze
 
     def sync_goals(match)
       return if match.espn_id.blank?
@@ -172,9 +175,40 @@ module Espn
       existing = match.goals.in_order.pluck(*COMPARABLE_GOAL_FIELDS)
       return if incoming == existing
 
+      # Snapshot the prior goals before the rewrite, to diff for notifications.
+      existing_keys = match.goals.pluck(*NOTIFY_GOAL_FIELDS)
+
       Match.transaction do
         match.goals.destroy_all
         rows.each { |row| match.goals.create!(row) }
+      end
+
+      notify_new_goals(match, rows, existing_keys)
+    end
+
+    # Pushes a Discord alert for each goal we hadn't recorded before. Live only:
+    # sync_goals also runs for just-finished matches and the missing-goals
+    # backfill, and we don't want to replay a whole match's goals when those
+    # fire. The empty+multiple guard seeds a baseline silently the first time we
+    # see a live match with several goals already on the board (process was down
+    # while they were scored); a lone first goal still alerts.
+    def notify_new_goals(match, rows, existing_keys)
+      return unless match.status == "live"
+      return if existing_keys.empty? && rows.size > 1
+
+      seen = existing_keys.to_set
+      fresh = rows.reject do |r|
+        seen.include?([ r[:team].id, r[:player_name], r[:minute], r[:own_goal], r[:penalty] ])
+      end
+      return if fresh.empty?
+
+      fresh.each do |r|
+        Discord::Notifier.goal(
+          scorer: r[:player_name], scoring_team: r[:team].name,
+          home_team: match.home_team&.name, away_team: match.away_team&.name,
+          home_goals: match.display_home_goals, away_goals: match.display_away_goals,
+          minute: r[:minute], penalty: r[:penalty], own_goal: r[:own_goal]
+        )
       end
     end
 

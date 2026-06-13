@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_13_013316) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -183,6 +183,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_013316) do
     t.string "away_label"
     t.string "advances_to"
     t.string "espn_id"
+    t.integer "prematch_alert_min"
     t.index ["away_team_id"], name: "index_matches_on_away_team_id"
     t.index ["espn_id"], name: "index_matches_on_espn_id", unique: true
     t.index ["home_team_id"], name: "index_matches_on_home_team_id"

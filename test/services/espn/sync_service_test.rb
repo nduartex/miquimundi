@@ -176,6 +176,58 @@ module Espn
       assert_equal goal.id, match.goals.in_order.first.id, "identical goals must not be rewritten"
     end
 
+    test "a new goal on a live match enqueues a Discord alert" do
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                            status: "live", espn_id: "100", home_goals: 1, away_goals: 0, kickoff_at: 1.hour.ago)
+      @client.summary_payloads["100"] = { "keyEvents" => [ goal_event(team: @t1, player: "Juan", minute: "9'") ] }
+      assert_enqueued_with(job: Discord::DeliverJob) do
+        @service.send(:sync_goals, match)
+      end
+    end
+
+    test "only the brand new goal is announced, not the ones already stored" do
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                            status: "live", espn_id: "100", home_goals: 1, away_goals: 1, kickoff_at: 1.hour.ago)
+      match.goals.create!(team: @t1, player_name: "Juan", minute: "9'", sort_order: 0)
+      @client.summary_payloads["100"] = { "keyEvents" => [
+        goal_event(team: @t1, player: "Juan", minute: "9'"),
+        goal_event(team: @t2, player: "Pedro", minute: "55'")
+      ] }
+      assert_enqueued_jobs 1, only: Discord::DeliverJob do
+        @service.send(:sync_goals, match)
+      end
+    end
+
+    test "finished-match backfill stores goals without announcing them" do
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                            status: "finished", espn_id: "100", home_goals: 2, away_goals: 0, kickoff_at: 1.hour.ago)
+      @client.summary_payloads["100"] = { "keyEvents" => [
+        goal_event(team: @t1, player: "Juan", minute: "9'"),
+        goal_event(team: @t1, player: "Pedro", minute: "55'")
+      ] }
+      assert_no_enqueued_jobs only: Discord::DeliverJob do
+        @service.send(:sync_goals, match)
+      end
+      assert_equal 2, match.goals.count
+    end
+
+    test "first sight of a live match with several goals seeds a baseline silently" do
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
+                            status: "live", espn_id: "100", home_goals: 2, away_goals: 0, kickoff_at: 1.hour.ago)
+      @client.summary_payloads["100"] = { "keyEvents" => [
+        goal_event(team: @t1, player: "Juan", minute: "9'"),
+        goal_event(team: @t1, player: "Pedro", minute: "55'")
+      ] }
+      assert_no_enqueued_jobs only: Discord::DeliverJob do
+        @service.send(:sync_goals, match)
+      end
+      assert_equal 2, match.goals.count, "goals are stored, just not replayed to Discord"
+    end
+
     test "knockout FT maps by teams, records shootout winner and recalculates" do
       group_b = Group.create!(tournament: @tournament, name: "B")
       rival = Team.create!(group: group_b, name: "Omega", code: "OOO")
