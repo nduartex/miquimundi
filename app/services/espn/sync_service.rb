@@ -86,13 +86,13 @@ module Espn
       competitors = Array(comp["competitors"])
       home_c = competitors.find { |c| c["homeAway"] == "home" }
       away_c = competitors.find { |c| c["homeAway"] == "away" }
-      return [nil, false] unless home_c && away_c
+      return [ nil, false ] unless home_c && away_c
 
       home_team = resolve_team(home_c["team"])
       away_team = resolve_team(away_c["team"])
       match = @tournament.matches.find_by(espn_id: event["id"]) ||
               map_match(event, home_team, away_team)
-      return [nil, false] unless match
+      return [ nil, false ] unless match
 
       was_finished = match.status == "finished"
       attrs = { espn_id: event["id"] }
@@ -121,7 +121,7 @@ module Espn
 
       match.update!(attrs)
       changed_score = match.saved_changes.key?("home_goals") || match.saved_changes.key?("away_goals")
-      [match, !was_finished && match.status == "finished", changed_score]
+      [ match, !was_finished && match.status == "finished", changed_score ]
     end
 
     def map_status(status)
@@ -168,7 +168,7 @@ module Espn
 
       # Skip the rewrite when nothing changed — the common case on live
       # cycles; avoids row churn and keeps goals.updated_at meaningful.
-      incoming = rows.map { |r| [r[:team].id, r[:player_name], r[:minute], r[:own_goal], r[:penalty], r[:sort_order]] }
+      incoming = rows.map { |r| [ r[:team].id, r[:player_name], r[:minute], r[:own_goal], r[:penalty], r[:sort_order] ] }
       existing = match.goals.in_order.pluck(*COMPARABLE_GOAL_FIELDS)
       return if incoming == existing
 
@@ -198,7 +198,7 @@ module Espn
     # Accent/case-insensitive exact match across both teams' squads.
     def link_player(match, name)
       @rosters ||= {}
-      roster = (@rosters[match.id] ||= Player.where(team_id: [match.home_team_id, match.away_team_id].compact)
+      roster = (@rosters[match.id] ||= Player.where(team_id: [ match.home_team_id, match.away_team_id ].compact)
                                              .index_by { |p| normalize(p.name) })
       roster[normalize(name)]
     end
@@ -252,7 +252,7 @@ module Espn
       return false if result.qualified_third_codes.present? && knockouts_started?
 
       thirds = GroupStanding.where(group: @tournament.groups, rank: 3).includes(:team)
-                            .sort_by { |s| [-s.points, -s.goal_difference, -s.goals_for] }
+                            .sort_by { |s| [ -s.points, -s.goal_difference, -s.goals_for ] }
                             .first(8)
       return false unless thirds.size == 8
 

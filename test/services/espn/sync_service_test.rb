@@ -39,11 +39,11 @@ module Espn
         c
       end
       { "id" => id, "date" => date,
-        "competitions" => [{
+        "competitions" => [ {
           "status" => { "type" => { "state" => state, "completed" => state == "post" } },
-          "competitors" => [competitor.call(home, "home", hs, home_shootout),
-                            competitor.call(away, "away", as, away_shootout)]
-        }] }
+          "competitors" => [ competitor.call(home, "home", hs, home_shootout),
+                            competitor.call(away, "away", as, away_shootout) ]
+        } ] }
     end
 
     def goal_event(team:, player:, minute:, type: "Goal", shootout: false)
@@ -51,7 +51,7 @@ module Espn
         "type" => { "text" => type },
         "clock" => { "displayValue" => minute },
         "team" => { "id" => team.reload.espn_id },
-        "participants" => [{ "athlete" => { "displayName" => player } }] }
+        "participants" => [ { "athlete" => { "displayName" => player } } ] }
     end
 
     def standings_for(group_name, rows, played: 1)
@@ -69,7 +69,7 @@ module Espn
     end
 
     test "creates a group match from the scoreboard and stores espn ids" do
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "pre")] }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "pre") ] }
       assert_difference "Match.count", 1 do
         @service.sync!
       end
@@ -82,8 +82,8 @@ module Espn
     end
 
     test "live match updates score and goal events" do
-      [@t1, @t2].each { |t| t.update!(espn_id: "espn-#{t.id}") }
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "in", hs: 1, as: 0)] }
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "in", hs: 1, as: 0) ] }
       @client.summary_payloads["100"] = { "keyEvents" => [
         goal_event(team: @t1, player: "Juan Pérez", minute: "9'"),
         { "scoringPlay" => false, "type" => { "text" => "Yellow Card" } }
@@ -91,14 +91,14 @@ module Espn
       @service.sync!
       match = Match.find_by(espn_id: "100")
       assert_equal "live", match.status
-      assert_equal [1, 0], [match.home_goals, match.away_goals]
-      assert_equal ["Juan Pérez"], match.goals.pluck(:player_name)
+      assert_equal [ 1, 0 ], [ match.home_goals, match.away_goals ]
+      assert_equal [ "Juan Pérez" ], match.goals.pluck(:player_name)
     end
 
     test "goal parsing flags penalties and own goals and links roster players" do
-      [@t1, @t2].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
       player = Player.create!(team: @t1, name: "Julián Quiñones")
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 2, as: 0)] }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 2, as: 0) ] }
       @client.summary_payloads["100"] = { "keyEvents" => [
         goal_event(team: @t1, player: "Julian Quinones", minute: "9'"),
         goal_event(team: @t1, player: "Rival Uno", minute: "50'", type: "Own Goal"),
@@ -112,8 +112,8 @@ module Espn
     end
 
     test "a group-stage FT alone never triggers a recalculation" do
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)] }
-      @client.standings_payload = { "children" => [standings_for("A", [[@t1, 1, 3, 1, 1], [@t2, 2, 0, -1, 0], [@t3, 3, 0, 0, 0], [@t4, 4, 0, 0, 0]])] }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0) ] }
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t1, 1, 3, 1, 1 ], [ @t2, 2, 0, -1, 0 ], [ @t3, 3, 0, 0, 0 ], [ @t4, 4, 0, 0, 0 ] ]) ] }
       assert_no_enqueued_jobs only: RecalculateScoresJob do
         @service.sync!
       end
@@ -122,33 +122,33 @@ module Espn
 
     test "completing a group creates its GroupResult from ESPN ranks and recalculates" do
       # 5 of 6 matches already finished (0-0 so goal rows trivially add up).
-      pairs = [[@t1, @t3], [@t1, @t4], [@t2, @t3], [@t2, @t4], [@t3, @t4]]
+      pairs = [ [ @t1, @t3 ], [ @t1, @t4 ], [ @t2, @t3 ], [ @t2, @t4 ], [ @t3, @t4 ] ]
       pairs.each_with_index do |(h, a), i|
         Match.create!(tournament: @tournament, phase: "group", home_team: h, away_team: a,
                       status: "finished", home_goals: 0, away_goals: 0, espn_id: "done-#{i}",
                       kickoff_at: 2.days.ago)
       end
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)] }
-      @client.summary_payloads["100"] = { "keyEvents" => [goal_event(team: @t1, player: "Juan", minute: "9'")] }
-      @client.standings_payload = { "children" => [standings_for("A", [[@t1, 1, 9, 5, 5], [@t2, 2, 4, 1, 2], [@t3, 3, 2, -2, 1], [@t4, 4, 1, -4, 0]], played: 3)] }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0) ] }
+      @client.summary_payloads["100"] = { "keyEvents" => [ goal_event(team: @t1, player: "Juan", minute: "9'") ] }
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t1, 1, 9, 5, 5 ], [ @t2, 2, 4, 1, 2 ], [ @t3, 3, 2, -2, 1 ], [ @t4, 4, 1, -4, 0 ] ], played: 3) ] }
 
-      assert_enqueued_with(job: RecalculateScoresJob, args: [@tournament.id]) do
+      assert_enqueued_with(job: RecalculateScoresJob, args: [ @tournament.id ]) do
         @service.sync!
       end
       result = @group.reload.group_result
-      assert_equal [@t1.id, @t2.id], [result.first_team_id, result.second_team_id]
+      assert_equal [ @t1.id, @t2.id ], [ result.first_team_id, result.second_team_id ]
     end
 
     test "stale standings (played < 3) block GroupResult creation even with all matches FT" do
-      pairs = [[@t1, @t3], [@t1, @t4], [@t2, @t3], [@t2, @t4], [@t3, @t4]]
+      pairs = [ [ @t1, @t3 ], [ @t1, @t4 ], [ @t2, @t3 ], [ @t2, @t4 ], [ @t3, @t4 ] ]
       pairs.each_with_index do |(h, a), i|
         Match.create!(tournament: @tournament, phase: "group", home_team: h, away_team: a,
                       status: "finished", home_goals: 0, away_goals: 0, espn_id: "done-#{i}",
                       kickoff_at: 2.days.ago)
       end
-      @client.scoreboard_payload = { "events" => [event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)] }
+      @client.scoreboard_payload = { "events" => [ event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0) ] }
       # Standings lagging: ranks exist but only reflect 2 matchdays.
-      @client.standings_payload = { "children" => [standings_for("A", [[@t2, 1, 6, 3, 3], [@t1, 2, 4, 1, 2], [@t3, 3, 2, -2, 1], [@t4, 4, 1, -2, 0]], played: 2)] }
+      @client.standings_payload = { "children" => [ standings_for("A", [ [ @t2, 1, 6, 3, 3 ], [ @t1, 2, 4, 1, 2 ], [ @t3, 3, 2, -2, 1 ], [ @t4, 4, 1, -2, 0 ] ], played: 2) ] }
 
       assert_no_enqueued_jobs only: RecalculateScoresJob do
         @service.sync!
@@ -161,17 +161,17 @@ module Espn
                     status: "live", espn_id: "100", home_goals: 1, away_goals: 0, kickoff_at: 1.hour.ago)
       payload = event(id: "100", home: @t1, away: @t2, state: "post", hs: 1, as: 0)
       payload["competitions"][0]["status"]["type"]["completed"] = false
-      @client.scoreboard_payload = { "events" => [payload] }
+      @client.scoreboard_payload = { "events" => [ payload ] }
       @service.sync!
       assert_equal "scheduled", Match.find_by(espn_id: "100").status
     end
 
     test "sync_goals is a no-op when the fetched goals match what is stored" do
-      [@t1, @t2].each { |t| t.update!(espn_id: "espn-#{t.id}") }
+      [ @t1, @t2 ].each { |t| t.update!(espn_id: "espn-#{t.id}") }
       match = Match.create!(tournament: @tournament, phase: "group", home_team: @t1, away_team: @t2,
                             status: "live", espn_id: "100", kickoff_at: 1.hour.ago)
       goal = match.goals.create!(team: @t1, player_name: "Juan Pérez", minute: "9'", sort_order: 0)
-      @client.summary_payloads["100"] = { "keyEvents" => [goal_event(team: @t1, player: "Juan Pérez", minute: "9'")] }
+      @client.summary_payloads["100"] = { "keyEvents" => [ goal_event(team: @t1, player: "Juan Pérez", minute: "9'") ] }
       @service.send(:sync_goals, match)
       assert_equal goal.id, match.goals.in_order.first.id, "identical goals must not be rewritten"
     end
@@ -191,7 +191,7 @@ module Espn
       ko.reload
       assert_equal "900", ko.espn_id
       # ESPN had the teams reversed: scores must land on our orientation.
-      assert_equal [1, 1], [ko.home_goals, ko.away_goals]
+      assert_equal [ 1, 1 ], [ ko.home_goals, ko.away_goals ]
       assert_equal rival.id, ko.penalty_winner_id
     end
 
@@ -200,7 +200,7 @@ module Espn
       groups = { "A" => @group }
       letters.drop(1).each { |l| groups[l] = Group.create!(tournament: @tournament, name: l) }
       groups.each_with_index do |(letter, group), i|
-        teams = letter == "A" ? [@t1, @t2, @t3] : Array.new(3) { |j| Team.create!(group: group, name: "#{letter}#{j}", code: "#{letter}#{j}X") }
+        teams = letter == "A" ? [ @t1, @t2, @t3 ] : Array.new(3) { |j| Team.create!(group: group, name: "#{letter}#{j}", code: "#{letter}#{j}X") }
         GroupResult.create!(group: group, first_team: teams[0], second_team: teams[1])
         # Third places with descending points: groups A..H qualify, I..L don't.
         GroupStanding.create!(group: group, team: teams[2], rank: 3, points: 12 - i,

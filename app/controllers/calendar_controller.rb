@@ -72,7 +72,7 @@ class CalendarController < ApplicationController
       home = teams[entry.dig("home", "iso2")]
       away = teams[entry.dig("away", "iso2")]
       return nil unless home && away
-      group_records[[home.id, away.id]] || group_records[[away.id, home.id]]
+      group_records[[ home.id, away.id ]] || group_records[[ away.id, home.id ]]
     else
       knockout_records[entry["match_number"]]
     end
@@ -82,9 +82,9 @@ class CalendarController < ApplicationController
     matches = Tournament.current&.matches
                         &.includes(:home_team, :away_team, goals: :team)&.to_a || []
     grouped = matches.select { |m| m.phase == "group" }
-                     .index_by { |m| [m.home_team_id, m.away_team_id] }
+                     .index_by { |m| [ m.home_team_id, m.away_team_id ] }
     knockouts = matches.reject { |m| m.phase == "group" }.index_by(&:match_number)
-    [grouped, knockouts]
+    [ grouped, knockouts ]
   end
 
   # iso2 ("mx") => Team, derived from Team::ISO2 (FIFA code => iso2).
