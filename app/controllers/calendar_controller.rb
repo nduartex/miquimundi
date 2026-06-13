@@ -46,8 +46,11 @@ class CalendarController < ApplicationController
   # Fixtures carry only the team's iso2 code; resolve name + flag from the teams
   # table so the calendar reflects the real roster. Falls back to whatever the
   # fixtures provide if a team isn't found (e.g. data not yet seeded).
+  # Each entry also gets its DB match (synced from ESPN) attached under
+  # "record" so the view can show live scores, status and goal events.
   def load_matches
     teams = team_lookup
+    group_records, knockout_records = match_lookups
     JSON.parse(File.read(FIXTURES_PATH)).fetch("matches", []).each do |match|
       %w[home away].each do |side|
         info = match[side]
@@ -57,7 +60,30 @@ class CalendarController < ApplicationController
         info["name"] = team.name
         info["flag_url"] = team.flag_url
       end
+      match["record"] = find_record(match, teams, group_records, knockout_records)
     end
+  end
+
+  # Group matches are joined by home team + kickoff proximity (the fixture file
+  # and ESPN agree on the official schedule; ±24h absorbs any drift). Knockouts
+  # are joined by their official match number.
+  def find_record(entry, teams, group_records, knockout_records)
+    if entry["phase"] == "group"
+      home = teams[entry.dig("home", "iso2")]
+      return nil unless home && entry["kickoff_utc"].present?
+      kickoff = Time.zone.parse(entry["kickoff_utc"])
+      (group_records[home.id] || []).find { |m| m.kickoff_at && (m.kickoff_at - kickoff).abs < 24.hours }
+    else
+      knockout_records[entry["match_number"]]
+    end
+  end
+
+  def match_lookups
+    matches = Tournament.current&.matches
+                        &.includes(:home_team, :away_team, goals: :team)&.to_a || []
+    grouped = matches.select { |m| m.phase == "group" }.group_by(&:home_team_id)
+    knockouts = matches.reject { |m| m.phase == "group" }.index_by(&:match_number)
+    [grouped, knockouts]
   end
 
   # iso2 ("mx") => Team, derived from Team::ISO2 (FIFA code => iso2).

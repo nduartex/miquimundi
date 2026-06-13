@@ -1,0 +1,56 @@
+<% content_for :title, "Goleadores — Mundial 2026" %>
+
+<main class="max-w-2xl mx-auto px-4 py-6 sm:py-10">
+  <header class="mb-6">
+    <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-wide">
+      Goleadores
+    </h1>
+    <p class="text-white/60 mt-1 text-sm sm:text-base">
+      Copa Mundial de la FIFA 2026
+      <% if @updated_at %>· actualizada hace <%= time_ago_in_words(@updated_at) %><% end %>
+    </p>
+    <%= render "shared/live_nav" %>
+  </header>
+
+  <% if @rows.empty? %>
+    <div class="surface surface-neon p-8 text-center text-white/60">
+      Aún no hay goles registrados. Vuelve cuando ruede el balón ⚽
+    </div>
+  <% else %>
+    <div class="surface surface-neon p-5">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-white/40 text-[11px] uppercase tracking-wider">
+            <th class="text-left font-semibold py-1 pr-1 w-8">#</th>
+            <th class="text-left font-semibold py-1">Jugador</th>
+            <th class="text-center font-semibold py-1 w-14">Goles</th>
+            <th class="text-center font-semibold py-1 w-20 hidden sm:table-cell">De penal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rank = 0; prev_goals = nil %>
+          <% @rows.each_with_index do |row, i| %>
+            <% rank = i + 1 unless row.goals == prev_goals; prev_goals = row.goals %>
+            <tr class="border-t border-white/5">
+              <td class="py-2 pr-1 font-extrabold tabular-nums <%= rank == 1 ? "text-amber-300" : "text-white/40" %>"><%= rank %></td>
+              <td class="py-2">
+                <span class="flex items-center gap-2.5 min-w-0">
+                  <% if row.team.flag_url %>
+                    <img src="<%= row.team.flag_url %>" alt="" width="24" height="18" loading="lazy"
+                         class="w-6 h-[18px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+                  <% end %>
+                  <span class="min-w-0">
+                    <span class="block text-white font-semibold truncate"><%= row.player_name %></span>
+                    <span class="block text-white/40 text-xs truncate"><%= row.team.name %></span>
+                  </span>
+                </span>
+              </td>
+              <td class="py-2 text-center tabular-nums text-white font-extrabold text-base"><%= row.goals %></td>
+              <td class="py-2 text-center tabular-nums text-white/60 hidden sm:table-cell"><%= row.penalties.positive? ? row.penalties : "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</main>

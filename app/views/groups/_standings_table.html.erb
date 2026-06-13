@@ -1,0 +1,43 @@
+<% # Real group table. `standings` come ranked; falls back to the group's teams
+   # with zeros when the sync hasn't run yet. Rank accents match the quiniela:
+   # 1º-2º qualify (emerald), 3º best-third candidate (amber). %>
+<% rows = standings.presence&.map { |s| [s.rank, s.team, s] } ||
+          group.teams.map { |t| [nil, t, nil] } %>
+<table class="w-full text-sm">
+  <thead>
+    <tr class="text-white/40 text-[11px] uppercase tracking-wider">
+      <th class="text-left font-semibold py-1 pr-1 w-6">#</th>
+      <th class="text-left font-semibold py-1">Equipo</th>
+      <th class="text-center font-semibold py-1 w-8">PJ</th>
+      <th class="text-center font-semibold py-1 w-8 hidden sm:table-cell">G</th>
+      <th class="text-center font-semibold py-1 w-8 hidden sm:table-cell">E</th>
+      <th class="text-center font-semibold py-1 w-8 hidden sm:table-cell">P</th>
+      <th class="text-center font-semibold py-1 w-9">DG</th>
+      <th class="text-center font-semibold py-1 w-9">Pts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% rows.each_with_index do |(rank, team, s), i| %>
+      <% pos = rank || i + 1 %>
+      <% pos_class = pos <= 2 ? "text-emerald-300" : pos == 3 ? "text-amber-300" : "text-white/40" %>
+      <tr class="border-t border-white/5">
+        <td class="py-1.5 pr-1 font-extrabold tabular-nums <%= pos_class %>"><%= pos %></td>
+        <td class="py-1.5">
+          <span class="flex items-center gap-2 min-w-0">
+            <% if team.flag_url %>
+              <img src="<%= team.flag_url %>" alt="" width="22" height="17" loading="lazy"
+                   class="w-[22px] h-[17px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+            <% end %>
+            <span class="text-white font-semibold truncate"><%= team.name %></span>
+          </span>
+        </td>
+        <td class="py-1.5 text-center tabular-nums text-white/80"><%= s&.played.to_i %></td>
+        <td class="py-1.5 text-center tabular-nums text-white/60 hidden sm:table-cell"><%= s&.wins.to_i %></td>
+        <td class="py-1.5 text-center tabular-nums text-white/60 hidden sm:table-cell"><%= s&.draws.to_i %></td>
+        <td class="py-1.5 text-center tabular-nums text-white/60 hidden sm:table-cell"><%= s&.losses.to_i %></td>
+        <td class="py-1.5 text-center tabular-nums text-white/80"><%= s ? format("%+d", s.goal_difference).sub("+0", "0") : 0 %></td>
+        <td class="py-1.5 text-center tabular-nums text-white font-extrabold"><%= s&.points.to_i %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

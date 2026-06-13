@@ -26,5 +26,8 @@ Rails.application.routes.draw do
   end
   delete "ligas/:id/members/:membership_id", to: "ligas#expel", as: :liga_member
   get "calendario", to: "calendar#show", as: :calendar
+  get "posiciones", to: "standings#index", as: :standings
+  get "goleadores", to: "scorers#index", as: :scorers
+  get "grupos/:id/en-vivo", to: "groups#live", as: :group_live
   get "q/:token", to: "shared_quinielas#show", as: :shared_quiniela
 end

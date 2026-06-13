@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_005916) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
     t.index ["young_player_id"], name: "index_award_predictions_on_young_player_id"
   end
 
+  create_table "goals", force: :cascade do |t|
+    t.bigint "match_id", null: false
+    t.bigint "team_id", null: false
+    t.bigint "player_id"
+    t.string "player_name", null: false
+    t.string "minute"
+    t.boolean "own_goal", default: false, null: false
+    t.boolean "penalty", default: false, null: false
+    t.integer "sort_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id", "sort_order"], name: "index_goals_on_match_id_and_sort_order"
+    t.index ["match_id"], name: "index_goals_on_match_id"
+    t.index ["player_id"], name: "index_goals_on_player_id"
+    t.index ["team_id"], name: "index_goals_on_team_id"
+  end
+
   create_table "group_predictions", force: :cascade do |t|
     t.bigint "quiniela_id", null: false
     t.bigint "group_id", null: false
@@ -69,6 +86,25 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
     t.index ["first_team_id"], name: "index_group_results_on_first_team_id"
     t.index ["group_id"], name: "index_group_results_on_group_id"
     t.index ["second_team_id"], name: "index_group_results_on_second_team_id"
+  end
+
+  create_table "group_standings", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "team_id", null: false
+    t.integer "played", default: 0, null: false
+    t.integer "wins", default: 0, null: false
+    t.integer "draws", default: 0, null: false
+    t.integer "losses", default: 0, null: false
+    t.integer "goals_for", default: 0, null: false
+    t.integer "goals_against", default: 0, null: false
+    t.integer "goal_difference", default: 0, null: false
+    t.integer "points", default: 0, null: false
+    t.integer "rank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "team_id"], name: "index_group_standings_on_group_id_and_team_id", unique: true
+    t.index ["group_id"], name: "index_group_standings_on_group_id"
+    t.index ["team_id"], name: "index_group_standings_on_team_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -146,7 +182,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
     t.string "home_label"
     t.string "away_label"
     t.string "advances_to"
+    t.string "espn_id"
     t.index ["away_team_id"], name: "index_matches_on_away_team_id"
+    t.index ["espn_id"], name: "index_matches_on_espn_id", unique: true
     t.index ["home_team_id"], name: "index_matches_on_home_team_id"
     t.index ["penalty_winner_id"], name: "index_matches_on_penalty_winner_id"
     t.index ["tournament_id"], name: "index_matches_on_tournament_id"
@@ -329,6 +367,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
     t.string "flag_emoji"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "espn_id"
+    t.index ["espn_id"], name: "index_teams_on_espn_id", unique: true
     t.index ["group_id"], name: "index_teams_on_group_id"
   end
 
@@ -380,6 +420,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
   add_foreign_key "award_predictions", "players", column: "young_player_id"
   add_foreign_key "award_predictions", "quinielas"
   add_foreign_key "award_predictions", "teams", column: "fair_play_team_id"
+  add_foreign_key "goals", "matches"
+  add_foreign_key "goals", "players"
+  add_foreign_key "goals", "teams"
   add_foreign_key "group_predictions", "groups"
   add_foreign_key "group_predictions", "quinielas"
   add_foreign_key "group_predictions", "teams", column: "first_team_id"
@@ -389,6 +432,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_160000) do
   add_foreign_key "group_results", "groups"
   add_foreign_key "group_results", "teams", column: "first_team_id"
   add_foreign_key "group_results", "teams", column: "second_team_id"
+  add_foreign_key "group_standings", "groups"
+  add_foreign_key "group_standings", "teams"
   add_foreign_key "groups", "tournaments"
   add_foreign_key "liga_activities", "ligas"
   add_foreign_key "liga_activities", "users"

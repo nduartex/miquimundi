@@ -24,6 +24,7 @@
       Horarios en tu zona:
       <span class="font-semibold" data-local-time-target="zone">tu hora local</span>
     </p>
+    <%= render "shared/live_nav" %>
   </header>
 
   <% @days.each do |day| %>
@@ -42,6 +43,9 @@
       <ul class="space-y-2.5">
         <% day[:matches].each do |m| %>
           <% knockout = m["home"].blank? %>
+          <% rec = m["record"] %>
+          <% live = rec&.status == "live" %>
+          <% finished = rec&.status == "finished" %>
           <li class="rounded-xl bg-white/[0.04] ring-1 ring-white/10 p-3.5 sm:p-4 hover:bg-white/[0.07] transition">
             <div class="flex items-center justify-between gap-3">
               <span class="flex items-center gap-1.5 min-w-0">
@@ -54,6 +58,13 @@
                   <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-300/90 bg-indigo-500/10 ring-1 ring-indigo-400/20 rounded px-1.5 py-0.5">
                     Grupo <%= m["group"] %>
                   </span>
+                <% end %>
+                <% if live %>
+                  <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/10 ring-1 ring-emerald-400/25 rounded-full px-2 py-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En vivo
+                  </span>
+                <% elsif finished %>
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-white/50 bg-white/5 ring-1 ring-white/15 rounded-full px-2 py-0.5">Final</span>
                 <% end %>
               </span>
 
@@ -69,30 +80,64 @@
               <% end %>
             </div>
 
-            <% if knockout %>
+            <% if knockout && !(rec&.home_team && rec&.away_team) %>
               <div class="mt-2.5 text-center">
                 <span class="font-semibold text-white/90"><%= m["home_label"] %></span>
                 <span class="text-white/40 text-xs font-bold px-2">vs</span>
                 <span class="font-semibold text-white/90"><%= m["away_label"] %></span>
               </div>
             <% else %>
+              <% home_name = knockout ? rec.home_team.name : m["home"]["name"] %>
+              <% away_name = knockout ? rec.away_team.name : m["away"]["name"] %>
+              <% home_flag = knockout ? rec.home_team.flag_url : (m["home"]["flag_url"] || "https://flagcdn.com/w80/#{m["home"]["iso2"]}.png") %>
+              <% away_flag = knockout ? rec.away_team.flag_url : (m["away"]["flag_url"] || "https://flagcdn.com/w80/#{m["away"]["iso2"]}.png") %>
               <div class="mt-2.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
                 <div class="flex items-center justify-end gap-2 min-w-0">
-                  <span class="font-semibold text-white truncate text-right"><%= m["home"]["name"] %></span>
-                  <img src="<%= m["home"]["flag_url"] || "https://flagcdn.com/w80/#{m["home"]["iso2"]}.png" %>"
-                       alt="" width="28" height="21" loading="lazy"
-                       class="w-7 h-[21px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+                  <span class="font-semibold text-white truncate text-right"><%= home_name %></span>
+                  <% if home_flag %>
+                    <img src="<%= home_flag %>" alt="" width="28" height="21" loading="lazy"
+                         class="w-7 h-[21px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+                  <% end %>
                 </div>
 
-                <span class="text-white/40 text-xs font-bold px-1">vs</span>
+                <% if rec && rec.status != "scheduled" && rec.home_goals %>
+                  <span class="tabular-nums font-extrabold text-base px-1 <%= live ? "text-emerald-300" : "text-white" %>">
+                    <%= rec.home_goals %>–<%= rec.away_goals %>
+                  </span>
+                <% else %>
+                  <span class="text-white/40 text-xs font-bold px-1">vs</span>
+                <% end %>
 
                 <div class="flex items-center gap-2 min-w-0">
-                  <img src="<%= m["away"]["flag_url"] || "https://flagcdn.com/w80/#{m["away"]["iso2"]}.png" %>"
-                       alt="" width="28" height="21" loading="lazy"
-                       class="w-7 h-[21px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
-                  <span class="font-semibold text-white truncate"><%= m["away"]["name"] %></span>
+                  <% if away_flag %>
+                    <img src="<%= away_flag %>" alt="" width="28" height="21" loading="lazy"
+                         class="w-7 h-[21px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+                  <% end %>
+                  <span class="font-semibold text-white truncate"><%= away_name %></span>
                 </div>
               </div>
+
+              <% if rec&.penalty_winner_id %>
+                <p class="mt-1 text-center text-xs text-amber-300/90 font-semibold">
+                  <%= rec.penalty_winner_id == rec.home_team_id ? home_name : away_name %> gana en penales
+                </p>
+              <% end %>
+
+              <% goals = rec ? rec.goals.sort_by(&:sort_order) : [] %>
+              <% if goals.any? %>
+                <div class="mt-2 grid grid-cols-2 gap-x-5 text-xs text-white/55">
+                  <ul class="space-y-0.5 text-right">
+                    <% goals.select { |g| g.team_id == rec.home_team_id }.each do |g| %>
+                      <li><%= g.minute %> <%= g.player_name %><%= " (pen)" if g.penalty %><%= " (AG)" if g.own_goal %> <span aria-hidden="true">⚽</span></li>
+                    <% end %>
+                  </ul>
+                  <ul class="space-y-0.5">
+                    <% goals.select { |g| g.team_id == rec.away_team_id }.each do |g| %>
+                      <li><span aria-hidden="true">⚽</span> <%= g.minute %> <%= g.player_name %><%= " (pen)" if g.penalty %><%= " (AG)" if g.own_goal %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
             <% end %>
 
             <p class="mt-2.5 flex items-center gap-1.5 text-white/50 text-xs">

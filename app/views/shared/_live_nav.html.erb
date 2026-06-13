@@ -1,0 +1,15 @@
+<% # Chips to hop between the public tournament pages (the top nav hides
+   # Posiciones/Goleadores on small screens for lack of space). %>
+<nav class="mt-3 flex flex-wrap gap-2" aria-label="Datos del torneo">
+  <% {
+    "Calendario" => calendar_path,
+    "Posiciones" => standings_path,
+    "Goleadores" => scorers_path
+  }.each do |label, path| %>
+    <% active = current_page?(path) %>
+    <%= link_to label, path,
+          class: "rounded-full px-3 py-1.5 text-sm font-semibold ring-1 transition #{active ?
+            'bg-white/15 text-white ring-white/25' :
+            'text-white/70 ring-white/15 hover:text-white hover:bg-white/10'}" %>
+  <% end %>
+</nav>

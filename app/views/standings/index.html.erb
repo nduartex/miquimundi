@@ -1,0 +1,31 @@
+<% content_for :title, "Tabla de Posiciones — Mundial 2026" %>
+
+<main class="max-w-5xl mx-auto px-4 py-6 sm:py-10">
+  <header class="mb-6">
+    <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-wide">
+      Tabla de Posiciones
+    </h1>
+    <p class="text-white/60 mt-1 text-sm sm:text-base">
+      Copa Mundial de la FIFA 2026
+      <% if @updated_at %>
+        · actualizada hace <%= time_ago_in_words(@updated_at) %>
+      <% end %>
+    </p>
+    <p class="text-white/40 text-xs mt-2">
+      <span class="text-emerald-300 font-semibold">1º-2º</span> clasifican ·
+      <span class="text-amber-300 font-semibold">3º</span> candidato a mejor tercero
+    </p>
+    <%= render "shared/live_nav" %>
+  </header>
+
+  <div class="grid sm:grid-cols-2 gap-4">
+    <% @groups.each do |group| %>
+      <div class="surface surface-neon p-5">
+        <h2 class="mb-3">
+          <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
+        </h2>
+        <%= render "groups/standings_table", group: group, standings: group.group_standings.sort_by { |s| s.rank || 99 } %>
+      </div>
+    <% end %>
+  </div>
+</main>

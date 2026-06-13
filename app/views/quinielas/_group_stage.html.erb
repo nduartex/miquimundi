@@ -4,14 +4,27 @@
   <% if locked %>Tu orden de grupos quedó <strong class="text-white">cerrado</strong>. El 1º y 2º clasifican; el 3º es candidato a mejor tercero.
   <% else %>Ordena los <strong class="text-white">4 equipos</strong> de cada grupo arrastrando desde <span class="text-white">⠿</span> (funciona también en el celular). El 1º y 2º clasifican y suman puntos; el orden completo alimenta tu bracket.<% end %>
 </p>
-<div class="grid sm:grid-cols-2 gap-4">
+<div class="grid sm:grid-cols-2 gap-4" <%= 'data-controller="modal"'.html_safe if locked %>>
   <% groups.each do |group| %>
     <% gp = quiniela.group_predictions.find_by(group_id: group.id) %>
     <% ranked_ids = gp&.ranked_team_ids || [] %>
     <% ordered = (ranked_ids.map { |id| group.teams.detect { |t| t.id == id } }.compact + (group.teams.to_a - group.teams.select { |t| ranked_ids.include?(t.id) })).first(4) %>
     <div class="surface surface-neon p-5">
-      <h3 class="mb-3">
-        <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
+      <h3 class="mb-3 flex items-center gap-2">
+        <% if locked %>
+          <%# Saved quiniela: the group badge opens the live-standings modal so
+              people can compare reality against their prediction. %>
+          <%= link_to group_live_path(group),
+                data: { turbo_frame: "group-live", action: "click->modal#open" },
+                class: "badge-group inline-flex items-center gap-1.5 rounded-lg font-display font-extrabold text-lg px-3 py-1 hover:ring-2 hover:ring-emerald-400/50 transition cursor-pointer",
+                title: "Ver cómo va el Grupo #{group.name} en la realidad" do %>
+            Grupo <%= group.name %>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+          <% end %>
+          <span class="text-white/30 text-[11px] font-semibold">ver en vivo</span>
+        <% else %>
+          <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
+        <% end %>
       </h3>
 
       <div <%= 'data-controller="group-order"'.html_safe unless locked %>>
@@ -44,6 +57,21 @@
           <% end %>
         </ul>
         <p class="text-white/40 text-xs mt-2"><span class="text-emerald-300 font-semibold">1º-2º</span> clasifican · <span class="text-white/60">3º</span> candidato a mejor tercero</p>
+      </div>
+    </div>
+  <% end %>
+
+  <% if locked %>
+    <%# Shared live-group modal: each badge click loads its group into the frame. %>
+    <div data-modal-target="panel" data-action="click->modal#backdrop"
+         class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-8">
+      <div class="max-w-md mx-auto mt-6 sm:mt-12 surface surface-neon p-5 relative">
+        <button type="button" data-action="modal#close"
+                class="absolute top-3 right-3 w-8 h-8 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition text-xl leading-none"
+                aria-label="Cerrar">✕</button>
+        <%= turbo_frame_tag "group-live" do %>
+          <p class="text-white/50 text-sm py-8 text-center">Cargando grupo…</p>
+        <% end %>
       </div>
     </div>
   <% end %>

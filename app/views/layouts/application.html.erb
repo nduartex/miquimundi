@@ -33,6 +33,10 @@
           <%= link_to "Ranking", rankings_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(rankings_path)}" %>
           <%= link_to "Ligas", ligas_path, id: "nav-ligas", class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(ligas_path)}" %>
           <%= link_to "Calendario", calendar_path, id: "nav-calendario", class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(calendar_path)}" %>
+          <%# En móvil el nav va justo de espacio: Posiciones/Goleadores viven ahí
+              como chips dentro de las páginas públicas (ver _live_nav). %>
+          <%= link_to "Posiciones", standings_path, id: "nav-posiciones", class: "hidden md:inline-flex px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(standings_path)}" %>
+          <%= link_to "Goleadores", scorers_path, id: "nav-goleadores", class: "hidden md:inline-flex px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(scorers_path)}" %>
           <%= link_to "Perfil", profile_path, class: "px-2.5 sm:px-3 py-2 rounded-lg text-white/85 hover:text-white hover:bg-white/10 font-semibold transition whitespace-nowrap #{'bg-white/15 text-white' if current_page?(profile_path)}" %>
           <%= link_to discord_invite_url, id: "nav-discord", target: "_blank", rel: "noopener noreferrer",
                 title: "Únete al Discord", aria: { label: "Únete al Discord" },

@@ -15,6 +15,7 @@ class Match < ApplicationRecord
   belongs_to :away_team, class_name: "Team", optional: true
   belongs_to :penalty_winner, class_name: "Team", optional: true
   has_many :match_predictions, dependent: :destroy
+  has_many :goals, dependent: :destroy
 
   validates :phase, inclusion: { in: PHASES }
   validates :status, inclusion: { in: STATUSES }

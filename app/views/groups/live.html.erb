@@ -1,0 +1,60 @@
+<%= turbo_frame_tag "group-live" do %>
+  <div class="space-y-4">
+    <div class="flex items-center gap-2">
+      <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= @group.name %></span>
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/10 ring-1 ring-emerald-400/25 rounded-full px-2 py-0.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Así va en la realidad
+      </span>
+    </div>
+
+    <%= render "groups/standings_table", group: @group, standings: @standings %>
+
+    <% if @prediction %>
+      <% current_rank = @standings.each_with_object({}) { |s, h| h[s.team_id] = s.rank } %>
+      <div class="rounded-xl bg-white/[0.04] ring-1 ring-white/10 p-3">
+        <p class="text-white/40 text-[11px] uppercase tracking-wider font-semibold mb-2">Tu pronóstico</p>
+        <ol class="space-y-1">
+          <% [@prediction.first_team, @prediction.second_team, @prediction.third_team, @prediction.fourth_team].compact.each_with_index do |team, i| %>
+            <% hit = current_rank[team.id] == i + 1 %>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="w-5 text-right font-extrabold tabular-nums <%= i < 2 ? "text-emerald-300" : i == 2 ? "text-amber-300" : "text-white/40" %>"><%= i + 1 %>.</span>
+              <% if team.flag_url %>
+                <img src="<%= team.flag_url %>" alt="" width="20" height="15" class="w-5 h-[15px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
+              <% end %>
+              <span class="text-white/90 font-semibold truncate"><%= team.name %></span>
+              <% if current_rank[team.id] %>
+                <span class="ml-auto text-xs font-bold <%= hit ? "text-emerald-300" : "text-white/40" %>">
+                  <%= hit ? "✓ va ahí" : "va #{current_rank[team.id]}º" %>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    <% end %>
+
+    <div>
+      <p class="text-white/40 text-[11px] uppercase tracking-wider font-semibold mb-2">Partidos</p>
+      <ul class="space-y-1.5">
+        <% @matches.each do |m| %>
+          <li class="rounded-lg bg-white/[0.04] ring-1 ring-white/10 px-3 py-2 text-sm">
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <span class="text-white/90 font-semibold text-right truncate"><%= m.home_team.name %></span>
+              <% if m.status == "scheduled" %>
+                <span class="text-white/40 text-xs font-bold tabular-nums px-1"><%= m.kickoff_at&.strftime("%d/%m") || "vs" %></span>
+              <% else %>
+                <span class="px-1 font-extrabold tabular-nums <%= m.status == "live" ? "text-emerald-300" : "text-white" %>">
+                  <%= m.home_goals %>–<%= m.away_goals %>
+                </span>
+              <% end %>
+              <span class="text-white/90 font-semibold truncate"><%= m.away_team.name %></span>
+            </div>
+            <% if m.status == "live" %>
+              <p class="text-center text-[10px] font-bold uppercase tracking-wider text-emerald-300 mt-0.5 animate-pulse">En vivo</p>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>
