@@ -26,6 +26,21 @@ class LiveDataTest < ActionDispatch::IntegrationTest
     assert_match "México", response.body
   end
 
+  test "posiciones projects a live match and shows the live banner" do
+    aus = Team.create!(group: @group, name: "Australia", code: "AUS")
+    tur = Team.create!(group: @group, name: "Turquía", code: "TUR")
+    # México 0 official; a live 1-0 should project México to 3 pts, 1st.
+    Match.create!(tournament: @tournament, phase: "group", home_team: @mex, away_team: aus,
+                  status: "live", home_goals: 1, away_goals: 0, kickoff_at: 1.hour.ago)
+    GroupStanding.where(group: @group).update_all(played: 0, points: 0, wins: 0,
+                                                  goals_for: 0, goals_against: 0, goal_difference: 0, rank: nil)
+    get standings_path
+    assert_response :success
+    assert_match "proyección provisional", response.body
+    assert_match "auto-refresh", response.body
+    assert_match "turbo-refresh-method", response.body
+  end
+
   test "goleadores lists scorers with goal counts, excluding own goals" do
     @match.goals.create!(team: @mex, player_name: "Rival En Contra", minute: "80'",
                          own_goal: true, sort_order: 2)

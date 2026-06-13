@@ -20,7 +20,8 @@
     <% rows.each_with_index do |(rank, team, s), i| %>
       <% pos = rank || i + 1 %>
       <% pos_class = pos <= 2 ? "text-emerald-300" : pos == 3 ? "text-amber-300" : "text-white/40" %>
-      <tr class="border-t border-white/5">
+      <% live = s.try(:live?) %>
+      <tr class="border-t border-white/5 <%= 'bg-emerald-500/[0.07]' if live %>">
         <td class="py-1.5 pr-1 font-extrabold tabular-nums <%= pos_class %>"><%= pos %></td>
         <td class="py-1.5">
           <span class="flex items-center gap-2 min-w-0">
@@ -29,6 +30,9 @@
                    class="w-[22px] h-[17px] rounded-sm object-cover ring-1 ring-white/15 shrink-0">
             <% end %>
             <span class="text-white font-semibold truncate"><%= team.name %></span>
+            <% if live %>
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Jugando ahora"></span>
+            <% end %>
           </span>
         </td>
         <td class="py-1.5 text-center tabular-nums text-white/80"><%= s&.played.to_i %></td>

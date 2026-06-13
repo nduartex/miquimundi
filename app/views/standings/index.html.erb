@@ -1,6 +1,15 @@
 <% content_for :title, "Tabla de Posiciones — Mundial 2026" %>
 
-<main class="max-w-5xl mx-auto px-4 py-6 sm:py-10">
+<% if @any_live %>
+  <%# Live page: morph-refresh every 60s so positions update without losing scroll. %>
+  <% content_for :head do %>
+    <meta name="turbo-refresh-method" content="morph">
+    <meta name="turbo-refresh-scroll" content="preserve">
+  <% end %>
+<% end %>
+
+<main class="max-w-5xl mx-auto px-4 py-6 sm:py-10"
+      <%= 'data-controller="auto-refresh"'.html_safe if @any_live %>>
   <header class="mb-6">
     <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-wide">
       Tabla de Posiciones
@@ -11,6 +20,12 @@
         · actualizada hace <%= time_ago_in_words(@updated_at) %>
       <% end %>
     </p>
+    <% if @any_live %>
+      <p class="mt-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/10 ring-1 ring-emerald-400/25 rounded-full px-2.5 py-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        En vivo · proyección provisional mientras ruedan los partidos
+      </p>
+    <% end %>
     <p class="text-white/40 text-xs mt-2">
       <span class="text-emerald-300 font-semibold">1º-2º</span> clasifican ·
       <span class="text-amber-300 font-semibold">3º</span> candidato a mejor tercero
@@ -20,11 +35,18 @@
 
   <div class="grid sm:grid-cols-2 gap-4">
     <% @groups.each do |group| %>
+      <% rows = @rows_by_group[group] %>
+      <% group_live = rows.any?(&:live?) %>
       <div class="surface surface-neon p-5">
-        <h2 class="mb-3">
+        <h2 class="mb-3 flex items-center gap-2">
           <span class="badge-group inline-flex items-center rounded-lg font-display font-extrabold text-lg px-3 py-1">Grupo <%= group.name %></span>
+          <% if group_live %>
+            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En vivo
+            </span>
+          <% end %>
         </h2>
-        <%= render "groups/standings_table", group: group, standings: group.group_standings.sort_by { |s| s.rank || 99 } %>
+        <%= render "groups/standings_table", group: group, standings: rows %>
       </div>
     <% end %>
   </div>
