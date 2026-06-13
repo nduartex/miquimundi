@@ -30,8 +30,9 @@ class GroupStandingsProjection
 
     @overlay.each do |m|
       home_goals, away_goals = m.display_home_goals, m.display_away_goals
-      apply_live(by_team[m.home_team_id], home_goals, away_goals)
-      apply_live(by_team[m.away_team_id], away_goals, home_goals)
+      live = m.live_now?
+      apply_match(by_team[m.home_team_id], home_goals, away_goals, live)
+      apply_match(by_team[m.away_team_id], away_goals, home_goals, live)
     end
 
     if @overlay.any?
@@ -82,9 +83,13 @@ class GroupStandingsProjection
     )
   end
 
-  def apply_live(row, scored, conceded)
+  # Overlays one match result. Only a genuinely in-progress match flags the row
+  # as live (drives the "En vivo" banner / auto-refresh). A finished match we're
+  # bridging until ESPN's official table catches up corrects the numbers without
+  # pretending it's still being played.
+  def apply_match(row, scored, conceded, live)
     return if row.nil?
-    row.live = true
+    row.live ||= live
     row.played += 1
     row.goals_for += scored
     row.goals_against += conceded

@@ -103,7 +103,18 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     assert_equal @t1.code, leader.team.code
     assert_equal 3, leader.points
     assert_equal 1, leader.played
-    assert leader.live?, "the provisional row stays flagged so the table keeps auto-refreshing"
+    assert_not leader.live?, "a finished match is corrected but never shown as live"
+    assert rows.none?(&:live?), "no 'En vivo' banner for a finished bridge"
+  end
+
+  test "a live match still flags the table even alongside a finished bridge" do
+    [ @t1, @t2, @t3, @t4 ].each_with_index { |t, i| standing(t, rank: i + 1, played: 0) }
+    ft = finished_match(@t1, @t2, 2, 0)   # finished — bridged, not live
+    lv = live_match(@t3, @t4, 1, 0)       # in progress — live
+
+    rows = GroupStandingsProjection.call(@group, live_matches: [ ft, lv ])
+    assert rows.find { |r| r.team == @t3 }.live?, "the in-progress match flags live"
+    assert_not rows.find { |r| r.team == @t1 }.live?, "the finished bridge does not"
   end
 
   test "does not double-count a finished match the official table already reflects" do
