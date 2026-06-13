@@ -10,7 +10,7 @@ class GroupsController < ApplicationController
                     .includes(:home_team, :away_team, goals: :team)
                     .order(:kickoff_at)
     # Project in-progress matches onto the table, same as /posiciones.
-    @standings = GroupStandingsProjection.call(@group, live_matches: @matches.select { |m| m.status == "live" })
+    @standings = GroupStandingsProjection.call(@group, live_matches: @matches.select(&:live_now?))
     @prediction = current_user&.quiniela_for(@group.tournament)&.group_predictions
                               &.find_by(group_id: @group.id)
     render layout: false

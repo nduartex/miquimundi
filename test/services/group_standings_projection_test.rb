@@ -54,6 +54,17 @@ class GroupStandingsProjectionTest < ActiveSupport::TestCase
     assert_not rows.find { |r| r.team == @t3 }.live?
   end
 
+  test "projection uses the reconciled score, not a lagging scoreboard" do
+    [@t1, @t2, @t3, @t4].each_with_index { |t, i| standing(t, rank: i + 1) }
+    # Scoreboard lags at 2-0 but the goals table already has 3 for t1.
+    match = live_match(@t1, @t2, 2, 0)
+    3.times { |i| match.goals.create!(team: @t1, player_name: "G#{i}", minute: "#{i}'", sort_order: i) }
+
+    leader = GroupStandingsProjection.call(@group, live_matches: [match]).first
+    assert_equal @t1.code, leader.team.code
+    assert_equal 3, leader.goals_for, "must reflect the 3 goals listed, not the stale scoreboard 2"
+  end
+
   test "live draw awards a point to both sides" do
     [@t1, @t2, @t3, @t4].each_with_index { |t, i| standing(t, rank: i + 1) }
     match = live_match(@t1, @t2, 1, 1)

@@ -22,6 +22,10 @@ class Match < ApplicationRecord
 
   scope :knockout, -> { where.not(phase: "group") }
   scope :ordered, -> { order(Arel.sql("match_number NULLS LAST"), :kickoff_at) }
+  # "Live right now": status live AND kicked off recently. The recency bound
+  # stops a match stuck on "live" (an abandonment ESPN never closes) from
+  # driving the live banner / auto-refresh forever. 4h covers extra time + pens.
+  scope :live_now, -> { where(status: "live").where(kickoff_at: 4.hours.ago..) }
 
   def knockout?
     phase != "group"
@@ -39,10 +43,30 @@ class Match < ApplicationRecord
     status == "finished" && home_goals.present? && away_goals.present?
   end
 
+  # Ruby-side twin of the live_now scope, for filtering already-loaded matches.
+  def live_now?
+    status == "live" && kickoff_at.present? && kickoff_at >= 4.hours.ago
+  end
+
   def actual_winner_team_id
     return nil unless finished?
     return home_team_id if home_goals > away_goals
     return away_team_id if away_goals > home_goals
     nil
+  end
+
+  # Display score reconciled with the goal events we hold. ESPN's scoreboard
+  # (home_goals/away_goals) and its summary (the goals table) are separate
+  # endpoints that can briefly disagree; taking the max keeps the shown score
+  # from ever falling below the goals actually listed. Reads loaded goals — no
+  # query when they're preloaded. Scoring keeps using raw home_goals/away_goals.
+  def display_home_goals = reconciled_score(home_goals, home_team_id)
+  def display_away_goals = reconciled_score(away_goals, away_team_id)
+
+  private
+
+  def reconciled_score(scoreboard, team_id)
+    return scoreboard if scoreboard.nil?
+    [ scoreboard, goals.count { |g| g.team_id == team_id } ].max
   end
 end

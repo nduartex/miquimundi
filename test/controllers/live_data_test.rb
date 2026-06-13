@@ -41,6 +41,26 @@ class LiveDataTest < ActionDispatch::IntegrationTest
     assert_match "turbo-refresh-method", response.body
   end
 
+  test "a live match with no score yet does not show the live banner" do
+    aus = Team.create!(group: @group, name: "Australia", code: "AUS")
+    # status live but ESPN hasn't sent the score: nothing to project.
+    Match.create!(tournament: @tournament, phase: "group", home_team: @mex, away_team: aus,
+                  status: "live", home_goals: nil, away_goals: nil, kickoff_at: 10.minutes.ago)
+    get standings_path
+    assert_response :success
+    assert_no_match "proyección provisional", response.body
+    assert_no_match "auto-refresh", response.body
+  end
+
+  test "a match stuck on live long after kickoff does not drive the live banner" do
+    aus = Team.create!(group: @group, name: "Australia", code: "AUS")
+    Match.create!(tournament: @tournament, phase: "group", home_team: @mex, away_team: aus,
+                  status: "live", home_goals: 1, away_goals: 0, kickoff_at: 6.hours.ago)
+    get standings_path
+    assert_response :success
+    assert_no_match "proyección provisional", response.body
+  end
+
   test "goleadores lists scorers with goal counts, excluding own goals" do
     @match.goals.create!(team: @mex, player_name: "Rival En Contra", minute: "80'",
                          own_goal: true, sort_order: 2)

@@ -26,8 +26,9 @@ class GroupStandingsProjection
     by_team = rows.index_by { |r| r.team.id }
 
     @live.each do |m|
-      apply_live(by_team[m.home_team_id], m.home_goals, m.away_goals)
-      apply_live(by_team[m.away_team_id], m.away_goals, m.home_goals)
+      home_goals, away_goals = m.display_home_goals, m.display_away_goals
+      apply_live(by_team[m.home_team_id], home_goals, away_goals)
+      apply_live(by_team[m.away_team_id], away_goals, home_goals)
     end
 
     if @live.any?

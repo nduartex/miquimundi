@@ -44,7 +44,7 @@
                 <span class="text-white/40 text-xs font-bold tabular-nums px-1"><%= m.kickoff_at&.strftime("%d/%m") || "vs" %></span>
               <% else %>
                 <span class="px-1 font-extrabold tabular-nums <%= m.status == "live" ? "text-emerald-300" : "text-white" %>">
-                  <%= m.home_goals %>–<%= m.away_goals %>
+                  <%= m.display_home_goals %>–<%= m.display_away_goals %>
                 </span>
               <% end %>
               <span class="text-white/90 font-semibold truncate"><%= m.away_team.name %></span>

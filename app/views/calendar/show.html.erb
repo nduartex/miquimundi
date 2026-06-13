@@ -102,7 +102,7 @@
 
                 <% if rec && rec.status != "scheduled" && rec.home_goals %>
                   <span class="tabular-nums font-extrabold text-base px-1 <%= live ? "text-emerald-300" : "text-white" %>">
-                    <%= rec.home_goals %>–<%= rec.away_goals %>
+                    <%= rec.display_home_goals %>–<%= rec.display_away_goals %>
                   </span>
                 <% else %>
                   <span class="text-white/40 text-xs font-bold px-1">vs</span>

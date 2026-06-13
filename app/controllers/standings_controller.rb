@@ -11,7 +11,10 @@ class StandingsController < ApplicationController
       GroupStandingsProjection.call(group, live_matches: live.fetch(group.id, []))
     end
     @groups = groups
-    @any_live = live.any?
+    # Banner + auto-refresh only when a row is actually projected live — not at
+    # the kickoff instant when status is "live" but the score hasn't synced yet,
+    # which would otherwise show a live banner over an unchanged table.
+    @any_live = @rows_by_group.values.any? { |rows| rows.any?(&:live?) }
     @updated_at = GroupStanding.maximum(:updated_at)
   end
 
@@ -19,7 +22,7 @@ class StandingsController < ApplicationController
 
   def live_matches(tournament)
     return {} unless tournament
-    tournament.matches.where(status: "live").includes(:home_team)
+    tournament.matches.live_now.includes(:home_team, :goals)
               .group_by { |m| m.home_team&.group_id }
   end
 end
