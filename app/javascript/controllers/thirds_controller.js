@@ -31,8 +31,12 @@ export default class extends Controller {
     }
     this.optionTargets.forEach((opt) => {
       const cb = opt.querySelector('input[type="checkbox"]')
-      opt.classList.toggle("ring-2", cb.checked)
-      opt.classList.toggle("ring-amber-300", cb.checked)
+      // El borde dorado señala una selección aún editable. En vistas guardadas
+      // (locked) la elección es definitiva: conservamos el check pero quitamos
+      // el borde para que no parezca modificable.
+      const ring = cb.checked && !this.lockedValue
+      opt.classList.toggle("ring-2", ring)
+      opt.classList.toggle("ring-amber-300", ring)
       opt.classList.toggle("opacity-40", cb.disabled && !cb.checked)
     })
   }
