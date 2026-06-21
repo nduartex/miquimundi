@@ -68,12 +68,13 @@
                 <% end %>
               </span>
 
-              <% if m["kickoff_utc"].present? %>
-                <time datetime="<%= m["kickoff_utc"] %>"
+              <% kickoff = rec&.kickoff_at&.utc&.iso8601 || m["kickoff_utc"] %>
+              <% if kickoff.present? %>
+                <time datetime="<%= kickoff %>"
                       data-local-time-target="time"
-                      data-utc="<%= m["kickoff_utc"] %>"
+                      data-utc="<%= kickoff %>"
                       class="tabular-nums font-semibold text-white/90 text-sm">
-                  <%= m["kickoff_utc"] %>
+                  <%= kickoff %>
                 </time>
               <% else %>
                 <span class="text-white/40 text-xs italic">Hora por confirmar</span>
