@@ -12,11 +12,6 @@ module Discord
     BLUE = 0x3498DB
     RED = 0xE74C3C
 
-    # Pings the whole server. Only the top-level `content` triggers mentions
-    # (embed text never does), and allowed_mentions makes the @everyone fire
-    # regardless of the webhook's default mention settings.
-    EVERYONE = { content: "@everyone", allowed_mentions: { parse: [ "everyone" ] } }.freeze
-
     # All args are primitives (the sync passes plain strings/ints/bools).
     def goal(scorer:, scoring_team:, home_team:, away_team:, home_goals:, away_goals:, minute:, penalty:, own_goal:)
       score = "**#{home_team} #{home_goals} - #{away_goals} #{away_team}**"
@@ -30,12 +25,12 @@ module Discord
         line = "#{scorer}#{penalty ? ' de penal' : ''}#{clock}"
       end
 
-      deliver(:goals, **EVERYONE, embeds: [ { title: title, description: "#{line}\n\n#{score}", color: GREEN } ])
+      deliver(:goals, embeds: [ { title: title, description: "#{line}\n\n#{score}", color: GREEN } ])
     end
 
     def prematch(match, minutes)
       fase = I18n.t("phase.#{match.phase}", default: "Fase de grupos")
-      deliver(:goals, **EVERYONE, embeds: [ {
+      deliver(:goals, embeds: [ {
         title: "⏰ Faltan ~#{minutes} min",
         description: "**#{match.home_team&.name}** vs **#{match.away_team&.name}**\n#{fase}",
         color: BLUE

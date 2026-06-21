@@ -15,8 +15,7 @@ module Discord
                     penalty: false, own_goal: false)
       key, payload = last_delivery
       assert_equal "goals", key
-      assert_equal "@everyone", payload["content"], "goals must ping the server"
-      assert_equal [ "everyone" ], payload.dig("allowed_mentions", "parse")
+      assert_nil payload["content"], "los goles ya no hacen @everyone"
       embed = payload["embeds"].first
       assert_equal "⚽ ¡GOL de Argentina!", embed["title"]
       assert_includes embed["description"], "Messi"
