@@ -24,13 +24,13 @@ class CalendarController < ApplicationController
   # client-side (local_time_controller).
   def show
     @days = load_matches
-      .group_by { |m| m["date"] }
+      .group_by { |m| day_key(m) }
       .sort_by { |date, _| date }
       .map do |date, matches|
         {
           date: date,
           label: day_label(date),
-          matches: matches.sort_by { |m| m["kickoff_utc"] || format("%03d", m["match_number"].to_i) }
+          matches: matches.sort_by { |m| sort_key(m) }
         }
       end
 
@@ -42,6 +42,28 @@ class CalendarController < ApplicationController
   end
 
   private
+
+  # Bucket each match by the date of its kickoff in the app timezone (Chile),
+  # not by the fixture's hardcoded "date" (the venue-based matchday). A late
+  # kickoff like Monterrey 22:00 is already the next day in Chile, so this keeps
+  # the day header in sync with the local time the page actually shows. Falls
+  # back to the fixture date when there's no kickoff yet (e.g. knockouts).
+  def day_key(match)
+    kickoff_time(match)&.to_date&.iso8601 || match["date"]
+  end
+
+  # Chronological within a day; matches without a time (unscheduled knockouts)
+  # fall back to their match number, sorting ahead of timed ones.
+  def sort_key(match)
+    kickoff_time(match)&.utc&.iso8601 || format("%03d", match["match_number"].to_i)
+  end
+
+  # Prefer the ESPN-synced DB time (authoritative); fall back to the fixture's
+  # static UTC. Both come back as TimeWithZone in the app zone.
+  def kickoff_time(match)
+    return match["record"].kickoff_at if match["record"]&.kickoff_at
+    Time.zone.parse(match["kickoff_utc"]) if match["kickoff_utc"].present?
+  end
 
   # Fixtures carry only the team's iso2 code; resolve name + flag from the teams
   # table so the calendar reflects the real roster. Falls back to whatever the
