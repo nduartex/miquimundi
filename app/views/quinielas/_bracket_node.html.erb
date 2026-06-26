@@ -1,0 +1,75 @@
+<%# Locals: m (Match), mp (MatchPrediction|nil), open (bool), mirror (bool, right half).
+    Renders both layers (your prediction + the real outcome); bracket_controller
+    shows one depending on the Mi pronóstico / Real toggle. %>
+<% mult = m.multiplier %>
+<% dis = m.locked? %>
+<% played = m.home_goals.present? %>
+<% editable = open && !dis && !played %>
+<div class="surface p-1.5 rounded-lg w-full relative z-10" data-bracket-target="node" data-slot="<%= m.bracket_slot %>">
+  <div class="flex items-center justify-between mb-1 <%= 'flex-row-reverse' if mirror %>">
+    <span class="text-[9px] font-bold uppercase tracking-wide text-white/35">P<%= m.match_number %></span>
+    <div class="flex items-center gap-1">
+      <% if dis %><span class="text-white/60 inline-flex"><%= icon "lock", class: "size-2.5" %></span><% end %>
+      <% if mult > 1.0 %><span class="px-1 py-0.5 rounded text-[9px] font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %></span><% end %>
+    </div>
+  </div>
+
+  <% %w[home away].each_with_index do |side, idx| %>
+    <% team = idx.zero? ? m.home_team : m.away_team %>
+    <% label = idx.zero? ? m.home_label : m.away_label %>
+    <% mine = idx.zero? ? mp&.pred_home : mp&.pred_away %>
+    <% real = idx.zero? ? m.home_goals : m.away_goals %>
+    <div class="flex items-center justify-between gap-1 transition-all <%= 'flex-row-reverse' if mirror %> <%= 'mb-0.5' if idx.zero? %>"
+         data-bracket-target="teamRow" data-slot="<%= m.bracket_slot %>" data-side="<%= side %>">
+      <span data-bracket-target="crown" class="hidden shrink-0 text-gold" title="Tu favorito a ganar"><%= icon "crown", class: "size-3.5" %></span>
+      <span class="min-w-0 flex items-center gap-1 text-xs font-semibold text-white truncate <%= 'flex-row-reverse text-right' if mirror %>"
+            data-bracket-target="slot" data-slot="<%= m.bracket_slot %>" data-side="<%= side %>">
+        <% if team %>
+          <% if team.flag_url %><img src="<%= team.flag_url %>" alt="" class="w-[18px] h-[12px] rounded-sm object-cover ring-1 ring-white/15 shrink-0"><% end %>
+          <span class="truncate"><%= team.name %></span>
+        <% else %>
+          <span class="truncate text-white/40"><%= label %></span>
+        <% end %>
+      </span>
+
+      <div class="flex items-center gap-0.5 shrink-0 <%= 'flex-row-reverse' if mirror %>">
+        <% if editable %>
+          <div class="flex items-center gap-0.5" data-controller="stepper" data-bracket-target="mineInput" data-slot="<%= m.bracket_slot %>" data-side="<%= side %>">
+            <button type="button" data-action="stepper#dec" aria-label="Menos" class="w-5 h-6 rounded bg-white/10 hover:bg-white/20 text-white text-sm font-bold leading-none transition cursor-pointer">−</button>
+            <%= number_field_tag "match_predictions[#{m.id}][pred_#{side}]", mine, min: 0, inputmode: "numeric",
+                  data: { stepper_target: "input", bracket_target: "input", slot: m.bracket_slot, side: side },
+                  class: "w-7 h-6 rounded bg-pitch-900/85 border border-chalk/25 text-white text-sm font-extrabold text-center tabular-nums focus:outline-none focus:ring-2 focus:ring-gold/55" %>
+            <button type="button" data-action="stepper#inc" aria-label="Más" class="w-5 h-6 rounded bg-white/10 hover:bg-white/20 text-white text-sm font-bold leading-none transition cursor-pointer">+</button>
+          </div>
+        <% end %>
+        <%# Controller fills this from the active mode (your pred / real goals). %>
+        <span data-bracket-target="score" data-slot="<%= m.bracket_slot %>" data-side="<%= side %>"
+              data-mine="<%= mine %>" data-real="<%= real %>"
+              class="text-sm font-extrabold text-white tabular-nums <%= 'hidden' if editable %>"></span>
+      </div>
+    </div>
+  <% end %>
+
+  <% if editable %>
+    <% pen_opts = [ [ "Penales: —", "" ] ] %>
+    <% pen_opts << [ m.home_team.name, m.home_team.id ] if m.home_team %>
+    <% pen_opts << [ m.away_team.name, m.away_team.id ] if m.away_team %>
+    <%= select_tag "match_predictions[#{m.id}][penalty_qualifier_id]",
+          options_for_select(pen_opts, mp&.penalty_qualifier_id),
+          data: { bracket_target: "penaltyMine", slot: m.bracket_slot },
+          class: "mt-1 w-full rounded bg-pitch-900/85 border border-chalk/25 text-white/80 text-[10px] px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-gold/55" %>
+  <% end %>
+
+  <%# Real-outcome footnotes, hidden until the Real mode is active. %>
+  <% if m.penalty_winner_id %>
+    <p data-bracket-target="penaltyReal" class="hidden mt-0.5 text-[10px] text-amber-300/90 font-semibold text-center truncate">
+      <%= m.penalty_winner_id == m.home_team_id ? m.home_team&.name : m.away_team&.name %> en penales
+    </p>
+  <% end %>
+  <% if played && mp %>
+    <% ok = mp.predicted_winner_team_id.present? && mp.predicted_winner_team_id == (m.actual_winner_team_id || m.penalty_winner_id) %>
+    <p data-bracket-target="verdict" class="mt-0.5 text-[10px] font-semibold text-center <%= ok ? 'text-grass' : 'text-white/40' %>">
+      <%= ok ? "✓ acertaste quién pasó" : "✗ no pasó tu pick" %>
+    </p>
+  <% end %>
+</div>

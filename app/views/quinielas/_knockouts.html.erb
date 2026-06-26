@@ -6,77 +6,135 @@
     <p class="text-white/40 text-sm mt-4">Por ahora completa tus grupos, los 8 mejores terceros y tus premios. 💪</p>
   </div>
 <% else %>
-  <% phase_styles = {
-       "round_32" => "bg-slate-200 text-slate-900", "round_16" => "bg-sky-200 text-slate-900",
-       "quarter" => "bg-sky-300 text-slate-900", "semi" => "bg-violet-300 text-slate-900",
-       "third_place" => "bg-orange-200 text-slate-900", "final" => "bg-amber-300 text-slate-900"
-     } %>
-  <% by_phase = matches.group_by(&:phase) %>
-  <% preds = quiniela.match_predictions.index_by(&:match_id) %>
-  <p class="text-white/70 mb-5">Predice el <strong class="text-white">marcador</strong> de cada partido real de eliminatorias.</p>
+  <%
+    team_h = ->(t) { t && { id: t.id, name: t.name, flag: t.flag_url } }
+    preds = quiniela.match_predictions.index_by(&:match_id)
+    bracket_data = matches.map do |m|
+      mp = preds[m.id]
+      {
+        slot: m.bracket_slot, n: m.match_number, phase: m.phase,
+        advances_to: m.advances_to.presence,
+        home: team_h.call(m.home_team), away: team_h.call(m.away_team),
+        home_label: m.home_label, away_label: m.away_label,
+        pred_home: mp&.pred_home, pred_away: mp&.pred_away,
+        penalty_qualifier_id: mp&.penalty_qualifier_id,
+        real_home: m.home_goals, real_away: m.away_goals,
+        penalty_winner_id: m.penalty_winner_id,
+        status: m.status, finished: m.finished?
+      }
+    end
 
-  <div class="space-y-8">
-    <% Match::KNOCKOUT_ORDER.each do |phase| %>
-      <% round_matches = by_phase[phase] %>
-      <% next if round_matches.blank? %>
-      <section>
-        <div class="flex items-center gap-3 mb-3">
-          <h3 class="font-display text-2xl font-extrabold text-white"><%= t("phase.#{phase}", default: phase) %></h3>
-          <span class="h-px flex-1 bg-white/15"></span>
+    # Build the bracket tree from the "Gan. N" labels so we can split it into a
+    # left and right half that converge on the final.
+    by_slot = matches.index_by(&:bracket_slot)
+    by_num  = matches.index_by(&:match_number)
+    child_of = ->(m, side) do
+      lbl = side == :home ? m.home_label : m.away_label
+      n = lbl.to_s[/Gan\.\s*(\d+)/, 1]
+      n && by_num[n.to_i]
+    end
+    walk = nil
+    walk = ->(m, depth, acc) do
+      return if m.nil?
+      (acc[depth] ||= []) << m
+      walk.call(child_of.call(m, :home), depth + 1, acc)
+      walk.call(child_of.call(m, :away), depth + 1, acc)
+    end
+    final_m = by_slot["M104"]
+    third_m = by_slot["M103"]
+    left_acc = {}; walk.call(child_of.call(final_m, :home), 0, left_acc)   # subtree feeding the final's home (M101)
+    right_acc = {}; walk.call(child_of.call(final_m, :away), 0, right_acc) # ...away (M102)
+    # Left half: leaves (R32) first → root (semi) last. Right half mirrored.
+    left_cols  = left_acc.keys.sort.reverse.map { |d| left_acc[d] }
+    right_cols = right_acc.keys.sort.map { |d| right_acc[d] }
+    round_name = ->(m) { t("phase.#{m.phase}", default: m.phase) }
+    col_header = ->(label) { tag.h3 label, class: "font-display text-[11px] font-extrabold uppercase tracking-wider text-white/55 text-center mb-2 whitespace-nowrap" }
+  %>
+
+  <div data-controller="bracket" data-action="input->bracket#recalc change->bracket#recalc">
+    <script type="application/json" data-bracket-target="data"><%= raw bracket_data.to_json %></script>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <div class="flex items-center gap-2">
+        <div class="surface px-3 py-1.5 inline-flex items-center gap-2 text-sm">
+          <%= icon "trophy", class: "size-4 text-gold" %>
+          <span class="text-white/60"><span data-bracket-target="championLabel">Tu campeón</span>:</span>
+          <span data-bracket-target="champion" class="font-display font-extrabold text-gold">—</span>
         </div>
-        <div class="space-y-3">
-          <% round_matches.each do |match| %>
-            <% mp = preds[match.id] %>
-            <% mult = match.multiplier %>
-            <% dis = match.locked? %>
-            <div class="surface p-4 <%= 'opacity-70' if dis %>">
-              <div class="flex items-center justify-between mb-3">
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= phase_styles[match.phase] %>">Partido <%= match.match_number %></span>
-                <div class="flex items-center gap-2">
-                  <% if dis %><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-white/15 text-white/80 inline-flex items-center gap-1"><%= icon "lock", class: "size-3" %> Cerrado</span><% end %>
-                  <% if mult > 1.0 %><span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-500/90 text-white">×<%= mult.to_s.sub(/\.0$/, "") %> puntos</span><% end %>
-                </div>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-left">
-                  <% if match.home_team %>
-                    <span class="inline-flex items-center gap-1.5"><% if match.home_team.flag_url %><img src="<%= match.home_team.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15"><% end %><%= match.home_team.name %></span>
-                  <% else %><span class="text-white/40"><%= match.home_label %></span><% end %>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  <div class="flex items-center gap-1" data-controller="stepper">
-                    <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
-                    <%= number_field_tag "match_predictions[#{match.id}][pred_home]", mp&.pred_home, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: dis, class: "w-14 h-11 rounded-xl bg-pitch-900/85 border border-chalk/25 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-gold/55" %>
-                    <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
-                  </div>
-                  <span class="text-white/50 font-display text-lg px-1">vs</span>
-                  <div class="flex items-center gap-1" data-controller="stepper">
-                    <button type="button" data-action="stepper#dec" aria-label="Menos" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">−</button>
-                    <%= number_field_tag "match_predictions[#{match.id}][pred_away]", mp&.pred_away, min: 0, inputmode: "numeric", data: { stepper_target: "input" }, disabled: dis, class: "w-14 h-11 rounded-xl bg-pitch-900/85 border border-chalk/25 text-white text-2xl font-extrabold text-center tabular-nums focus:outline-none focus:ring-4 focus:ring-gold/55" %>
-                    <button type="button" data-action="stepper#inc" aria-label="Más" <%= "disabled" if dis %> class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white text-2xl font-bold leading-none transition cursor-pointer">+</button>
-                  </div>
-                </div>
-                <div class="flex-1 min-w-0 text-white font-semibold truncate text-center sm:text-right">
-                  <% if match.away_team %>
-                    <span class="inline-flex items-center gap-1.5"><% if match.away_team.flag_url %><img src="<%= match.away_team.flag_url %>" alt="" class="w-[22px] h-[16px] rounded-sm object-cover ring-1 ring-white/15"><% end %><%= match.away_team.name %></span>
-                  <% else %><span class="text-white/40"><%= match.away_label %></span><% end %>
-                </div>
-              </div>
-              <% if match.home_team && match.away_team %>
-                <div class="mt-3">
-                  <label class="block text-white/50 text-xs mb-1">Si hay empate, ¿quién pasa por penales?</label>
-                  <%= select_tag "match_predictions[#{match.id}][penalty_qualifier_id]",
-                        options_for_select([["—", ""], [match.home_team.name, match.home_team.id], [match.away_team.name, match.away_team.id]], mp&.penalty_qualifier_id),
-                        disabled: dis, class: "w-full rounded-lg bg-pitch-900/85 border border-chalk/25 text-white text-sm px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold/55" %>
+        <%# Mi pronóstico ⇄ Real %>
+        <div class="surface inline-flex p-0.5 text-xs font-bold">
+          <button type="button" data-action="bracket#showMine" data-bracket-target="modeMine"
+                  class="px-2.5 py-1 rounded-md bg-gold text-pitch-900">Mi pronóstico</button>
+          <button type="button" data-action="bracket#showReal" data-bracket-target="modeReal"
+                  class="px-2.5 py-1 rounded-md text-white/70">Real</button>
+        </div>
+      </div>
+      <div class="inline-flex items-center gap-1 surface px-1.5 py-1">
+        <button type="button" data-action="bracket#zoomOut" aria-label="Alejar" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-lg font-bold leading-none cursor-pointer">−</button>
+        <button type="button" data-action="bracket#zoomFit" class="px-2 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold cursor-pointer">Ajustar</button>
+        <button type="button" data-action="bracket#zoomIn" aria-label="Acercar" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-lg font-bold leading-none cursor-pointer">+</button>
+        <span data-bracket-target="zoomLabel" class="text-white/45 text-[11px] tabular-nums w-9 text-center">100%</span>
+      </div>
+    </div>
+
+    <%# full-bleed map-like canvas: on phones it's a bounded pan/pinch surface,
+        on desktop it fits to width. touch-action lets one finger pan natively
+        while the controller handles two-finger pinch. %>
+    <div class="w-screen relative left-1/2 -translate-x-1/2 overflow-auto px-3 pt-1 pb-6 max-h-[calc(100dvh-22rem)] sm:max-h-none overscroll-contain sm:overscroll-auto [touch-action:pan-x_pan-y]" data-bracket-target="scroller">
+      <div class="relative flex items-stretch gap-2 sm:gap-3 min-w-max mx-auto w-fit origin-top-left" data-bracket-target="stage">
+        <svg data-bracket-target="links" class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+        <%# ---- LEFT HALF: R32 → R16 → QF → SF (left to centre) ---- %>
+        <% left_cols.each do |col| %>
+          <div class="flex flex-col w-[156px] sm:w-[172px] shrink-0">
+            <%= col_header.call(round_name.call(col.first)) %>
+            <%# each match takes an equal vertical share and centres in it, so a
+                round-N+1 card lands exactly at the midpoint of its two feeders %>
+            <div class="flex-1 flex flex-col">
+              <% col.each do |m| %>
+                <div class="flex-1 flex items-center">
+                  <%= render "bracket_node", m: m, mp: preds[m.id], open: open, mirror: false %>
                 </div>
               <% end %>
-              <% if match.advances_to.present? %>
-                <p class="text-white/40 text-xs mt-3 text-center">↳ El ganador avanza al partido <%= match.advances_to.delete("M") %></p>
-              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%# ---- CENTRE: Final (finalists clash) + third place ---- %>
+        <div class="flex flex-col justify-center items-center gap-4 w-[176px] sm:w-[188px] shrink-0 px-1">
+          <div class="w-full">
+            <%= col_header.call("🏆 #{round_name.call(final_m)}") %>
+            <div class="ring-1 ring-gold/40 rounded-2xl p-0.5 bg-gold/5">
+              <%= render "bracket_node", m: final_m, mp: preds[final_m.id], open: open, mirror: false %>
+            </div>
+          </div>
+          <% if third_m %>
+            <div class="w-full">
+              <%= col_header.call(round_name.call(third_m)) %>
+              <%= render "bracket_node", m: third_m, mp: preds[third_m.id], open: open, mirror: false %>
             </div>
           <% end %>
         </div>
-      </section>
-    <% end %>
+
+        <%# ---- RIGHT HALF: SF → QF → R16 → R32 (centre to right, mirrored) ---- %>
+        <% right_cols.each do |col| %>
+          <div class="flex flex-col w-[156px] sm:w-[172px] shrink-0">
+            <%= col_header.call(round_name.call(col.first)) %>
+            <div class="flex-1 flex flex-col">
+              <% col.each do |m| %>
+                <div class="flex-1 flex items-center">
+                  <%= render "bracket_node", m: m, mp: preds[m.id], open: open, mirror: true %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+    <p class="text-white/35 text-xs text-center mt-1">
+      <span class="sm:hidden">Arrastra para moverte, pellizca para acercar, o usa <strong class="text-white/60">+ / −</strong>.</span>
+      <span class="hidden sm:inline">Usa <strong class="text-white/60">+ / −</strong> para acercar y <strong class="text-white/60">Ajustar</strong> para ver todo el cuadro.</span>
+    </p>
   </div>
 <% end %>

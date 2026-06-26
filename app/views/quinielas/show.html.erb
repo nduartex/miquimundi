@@ -206,7 +206,11 @@
     <p data-gate-target="status" hidden role="status"
        class="mt-6 text-center text-amber-200/90 text-sm font-semibold"></p>
 
-    <div class="mt-8 flex items-center justify-between gap-3">
+    <%# Sticky action bar on phones so Guardar stays reachable even when a tall
+        panel (the bracket) traps vertical scrolling. Normal flow on desktop. %>
+    <div class="mt-8 flex items-center justify-between gap-3
+                sticky bottom-0 z-30 -mx-4 px-4 py-3 bg-pitch-900/90 backdrop-blur border-t border-white/10
+                sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0">
       <button type="button" data-action="wizard#prev" data-wizard-target="back" class="btn-ghost flex-1 font-extrabold uppercase tracking-wide whitespace-nowrap">
         ← Atrás
       </button>
