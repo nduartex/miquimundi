@@ -35,7 +35,9 @@
         <% selected = award&.public_send(a[:field].sub("_id", "")) %>
         <div class="relative" data-controller="combobox"
              <%= "data-combobox-position-value=#{a[:position]}".html_safe if a[:position] %>>
-          <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, data: { combobox_target: "hidden" } %>
+          <%# disabled when locked so a knockout-only save doesn't carry first-part
+              params (which would trip the "first part cerrada" gate). %>
+          <%= hidden_field_tag "award_prediction[#{a[:field]}]", selected&.id, disabled: locked, data: { combobox_target: "hidden" } %>
           <% placeholder = a[:position] == "goalkeeper" ? "Busca un arquero por nombre o país…" : "Busca por jugador o país…" %>
           <input type="text" data-combobox-target="input" autocomplete="off"
                  value="<%= selected&.name %>" placeholder="<%= placeholder %>"
