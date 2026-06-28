@@ -426,16 +426,11 @@ export default class extends Controller {
     if (!this.hasChampionTarget) return
     const finalM = this.matches.find((m) => m.phase === "final")
     if (!finalM) return
-    let champ = null
-    if (!mine) {
-      const w = this.realWinnerSide(finalM)
-      if (w) champ = w === "home" ? finalM.home : finalM.away
-    } else {
-      const home = finalM.home || resolved[`${finalM.slot}-home`]
-      const away = finalM.away || resolved[`${finalM.slot}-away`]
-      const ph = this.pred(finalM, "home"), pa = this.pred(finalM, "away")
-      if (ph != null && pa != null && ph !== pa) champ = ph > pa ? home : away
-    }
-    this.championTarget.textContent = champ ? champ.name : "—"
+    // Reuse decideWinner so a final settled on penalties (a tie + a penalty
+    // pick) crowns the champion just like a decisive score does.
+    const home = finalM.home || resolved[`${finalM.slot}-home`]
+    const away = finalM.away || resolved[`${finalM.slot}-away`]
+    const { winner } = this.decideWinner(finalM, home, away, mine)
+    this.championTarget.textContent = winner ? winner.name : "—"
   }
 }
