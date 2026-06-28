@@ -29,17 +29,22 @@ module Results
       end
     end
 
+    # A row can carry a confirmed-but-unplayed matchup (teams only, no score):
+    # that just seeds the bracket slot and leaves the match scheduled, so the
+    # bracket/calendar show the real teams while ESPN keeps syncing the kickoff
+    # and live result. A row with a score marks the match finished as before.
     def apply_matches
       Array(@data["matches"]).each do |row|
         match = @tournament.matches.find_by(bracket_slot: row["bracket_slot"])
         next unless match
+        finished = row["home_goals"].present? && row["away_goals"].present?
         match.update!(
           home_team: row["home"] ? teams[row["home"]] : match.home_team,
           away_team: row["away"] ? teams[row["away"]] : match.away_team,
           home_goals: row["home_goals"],
           away_goals: row["away_goals"],
-          penalty_winner: row["penalty_winner"] ? teams[row["penalty_winner"]] : nil,
-          status: "finished"
+          penalty_winner: row["penalty_winner"] ? teams[row["penalty_winner"]] : match.penalty_winner,
+          status: finished ? "finished" : match.status
         )
       end
     end

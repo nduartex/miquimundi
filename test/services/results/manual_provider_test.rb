@@ -23,4 +23,17 @@ class Results::ManualProviderTest < ActiveSupport::TestCase
     assert_equal 2, @match.home_goals
     assert_equal "finished", @match.status
   end
+
+  test "a matchup without a score seeds the teams but leaves the match scheduled" do
+    slot = Match.create!(tournament: @tournament, phase: "round_32",
+                         status: "scheduled", bracket_slot: "M73")
+    data = { "matches" => [ { "bracket_slot" => "M73", "home" => "T1", "away" => "T2" } ] }
+    Results::ManualProvider.new(@tournament, data).apply!
+
+    slot.reload
+    assert_equal @t1.id, slot.home_team_id
+    assert_equal @t2.id, slot.away_team_id
+    assert_nil slot.home_goals
+    assert_equal "scheduled", slot.status # not forced to finished without a score
+  end
 end
