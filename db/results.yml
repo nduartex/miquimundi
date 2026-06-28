@@ -1,6 +1,22 @@
 # Resultados reales del Mundial 2026. Editar y correr: bin/rails quiniela:load_results
 group_results: []
-matches: []
+matches:
+  - { bracket_slot: "M73", home: "RSA", away: "CAN" }
+  - { bracket_slot: "M74", home: "GER", away: "PAR" }
+  - { bracket_slot: "M75", home: "NED", away: "MAR" }
+  - { bracket_slot: "M76", home: "BRA", away: "JPN" }
+  - { bracket_slot: "M77", home: "FRA", away: "SWE" }
+  - { bracket_slot: "M78", home: "CIV", away: "NOR" }
+  - { bracket_slot: "M79", home: "MEX", away: "ECU" }
+  - { bracket_slot: "M80", home: "ENG", away: "COD" }
+  - { bracket_slot: "M81", home: "USA", away: "BIH" }
+  - { bracket_slot: "M82", home: "BEL", away: "SEN" }
+  - { bracket_slot: "M83", home: "POR", away: "CRO" }
+  - { bracket_slot: "M84", home: "ESP", away: "AUT" }
+  - { bracket_slot: "M85", home: "SUI", away: "ALG" }
+  - { bracket_slot: "M86", home: "ARG", away: "CPV" }
+  - { bracket_slot: "M87", home: "COL", away: "GHA" }
+  - { bracket_slot: "M88", home: "AUS", away: "EGY" }
 # Códigos de los 8 equipos que clasificaron como mejores terceros, ej: [MEX, BRA, ...]
 qualified_thirds: []
 awards:
